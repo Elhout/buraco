@@ -61,7 +61,8 @@
     "eslint": "^9.39.5",
     "eslint-config-expo": "~58.0.4",
     "typescript": "~6.0.3",
-    "vitest": "^3.2.7"
+    "vitest": "^3.2.7",
+    "wrangler": "4.40.0"
   },
   "scripts": {
     "start": "expo start",
@@ -70,7 +71,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "web:deploy": "expo export --platform web && wrangler pages deploy dist --project-name buraco-club --branch main --commit-dirty=true"
   },
   "private": true
 }

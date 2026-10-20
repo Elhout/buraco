@@ -1,4 +1,4 @@
-# Cloudflare response headers for the web build (Workers static assets).
+# Cloudflare Pages response headers for the web build.
 /sw.js
   Cache-Control: no-cache
 /manifest.webmanifest

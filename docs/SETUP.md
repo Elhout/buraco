@@ -118,15 +118,16 @@ own icon. No Apple account, nothing to install, nothing expires.
 1. **Notification keys (once)**: generate a VAPID key pair and set it as described in
    `supabase/functions/README.md`. Put the *public* key in `apps/mobile/.env.local` as
    `EXPO_PUBLIC_VAPID_PUBLIC_KEY`.
-2. **Build and host** on Cloudflare (Workers static assets, free). After `npx wrangler login` once:
+2. **Build and host** on Cloudflare Pages (free). After `npx wrangler login` once:
    ```bash
    cd apps/mobile
-   npx expo export --platform web             # writes dist/
-   npx wrangler deploy                        # uses apps/mobile/wrangler.jsonc
+   pnpm web:deploy        # expo export --platform web, then wrangler pages deploy dist
    ```
-   Live: **https://buraco-club.sherifelhout.workers.dev** (a custom domain is optional).
-   `wrangler.jsonc` serves every route as the single-page app; `public/_headers` adds the headers.
-   Run the same two commands again for every update. Players get it the next time they open the app.
+   Live: **https://buraco-club.pages.dev** (a custom domain is optional). Pages serves every
+   unknown route as the single-page app; `public/_headers` adds the security headers.
+   wrangler is pinned to 4.40 in `apps/mobile/package.json`: newer versions turn `pages`
+   commands into Workers deploys, whose address includes the account's workers.dev subdomain.
+   Run `pnpm web:deploy` again for every update. Players get it the next time they open the app.
 3. **Each iPhone player**: open the link in **Safari**, sign in, tap *Share* → *Add to Home
    Screen*, then open *Buraco* from the home screen and tap *Turn on notifications* (iOS 16.4+).
    Notifications only work from the home-screen icon, not from a Safari tab.
