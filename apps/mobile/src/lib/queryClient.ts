@@ -21,6 +21,11 @@ export const queryClient = new QueryClient({
 /** Cache survives restarts in SQLite: history and stats open instantly, even with no signal. */
 export const persister = createAsyncStoragePersister({ storage: Storage, key: 'buraco-query-cache', throttleTime: 2_000 })
 export const PERSIST_MAX_AGE = 7 * DAY
+/**
+ * Bump to throw away every phone's saved cache once, e.g. after a query changed its data shape.
+ * 2: club accounts were saved as a Map, which JSON turns into {} (crashed Club settings).
+ */
+export const PERSIST_BUSTER = '2'
 
 let wired = false
 

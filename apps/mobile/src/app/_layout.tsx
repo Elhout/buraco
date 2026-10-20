@@ -24,7 +24,7 @@ import { syncDirectionOnLaunch } from '@/i18n'
 import { env } from '@/lib/env'
 import { startOutbox } from '@/lib/outbox'
 import { startPushRouting } from '@/lib/push'
-import { PERSIST_MAX_AGE, persister, queryClient, wireQueryEnvironment } from '@/lib/queryClient'
+import { PERSIST_BUSTER, PERSIST_MAX_AGE, persister, queryClient, wireQueryEnvironment } from '@/lib/queryClient'
 import { watchSystemScheme } from '@/theme/scheme'
 import { color, scheme } from '@/theme/tokens'
 
@@ -52,7 +52,7 @@ function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: color.bg }}>
       <SafeAreaProvider>
-        <PersistQueryClientProvider client={queryClient} persistOptions={{ persister, maxAge: PERSIST_MAX_AGE }}>
+        <PersistQueryClientProvider client={queryClient} persistOptions={{ persister, maxAge: PERSIST_MAX_AGE, buster: PERSIST_BUSTER }}>
           <SessionProvider>
             <ClubProvider>
               <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />

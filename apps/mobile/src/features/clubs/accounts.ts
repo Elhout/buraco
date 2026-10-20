@@ -15,12 +15,14 @@ export function useClubAccounts(clubId: string, enabled: boolean) {
   const query = useQuery({
     queryKey: qk.accounts(clubId),
     enabled,
-    queryFn: async (): Promise<ReadonlyMap<string, MemberAccount>> => {
+    // A plain object, not a Map: the query cache is saved on the phone as JSON (queryClient.ts).
+    queryFn: async (): Promise<Readonly<Record<string, MemberAccount>>> => {
       const rows = await rpc('club_accounts', { p_club_id: clubId })
-      return new Map(rows.map((r) => [r.user_id, { username: r.username, canManage: r.can_manage }]))
+      return Object.fromEntries(rows.map((r) => [r.user_id, { username: r.username, canManage: r.can_manage }]))
     },
   })
-  return { ...query, accountOf: (userId: string): MemberAccount | null => query.data?.get(userId) ?? null }
+  const byId = query.data ?? {}
+  return { ...query, accountOf: (userId: string): MemberAccount | null => (Object.hasOwn(byId, userId) ? byId[userId]! : null) }
 }
 
 export type AccountRequest =

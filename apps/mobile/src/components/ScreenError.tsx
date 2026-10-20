@@ -1,4 +1,4 @@
-import type { ErrorBoundaryProps } from 'expo-router'
+import { type ErrorBoundaryProps, usePathname } from 'expo-router'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Platform, StyleSheet, View } from 'react-native'
@@ -18,6 +18,7 @@ const LAST_AUTO_RELOAD = 'last-auto-reload'
 export function ScreenError({ error, retry }: ErrorBoundaryProps) {
   const { t } = useTranslation()
   const stale = Platform.OS === 'web' && isStaleBundleError(error)
+  const path = usePathname()
 
   useEffect(() => {
     if (!stale) return
@@ -34,10 +35,15 @@ export function ScreenError({ error, retry }: ErrorBoundaryProps) {
       </Text>
       <Button label={t('actions.reload')} onPress={() => void reloadApp()} />
       {stale ? null : <Button label={t('actions.retry')} variant="quiet" onPress={() => void retry()} />}
+      {/* Technical detail for a screenshot to the developer; nothing private is in it. */}
+      <Text variant="caption" tone={color.inkFaint} center selectable style={styles.detail}>
+        {`${path} · ${error.name}: ${error.message}`}
+      </Text>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  detail: { maxWidth: 480, writingDirection: 'ltr' },
   root: { flex: 1, backgroundColor: color.bg, alignItems: 'center', justifyContent: 'center', gap: space.lg, padding: space.xl },
 })
