@@ -34,5 +34,8 @@
   "won": "{{name}} wins",
   "wonScore": "{{winner}} to {{loser}}",
   "tie": "Tied at the target. Play another round.",
-  "gameOver": "The game is over. Start a new one to keep playing."
+  "gameOver": "The game is over. Start a new one to keep playing.",
+  "difference": "Difference",
+  "level": "Level",
+  "leadA11y": "Team {{team}} leads by {{points}}"
 }

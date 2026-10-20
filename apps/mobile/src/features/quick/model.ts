@@ -61,6 +61,17 @@ export interface RoundRow {
   readonly totals: Totals
 }
 
+/** Who is ahead on these totals and by how much; null when level. */
+export interface Lead {
+  readonly team: Team | null
+  readonly margin: number
+}
+
+export function leadOf(totals: Totals): Lead {
+  const margin = Math.abs(totals.A - totals.B)
+  return { team: margin === 0 ? null : totals.A > totals.B ? 'A' : 'B', margin }
+}
+
 /** Rounds with running totals, newest first (as listed on screen). */
 export function roundRows(game: QuickGame): RoundRow[] {
   let acc: Totals = { A: 0, B: 0 }

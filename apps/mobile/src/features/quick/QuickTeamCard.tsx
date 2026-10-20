@@ -33,13 +33,29 @@ export function QuickTeamCard({ team, name, total, target, leading, onRename }: 
         </Text>
         <Ionicons name="pencil" size={14} color={color.inkFaint} />
       </Pressable>
-      <Score value={total} size="scoreXl" tone={teamColor(team)} numberOfLines={1} adjustsFontSizeToFit style={styles.score} />
+      <Score
+        value={total}
+        size="scoreXl"
+        tone={teamColor(team)}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        style={[styles.score, scoreFit(formatNumber(total))]}
+      />
       <TargetBar team={team} value={total} target={target} />
       <Text variant="caption" tone={toGo === 0 ? teamColor(team) : color.inkMuted}>
         {toGo === 0 ? t('atTarget') : t('toGo', { points: formatNumber(toGo) })}
       </Text>
     </View>
   )
+}
+
+/**
+ * Half a phone width holds about four big digits; longer totals ("1,800", "-1,250") shrink so
+ * they never get cut off. adjustsFontSizeToFit does this on phones but not in the web build.
+ */
+const scoreFit = (text: string): { fontSize: number; lineHeight: number } | null => {
+  const scale = Math.min(1, 4 / Math.max(text.length, 1))
+  return scale < 1 ? { fontSize: Math.round(72 * scale), lineHeight: Math.round(76 * scale) } : null
 }
 
 const styles = StyleSheet.create({

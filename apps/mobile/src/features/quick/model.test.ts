@@ -14,6 +14,7 @@ import {
   roundRows,
   setTarget,
   undoLastRound,
+  leadOf,
 } from './model'
 
 const play = (rounds: readonly [number, number][], start: QuickGame = newQuickGame()): QuickGame =>
@@ -130,5 +131,16 @@ describe('parseQuickGame', () => {
     expect(parseQuickGame(JSON.stringify({ target: 5, rounds: [] }))).toBeNull()
     expect(parseQuickGame(JSON.stringify({ target: 2000, rounds: [{ a: 1 }] }))).toBeNull()
     expect(parseQuickGame(JSON.stringify({ target: 2000, rounds: [{ a: 1e9, b: 0 }] }))).toBeNull()
+  })
+})
+
+describe('leadOf', () => {
+  it('names the leading team and the gap after a round', () => {
+    expect(leadOf({ A: 2000, B: 25 })).toEqual({ team: 'A', margin: 1975 })
+    expect(leadOf({ A: -40, B: 60 })).toEqual({ team: 'B', margin: 100 })
+  })
+
+  it('reports a level score with no leader', () => {
+    expect(leadOf({ A: 300, B: 300 })).toEqual({ team: null, margin: 0 })
   })
 })
