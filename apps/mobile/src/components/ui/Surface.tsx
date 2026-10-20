@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native'
-import { color, elevation, radius, space } from '@/theme/tokens'
+import { color, elevation, radius, scheme, space } from '@/theme/tokens'
 
 export interface CardProps {
   children: ReactNode
@@ -51,7 +51,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: space.lg,
     gap: space.md,
-    borderWidth: StyleSheet.hairlineWidth,
+    // Light cards float on a soft shadow; dark ones need a hairline to separate from the background.
+    borderWidth: scheme === 'light' ? 0 : StyleSheet.hairlineWidth,
     borderColor: color.line,
     overflow: 'hidden',
   },

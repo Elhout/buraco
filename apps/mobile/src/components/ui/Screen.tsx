@@ -71,7 +71,7 @@ export function Screen({
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: color.felt },
+  root: { flex: 1, backgroundColor: color.bg },
   fill: { flex: 1 },
   content: { padding: space.lg, gap: space.lg, paddingBottom: space.xxxl },
   header: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: space.md, marginBottom: space.xs },

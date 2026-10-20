@@ -4,7 +4,9 @@ import type { ConfigContext, ExpoConfig } from 'expo/config'
 // public identifiers, never secrets.
 const env = process.env
 
-const FELT = '#0B1410'
+// Background behind the splash and app launch, per phone theme (matches theme/tokens.ts bg).
+const BG_LIGHT = '#F2F3F7'
+const BG_DARK = '#0F1115'
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -14,10 +16,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'buraco',
-  userInterfaceStyle: 'dark',
-  backgroundColor: FELT,
+  userInterfaceStyle: 'automatic',
+  backgroundColor: BG_LIGHT,
   ios: {
-    icon: './assets/expo.icon',
+    icon: './assets/images/icon.png',
     bundleIdentifier: env.APP_BUNDLE_ID ?? 'com.buraco.score',
     supportsTablet: false,
     infoPlist: { ITSAppUsesNonExemptEncryption: false },
@@ -25,7 +27,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     package: env.APP_BUNDLE_ID ?? 'com.buraco.score',
     adaptiveIcon: {
-      backgroundColor: FELT,
+      backgroundColor: BG_DARK,
       foregroundImage: './assets/images/android-icon-foreground.png',
       backgroundImage: './assets/images/android-icon-background.png',
       monochromeImage: './assets/images/android-icon-monochrome.png',
@@ -35,7 +37,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   web: { output: 'single', favicon: './assets/images/favicon.png' },
   plugins: [
     'expo-router',
-    ['expo-splash-screen', { backgroundColor: FELT, image: './assets/images/splash-icon.png', imageWidth: 76 }],
+    [
+      'expo-splash-screen',
+      { backgroundColor: BG_LIGHT, image: './assets/images/splash-icon.png', imageWidth: 76, dark: { backgroundColor: BG_DARK } },
+    ],
     'expo-sqlite',
     ['expo-localization', { supportsRTL: true, supportedLocales: { ios: ['en', 'ar'], android: ['en', 'ar'] } }],
     ['expo-notifications', { color: '#F2B33D', defaultChannel: 'default' }],

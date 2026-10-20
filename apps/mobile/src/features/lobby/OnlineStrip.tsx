@@ -38,7 +38,7 @@ export function OnlineStrip({ clubId, userId, online }: OnlineStripProps) {
             style={styles.member}
             accessible
             accessibilityLabel={t(isOnline ? 'online.label' : 'online.labelOffline', { name: m.name })}>
-            <Avatar name={m.name} url={m.avatarUrl} size={48} online={isOnline} ring={m.userId === userId ? color.ivory : undefined} />
+            <Avatar name={m.name} url={m.avatarUrl} size={48} online={isOnline} ring={m.userId === userId ? color.primary : undefined} />
             <Text variant="caption" numberOfLines={1} center tone={isOnline ? color.ink : color.inkFaint}>
               {m.userId === userId ? t('common:you') : (m.name.split(' ')[0] ?? m.name)}
             </Text>

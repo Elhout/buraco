@@ -42,7 +42,7 @@ function NextRoundStatus({ data, index, onDraw }: { data: TournamentData; index:
       size="lg"
       block
       label={t('organizer.startRound', { n: draw.roundNo })}
-      icon={<Ionicons name="play" size={18} color={color.inkOnLight} />}
+      icon={<Ionicons name="play" size={18} color={color.onPrimary} />}
       onPress={onDraw}
     />
   )

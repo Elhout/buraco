@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { Image } from 'expo-image'
 import type { ReactNode } from 'react'
 import { I18nManager, Pressable, StyleSheet, TextInput, type TextInputProps, View } from 'react-native'
-import { HIT, type Team, color, font, radius, space, teamColor, teamSoft } from '@/theme/tokens'
+import { HIT, type Team, color, font, radius, scheme, space, teamColor, teamSoft } from '@/theme/tokens'
 import { Text } from './Text'
 
 /** Team label: always the Latin letter (spec: avoids confusion at the table in Arabic). */
@@ -10,7 +10,7 @@ export function TeamBadge({ team, size = 'md' }: { team: Team; size?: 'sm' | 'md
   const d = size === 'sm' ? 22 : 30
   return (
     <View style={[styles.badge, { width: d, height: d, backgroundColor: teamColor(team) }]} accessibilityLabel={`Team ${team}`}>
-      <Text variant={size === 'sm' ? 'caption' : 'label'} tone={color.inkOnLight} style={styles.latin}>
+      <Text variant={size === 'sm' ? 'caption' : 'label'} tone={color.onPrimary} style={styles.latin}>
         {team}
       </Text>
     </View>
@@ -26,7 +26,8 @@ const initials = (name: string): string =>
     .join('')
     .toUpperCase()
 
-const HUES = ['#7C5C3B', '#3B6E5C', '#5B4B7A', '#7A3E4B', '#3E5E7A', '#6B6B3A'] as const
+/** Mid-tone hues: white initials stay readable on them in both light and dark themes. */
+const HUES = ['#B7791F', '#2F855A', '#6B46C1', '#C53030', '#2B6CB0', '#4A5568'] as const
 const hueFor = (seed: string): string => HUES[[...seed].reduce((n, c) => n + c.charCodeAt(0), 0) % HUES.length]!
 
 export interface AvatarProps {
@@ -49,7 +50,7 @@ export function Avatar({ name, url, size = 40, ring, online }: AvatarProps) {
         {url ? (
           <Image source={{ uri: url }} style={{ width: size, height: size }} contentFit="cover" accessibilityIgnoresInvertColors />
         ) : (
-          <Text variant="label" style={{ fontSize: size * 0.38, lineHeight: size * 0.5 }}>
+          <Text variant="label" tone="#FFFFFF" style={{ fontSize: size * 0.38, lineHeight: size * 0.5 }}>
             {initials(name)}
           </Text>
         )}
@@ -78,7 +79,7 @@ const bannerTone: Record<BannerTone, { bg: string; fg: string; icon: keyof typeo
   danger: { bg: color.dangerSoft, fg: color.danger, icon: 'cloud-offline-outline' },
   success: { bg: color.successSoft, fg: color.success, icon: 'checkmark-circle-outline' },
   ghost: { bg: color.ghostSoft, fg: color.ghost, icon: 'eye-off-outline' },
-  warning: { bg: 'rgba(245, 165, 36, 0.14)', fg: color.warning, icon: 'alert-circle-outline' },
+  warning: { bg: color.warningSoft, fg: color.warning, icon: 'alert-circle-outline' },
 }
 
 export function Banner({ tone = 'info', children, action }: { tone?: BannerTone; children: ReactNode; action?: ReactNode }) {
@@ -171,7 +172,7 @@ export function Segmented<T extends string>({ value, options, onChange }: Segmen
             accessibilityState={{ selected: active }}
             onPress={() => onChange(o.value)}
             style={[styles.segment, active && styles.segmentActive]}>
-            <Text variant="label" tone={active ? color.inkOnLight : color.inkMuted} center>
+            <Text variant="label" tone={active ? color.onPrimary : color.inkMuted} center>
               {o.label}
             </Text>
           </Pressable>
@@ -234,7 +235,7 @@ const styles = StyleSheet.create({
   latin: { fontFamily: font.bold, writingDirection: 'ltr' },
   badge: { borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center' },
   avatar: { alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  presence: { position: 'absolute', bottom: 0, end: 0, width: 12, height: 12, borderRadius: 6, borderWidth: 2, borderColor: color.felt },
+  presence: { position: 'absolute', bottom: 0, end: 0, width: 12, height: 12, borderRadius: 6, borderWidth: 2, borderColor: color.bg },
   track: { height: 8, borderRadius: radius.pill, overflow: 'hidden' },
   fill: { height: '100%', borderRadius: radius.pill },
   banner: { flexDirection: 'row', alignItems: 'center', gap: space.sm, padding: space.md, borderRadius: radius.md },
@@ -245,7 +246,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     borderWidth: 1,
     borderColor: color.line,
-    backgroundColor: color.sunken,
+    // White fields on the grey page in light mode; recessed ones in dark mode.
+    backgroundColor: scheme === 'light' ? color.surface : color.sunken,
     color: color.ink,
     paddingHorizontal: space.md,
     fontFamily: font.regular,
@@ -261,7 +263,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: space.sm,
   },
-  segmentActive: { backgroundColor: color.ivory },
+  segmentActive: { backgroundColor: color.primary },
   listRow: {
     flexDirection: 'row',
     alignItems: 'center',

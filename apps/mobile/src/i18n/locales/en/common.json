@@ -106,5 +106,12 @@
     "history": "History",
     "stats": "Stats",
     "tournaments": "Tournaments"
+  },
+  "theme": {
+    "section": "Appearance",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark",
+    "hint": "System follows your phone's light or dark setting."
   }
 }

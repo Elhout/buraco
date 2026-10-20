@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.lg,
     paddingTop: space.md,
     paddingBottom: space.lg,
-    backgroundColor: color.felt,
+    backgroundColor: color.bg,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: color.line,
   },

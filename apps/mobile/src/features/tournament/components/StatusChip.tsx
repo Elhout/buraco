@@ -6,7 +6,7 @@ import { Chip } from './Chip'
 const TONE: Record<TournamentStatus, string> = {
   draft: color.inkMuted,
   running: color.success,
-  finished: color.ivory,
+  finished: color.primary,
   cancelled: color.danger,
 }
 

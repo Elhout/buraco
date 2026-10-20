@@ -70,7 +70,7 @@ function StartBar({ state }: { state: NewGameState }) {
         loading={state.starting}
         disabled={state.issues.length > 0}
         onPress={state.start}
-        icon={<Ionicons name={state.mode === 'ghost' ? 'flash' : 'paper-plane'} size={20} color={color.inkOnLight} />}
+        icon={<Ionicons name={state.mode === 'ghost' ? 'flash' : 'paper-plane'} size={20} color={color.onPrimary} />}
       />
     </View>
   )
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     gap: space.sm,
     paddingHorizontal: space.lg,
     paddingVertical: space.md,
-    backgroundColor: color.felt,
+    backgroundColor: color.bg,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: color.line,
   },

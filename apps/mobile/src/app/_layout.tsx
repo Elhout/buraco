@@ -24,7 +24,8 @@ import { env } from '@/lib/env'
 import { startOutbox } from '@/lib/outbox'
 import { startPushRouting } from '@/lib/push'
 import { PERSIST_MAX_AGE, persister, queryClient, wireQueryEnvironment } from '@/lib/queryClient'
-import { color } from '@/theme/tokens'
+import { watchSystemScheme } from '@/theme/scheme'
+import { color, scheme } from '@/theme/tokens'
 
 void SplashScreen.preventAutoHideAsync()
 syncDirectionOnLaunch()
@@ -48,12 +49,12 @@ function RootLayout() {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: color.felt }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: color.bg }}>
       <SafeAreaProvider>
         <PersistQueryClientProvider client={queryClient} persistOptions={{ persister, maxAge: PERSIST_MAX_AGE }}>
           <SessionProvider>
             <ClubProvider>
-              <StatusBar style="light" />
+              <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
               <RootNavigator />
             </ClubProvider>
           </SessionProvider>
@@ -81,6 +82,7 @@ function RootNavigator() {
   }, [settled])
 
   useEffect(() => startOutbox(queryClient), [])
+  useEffect(() => watchSystemScheme(), [])
 
   // Only once the navigator is mounted and the app routes exist, so a tap that launched the app lands.
   useEffect(() => (inApp ? startPushRouting() : undefined), [inApp])
@@ -99,8 +101,10 @@ function RootNavigator() {
 
   return (
     <LocaleProvider direction={I18nManager.isRTL ? 'rtl' : 'ltr'}>
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: color.felt }, animation: 'fade_from_bottom' }}>
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: color.bg }, animation: 'fade_from_bottom' }}>
         <Stack.Screen name="index" />
+        {/* Quick game calculator: no sign-in, open in every stage. */}
+        <Stack.Screen name="quick" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Protected guard={stage === 'signedOut'}>
           <Stack.Screen name="(auth)" />
         </Stack.Protected>

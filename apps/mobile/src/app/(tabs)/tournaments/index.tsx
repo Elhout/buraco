@@ -24,7 +24,7 @@ export default function TournamentsScreen() {
       onRefresh={() => void refetch()}
       actions={
         canOrganize && (data?.length ?? 0) > 0 ? (
-          <Button label={t('list.new')} onPress={create} icon={<Ionicons name="add" size={18} color={color.inkOnLight} />} />
+          <Button label={t('list.new')} onPress={create} icon={<Ionicons name="add" size={18} color={color.onPrimary} />} />
         ) : null
       }>
       {isPending ? <ActivityIndicator color={color.ink} accessibilityLabel={t('common:loading')} /> : null}

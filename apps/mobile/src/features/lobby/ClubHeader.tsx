@@ -29,8 +29,8 @@ function ClubSwitcher({ visible, onClose }: { visible: boolean; onClose: () => v
               key={c.club.id}
               title={c.club.name}
               subtitle={active ? t('switcher.current') : t(`switcher.role.${c.role}`)}
-              leading={<Avatar name={c.club.name} size={40} ring={active ? color.ivory : undefined} />}
-              trailing={active ? <Ionicons name="checkmark-circle" size={24} color={color.ivory} /> : undefined}
+              leading={<Avatar name={c.club.name} size={40} ring={active ? color.primary : undefined} />}
+              trailing={active ? <Ionicons name="checkmark-circle" size={24} color={color.primary} /> : undefined}
               onPress={() => pick(c)}
             />
           )

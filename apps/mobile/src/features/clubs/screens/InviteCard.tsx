@@ -38,7 +38,7 @@ export function InviteCard({ club, isOwner }: InviteCardProps) {
   return (
     <Card tone="raised" style={styles.card}>
       <View style={styles.qr} accessibilityRole="image" accessibilityLabel={t('clubSettings.qrLabel')}>
-        <QRCode value={link} size={188} color={color.inkOnLight} backgroundColor={color.ivory} quietZone={12} />
+        <QRCode value={link} size={188} color={color.onPrimary} backgroundColor={color.primary} quietZone={12} />
       </View>
       <View style={styles.codeBlock}>
         <Text variant="caption" tone={color.inkMuted} center>
@@ -62,7 +62,7 @@ export function InviteCard({ club, isOwner }: InviteCardProps) {
           <Button
             label={tc('actions.share')}
             block
-            icon={<Ionicons name="share-outline" size={18} color={color.inkOnLight} />}
+            icon={<Ionicons name="share-outline" size={18} color={color.onPrimary} />}
             onPress={share}
           />
         </View>
@@ -79,7 +79,7 @@ export function InviteCard({ club, isOwner }: InviteCardProps) {
 
 const styles = StyleSheet.create({
   card: { alignItems: 'stretch', gap: space.lg },
-  qr: { alignSelf: 'center', padding: space.xs, borderRadius: radius.md, backgroundColor: color.ivory },
+  qr: { alignSelf: 'center', padding: space.xs, borderRadius: radius.md, backgroundColor: color.primary },
   codeBlock: { gap: space.xxs },
   code: { fontFamily: font.score, letterSpacing: 6, writingDirection: 'ltr' },
   flex: { flex: 1 },

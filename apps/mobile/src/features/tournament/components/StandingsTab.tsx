@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   },
   row: { flexDirection: 'row', alignItems: 'center', gap: space.xs, paddingHorizontal: space.md, minHeight: 52 },
   head: { minHeight: 36, backgroundColor: color.sunken },
-  me: { backgroundColor: color.raised, borderStartWidth: 4, borderStartColor: color.ivory },
+  me: { backgroundColor: color.raised, borderStartWidth: 4, borderStartColor: color.primary },
   rank: { width: 28 },
   name: { flex: 1 },
   num: { width: 30, textAlign: 'center' },

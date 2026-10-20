@@ -21,7 +21,7 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: color.inkFaint,
         tabBarStyle: { backgroundColor: color.sunken, borderTopColor: color.line, height: 64, paddingTop: 6 },
         tabBarLabelStyle: { fontFamily: font.medium, fontSize: 12 },
-        sceneStyle: { backgroundColor: color.felt },
+        sceneStyle: { backgroundColor: color.bg },
       }}>
       <Tabs.Screen name="club" options={{ title: t('tabs.club'), tabBarIcon: icon('people-outline', 'people') }} />
       <Tabs.Screen name="history" options={{ title: t('tabs.history'), tabBarIcon: icon('time-outline', 'time') }} />

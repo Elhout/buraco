@@ -65,7 +65,7 @@ export default function LobbyScreen() {
         label={t('newGame')}
         size="lg"
         block
-        icon={<Ionicons name="add" size={24} color={color.inkOnLight} />}
+        icon={<Ionicons name="add" size={24} color={color.onPrimary} />}
         onPress={() => router.push('/game/new')}
       />
     </View>
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.lg,
     paddingTop: space.md,
     paddingBottom: space.md,
-    backgroundColor: color.felt,
+    backgroundColor: color.bg,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: color.line,
   },

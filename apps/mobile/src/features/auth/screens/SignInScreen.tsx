@@ -1,4 +1,6 @@
 import { loginEmail, validateUsername } from '@buraco/shared'
+import { Ionicons } from '@expo/vector-icons'
+import { router } from 'expo-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -16,6 +18,7 @@ import { useAuthErrorText } from './useAuthErrorText'
  */
 export function SignInScreen() {
   const { t } = useTranslation('auth')
+  const { t: tq } = useTranslation('quick')
   const errorText = useAuthErrorText()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -89,6 +92,21 @@ export function SignInScreen() {
         />
         <Button label={t('signIn.submit')} size="lg" block loading={busy} onPress={() => void signIn()} />
       </Stack>
+      <View style={styles.or}>
+        <View style={styles.rule} />
+        <Text variant="caption" tone={color.inkFaint}>
+          {t('signIn.or')}
+        </Text>
+        <View style={styles.rule} />
+      </View>
+      <Button
+        label={tq('entry')}
+        variant="secondary"
+        size="lg"
+        block
+        icon={<Ionicons name="flash-outline" size={20} color={color.ink} />}
+        onPress={() => router.push('/quick')}
+      />
       <Text variant="caption" tone={color.inkFaint} center>
         {t('signIn.help')}
       </Text>
@@ -103,4 +121,6 @@ const styles = StyleSheet.create({
   suits: { flexDirection: 'row', gap: space.sm, marginBottom: space.sm },
   suit: { fontFamily: font.score, fontSize: 40, lineHeight: 44 },
   ltr: { writingDirection: 'ltr' },
+  or: { flexDirection: 'row', alignItems: 'center', gap: space.md },
+  rule: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: color.line },
 })

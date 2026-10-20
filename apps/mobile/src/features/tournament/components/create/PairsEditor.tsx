@@ -102,7 +102,7 @@ export function PairsEditor({ draft, pending, nameOf, onChange }: PairsEditorPro
               onPress={() => tap(userId)}
               style={({ pressed }) => [styles.unpaired, held && styles.held, pressed && styles.pressed]}>
               <Avatar name={nameOf(userId)} size={28} />
-              <Text variant="label" tone={held ? color.inkOnLight : color.ink} numberOfLines={1}>
+              <Text variant="label" tone={held ? color.onPrimary : color.ink} numberOfLines={1}>
                 {nameOf(userId)}
               </Text>
             </Pressable>

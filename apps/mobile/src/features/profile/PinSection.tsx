@@ -69,7 +69,7 @@ export function PinSection({ startReset }: PinSectionProps) {
                 disabled={bio.loading}
                 onValueChange={toggleBiometric}
                 trackColor={{ false: color.line, true: color.teamA }}
-                thumbColor={color.ivory}
+                thumbColor="#FFFFFF"
                 accessibilityLabel={t('pin.biometric')}
               />
             }

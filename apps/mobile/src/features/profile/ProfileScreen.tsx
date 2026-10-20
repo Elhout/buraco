@@ -6,6 +6,7 @@ import { useSession } from '@/features/auth/SessionProvider'
 import { BackButton } from '@/features/auth/screens/BackButton'
 import { color, space } from '@/theme/tokens'
 import { AccountSection } from './AccountSection'
+import { AppearanceSection } from './AppearanceSection'
 import { DevicesSection } from './DevicesSection'
 import { IdentitySection } from './IdentitySection'
 import { MyClubsSection } from './MyClubsSection'
@@ -35,6 +36,7 @@ export function ProfileScreen() {
           <IdentitySection key={profile.id} profile={profile} />
           <PinSection startReset={resetPin === '1'} />
           <MyClubsSection />
+          <AppearanceSection />
           <NotificationsSection profile={profile} />
           <DevicesSection />
           <AccountSection />

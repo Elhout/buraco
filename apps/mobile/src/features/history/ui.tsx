@@ -33,7 +33,7 @@ const pillColors: Record<PillTone, { bg: string; fg: string }> = {
   ghost: { bg: color.ghostSoft, fg: color.ghost },
   danger: { bg: color.dangerSoft, fg: color.danger },
   neutral: { bg: color.raised, fg: color.inkMuted },
-  warning: { bg: 'rgba(245, 165, 36, 0.14)', fg: color.warning },
+  warning: { bg: color.warningSoft, fg: color.warning },
 }
 
 export function Pill({ label, tone, icon }: { label: string; tone: PillTone; icon?: keyof typeof Ionicons.glyphMap }) {
@@ -64,11 +64,11 @@ export function Chip({ label, selected, onPress, picker }: ChipProps) {
       accessibilityState={{ selected }}
       hitSlop={{ top: 6, bottom: 6 }}
       style={({ pressed }) => [styles.chip, selected && styles.chipOn, pressed && styles.pressed]}>
-      {selected && !picker ? <Ionicons name="checkmark" size={14} color={color.inkOnLight} /> : null}
-      <Text variant="label" tone={selected ? color.inkOnLight : color.ink}>
+      {selected && !picker ? <Ionicons name="checkmark" size={14} color={color.onPrimary} /> : null}
+      <Text variant="label" tone={selected ? color.onPrimary : color.ink}>
         {label}
       </Text>
-      {picker ? <Ionicons name="chevron-down" size={14} color={selected ? color.inkOnLight : color.inkMuted} /> : null}
+      {picker ? <Ionicons name="chevron-down" size={14} color={selected ? color.onPrimary : color.inkMuted} /> : null}
     </Pressable>
   )
 }
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: color.lineStrong,
   },
-  chipOn: { backgroundColor: color.ivory, borderColor: color.ivory },
+  chipOn: { backgroundColor: color.primary, borderColor: color.primary },
   pressed: { opacity: 0.8 },
   sheetList: { maxHeight: 420 },
   option: {

@@ -4,6 +4,7 @@ import arGame from './locales/ar/game.json'
 import arHistory from './locales/ar/history.json'
 import arLobby from './locales/ar/lobby.json'
 import arProfile from './locales/ar/profile.json'
+import arQuick from './locales/ar/quick.json'
 import arStats from './locales/ar/stats.json'
 import arTournament from './locales/ar/tournament.json'
 import enAuth from './locales/en/auth.json'
@@ -12,6 +13,7 @@ import enGame from './locales/en/game.json'
 import enHistory from './locales/en/history.json'
 import enLobby from './locales/en/lobby.json'
 import enProfile from './locales/en/profile.json'
+import enQuick from './locales/en/quick.json'
 import enStats from './locales/en/stats.json'
 import enTournament from './locales/en/tournament.json'
 
@@ -26,6 +28,7 @@ export const resources = {
     stats: enStats,
     tournament: enTournament,
     profile: enProfile,
+    quick: enQuick,
   },
   ar: {
     common: arCommon,
@@ -36,10 +39,11 @@ export const resources = {
     stats: arStats,
     tournament: arTournament,
     profile: arProfile,
+    quick: arQuick,
   },
 } as const
 
-export const NAMESPACES = ['common', 'auth', 'lobby', 'game', 'history', 'stats', 'tournament', 'profile'] as const
+export const NAMESPACES = ['common', 'auth', 'lobby', 'game', 'history', 'stats', 'tournament', 'profile', 'quick'] as const
 export type Namespace = (typeof NAMESPACES)[number]
 export type Lang = keyof typeof resources
 export const LANGS: readonly Lang[] = ['en', 'ar']

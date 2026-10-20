@@ -23,5 +23,5 @@ export function ConfigMissing() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: color.felt, alignItems: 'center', justifyContent: 'center', gap: space.md, padding: space.xl },
+  root: { flex: 1, backgroundColor: color.bg, alignItems: 'center', justifyContent: 'center', gap: space.md, padding: space.xl },
 })

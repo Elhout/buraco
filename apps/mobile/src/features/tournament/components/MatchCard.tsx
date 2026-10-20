@@ -48,7 +48,7 @@ export function MatchCard({ match, index, mine, onOpen, onEdit }: MatchCardProps
     <Card
       onPress={onOpen ?? undefined}
       tone={mine ? 'raised' : 'surface'}
-      accent={mine ? color.ivory : undefined}
+      accent={mine ? color.primary : undefined}
       accessibilityLabel={t('detail.a11yMatch', { table: match.tableNo, a: namesA, scoreA, b: namesB, scoreB, status: status.text })}>
       <Row gap={8}>
         <Text variant="label" tone={color.inkMuted} style={styles.flex}>

@@ -22,7 +22,7 @@ export function useNow(enabled: boolean): number {
 
 const TONE: Record<ClockTone, { fg: string; bg: string }> = {
   calm: { fg: color.ink, bg: color.raised },
-  warning: { fg: color.warning, bg: 'rgba(245, 165, 36, 0.14)' },
+  warning: { fg: color.warning, bg: color.warningSoft },
   danger: { fg: color.danger, bg: color.dangerSoft },
   over: { fg: color.danger, bg: color.dangerSoft },
 }

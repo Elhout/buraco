@@ -14,7 +14,7 @@ export interface ChipProps {
 /** Small pill: a status tag, or a quick-pick option (round length, target). */
 export function Chip({ label, onPress, selected, tone = color.inkMuted, accessibilityLabel }: ChipProps) {
   const body = (
-    <Text variant="caption" tone={selected ? color.inkOnLight : tone}>
+    <Text variant="caption" tone={selected ? color.onPrimary : tone}>
       {label}
     </Text>
   )
@@ -41,6 +41,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   pick: { minHeight: 36, justifyContent: 'center', paddingHorizontal: space.md, borderColor: color.lineStrong },
-  selected: { backgroundColor: color.ivory, borderColor: color.ivory },
+  selected: { backgroundColor: color.primary, borderColor: color.primary },
   pressed: { opacity: 0.8 },
 })

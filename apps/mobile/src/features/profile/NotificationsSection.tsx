@@ -28,7 +28,7 @@ export function NotificationsSection({ profile }: { profile: Profile }) {
           disabled={update.isPending}
           onValueChange={(on) => update.mutate({ [key]: on })}
           trackColor={{ false: color.line, true: color.teamA }}
-          thumbColor={color.ivory}
+          thumbColor="#FFFFFF"
           accessibilityLabel={t(`notifications.${key}`)}
         />
       }

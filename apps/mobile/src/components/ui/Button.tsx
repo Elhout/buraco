@@ -16,12 +16,12 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
 }
 
 const palette: Record<ButtonVariant, { bg: string; fg: string; border: string }> = {
-  primary: { bg: color.ivory, fg: color.inkOnLight, border: color.ivory },
+  primary: { bg: color.primary, fg: color.onPrimary, border: color.primary },
   secondary: { bg: 'transparent', fg: color.ink, border: color.lineStrong },
   quiet: { bg: 'transparent', fg: color.inkMuted, border: 'transparent' },
   danger: { bg: color.dangerSoft, fg: color.danger, border: color.danger },
-  teamA: { bg: color.teamA, fg: color.inkOnLight, border: color.teamA },
-  teamB: { bg: color.teamB, fg: color.inkOnLight, border: color.teamB },
+  teamA: { bg: color.teamA, fg: color.onPrimary, border: color.teamA },
+  teamB: { bg: color.teamB, fg: color.onPrimary, border: color.teamB },
 }
 
 export function Button({ label, variant = 'primary', size = 'md', loading, icon, block, disabled, onPress, ...rest }: ButtonProps) {

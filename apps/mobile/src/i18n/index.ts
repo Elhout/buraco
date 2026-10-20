@@ -1,9 +1,9 @@
 import { getLocales } from 'expo-localization'
 import { kv as Storage } from '../lib/kv'
-import * as Updates from 'expo-updates'
 import { createInstance } from 'i18next'
 import { initReactI18next } from 'react-i18next'
-import { DevSettings, I18nManager, Platform } from 'react-native'
+import { I18nManager, Platform } from 'react-native'
+import { reloadApp } from '../lib/reload'
 import { type Lang, NAMESPACES, resources } from './resources'
 
 export type { Lang } from './resources'
@@ -62,19 +62,13 @@ export async function setLanguage(lang: Lang): Promise<void> {
     // Non-fatal: the profile language still applies on next sign-in.
   }
   const rtl = isRTL(lang)
-  if (Platform.OS === 'web') {
-    // A full reload re-renders every screen in the new direction, as on phones.
-    if (I18nManager.isRTL !== rtl) globalThis.location?.reload()
-    return
-  }
   if (I18nManager.isRTL === rtl) return
-  I18nManager.allowRTL(rtl)
-  I18nManager.forceRTL(rtl)
-  try {
-    await Updates.reloadAsync()
-  } catch {
-    if (__DEV__) DevSettings.reload()
+  if (Platform.OS !== 'web') {
+    I18nManager.allowRTL(rtl)
+    I18nManager.forceRTL(rtl)
   }
+  // A restart re-renders every screen in the new direction (on the web, a page reload).
+  await reloadApp()
 }
 
 /** Keep native direction aligned with the stored language at startup. */

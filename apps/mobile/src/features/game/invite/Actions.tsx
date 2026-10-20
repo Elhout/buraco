@@ -23,7 +23,7 @@ export function PlayerActions({ gameId, userId }: { gameId: string; userId: stri
         size="lg"
         block
         onPress={() => setPin(true)}
-        icon={<Ionicons name="keypad" size={20} color={color.inkOnLight} />}
+        icon={<Ionicons name="keypad" size={20} color={color.onPrimary} />}
       />
       <Button label={t('invite.decline')} variant="quiet" block onPress={() => setDecline(true)} />
       <PinSheet

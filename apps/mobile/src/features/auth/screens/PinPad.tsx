@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   root: { gap: space.lg },
   dots: { flexDirection: 'row', justifyContent: 'center', gap: space.lg, direction: 'ltr' },
   dot: { width: 18, height: 18, borderRadius: radius.pill, borderWidth: 2, borderColor: color.inkMuted },
-  dotFilled: { backgroundColor: color.ivory, borderColor: color.ivory },
+  dotFilled: { backgroundColor: color.primary, borderColor: color.primary },
   dotError: { borderColor: color.danger },
   message: { minHeight: 20 },
 })
