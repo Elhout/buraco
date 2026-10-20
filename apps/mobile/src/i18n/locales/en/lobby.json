@@ -87,7 +87,11 @@
       "hostMustPlay": "Take a seat yourself to host a verified game.",
       "guestName": "Guest names need 1 to 40 characters."
     },
-    "ghostHintConfirm": "Pick the players and play. You enter all the scores. Counts in stats once the players confirm with their PIN. Guests welcome."
+    "ghostHintConfirm": "Pick the players and play. You enter all the scores. Counts in stats once the players confirm with their PIN. Guests welcome.",
+    "aloneTitle": "Only you are in the club so far",
+    "aloneBody": "Add the other players once, then pick them here for every game.",
+    "aloneAsk": "Ask the club owner to add the other players.",
+    "addPlayer": "Add player"
   },
   "invite": {
     "title": "Waiting for players",

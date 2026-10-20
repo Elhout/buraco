@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { Button, ErrorText, Screen, Text } from '@/components/ui'
 import { useSession, useUserId } from '@/features/auth/SessionProvider'
+import { useState } from 'react'
 import { useCurrentClub } from '@/features/clubs/ClubProvider'
+import { AddPlayerSheet } from '@/features/clubs/screens/AddPlayerSheet'
 import { type DraftIssue, filledCount } from '@/features/game/new/draft'
 import { GuestField } from '@/features/game/new/GuestField'
 import { MemberPicker } from '@/features/game/new/MemberPicker'
@@ -64,7 +66,9 @@ export default function NewGameScreen() {
   const { t } = useTranslation(['lobby', 'common'])
   const userId = useUserId()
   const { profile } = useSession()
-  const { club } = useCurrentClub()
+  const { club, role } = useCurrentClub()
+  const canAdd = role === 'owner' || role === 'admin'
+  const [adding, setAdding] = useState(false)
   const online = useOnlineMembers(club.id)
   const state = useNewGame(club.id, { kind: 'member', userId, name: profile?.display_name ?? '' })
 
@@ -76,8 +80,16 @@ export default function NewGameScreen() {
       edges={['top', 'bottom']}
       footer={<StartBar state={state} />}>
       <TeamPanels slots={state.slots} meId={userId} onClear={state.clear} onSwap={state.swap} onShuffle={state.reshuffle} />
-      <MemberPicker clubId={club.id} meId={userId} slots={state.slots} online={online} onToggle={state.toggle} />
+      <MemberPicker
+        clubId={club.id}
+        meId={userId}
+        slots={state.slots}
+        online={online}
+        onToggle={state.toggle}
+        onAddPlayer={canAdd ? () => setAdding(true) : undefined}
+      />
       <GuestField slots={state.slots} onAdd={state.toggle} />
+      {canAdd ? <AddPlayerSheet clubId={club.id} visible={adding} onClose={() => setAdding(false)} /> : null}
     </Screen>
   )
 }

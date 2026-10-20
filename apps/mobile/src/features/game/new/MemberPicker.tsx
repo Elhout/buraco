@@ -14,7 +14,12 @@ export interface MemberPickerProps {
   slots: Slots
   online: ReadonlySet<string>
   onToggle: (player: Player) => void
+  /** Owners and admins can add a player to the club without leaving this screen. */
+  onAddPlayer?: () => void
 }
+
+/** The search box only helps once the list is longer than a screen. */
+const SEARCH_FROM = 10
 
 const asPlayer = (m: Member): Player => ({ kind: 'member', userId: m.userId, name: m.name })
 
@@ -57,7 +62,7 @@ function MemberRow({
 }
 
 /** Searchable club members with presence dots; tap to seat or unseat. */
-export function MemberPicker({ clubId, meId, slots, online, onToggle }: MemberPickerProps) {
+export function MemberPicker({ clubId, meId, slots, online, onToggle, onAddPlayer }: MemberPickerProps) {
   const { t } = useTranslation(['lobby', 'common'])
   const { members, isPending, error, refetch } = useClubMembers(clubId)
   const [query, setQuery] = useState('')
@@ -74,6 +79,20 @@ export function MemberPicker({ clubId, meId, slots, online, onToggle }: MemberPi
         </Text>
         <ErrorText error={error} />
         <Button label={t('common:actions.retry')} variant="secondary" onPress={() => void refetch()} />
+      </View>
+    )
+  else if (members.length <= 1)
+    // Only me in the club: say so instead of showing an (almost) empty list.
+    list = (
+      <View style={styles.alone}>
+        <Ionicons name="people-outline" size={32} color={color.inkFaint} />
+        <Text variant="bodyStrong" center>
+          {t('new.aloneTitle')}
+        </Text>
+        <Text variant="label" tone={color.inkMuted} center>
+          {onAddPlayer ? t('new.aloneBody') : t('new.aloneAsk')}
+        </Text>
+        {onAddPlayer ? <Button label={t('new.addPlayer')} onPress={onAddPlayer} /> : null}
       </View>
     )
   else if (visible.length === 0)
@@ -96,15 +115,22 @@ export function MemberPicker({ clubId, meId, slots, online, onToggle }: MemberPi
 
   return (
     <View style={styles.wrap}>
-      <SectionTitle>{t('new.members')}</SectionTitle>
-      <Field
-        label={t('new.search')}
-        value={query}
-        onChangeText={setQuery}
-        autoCorrect={false}
-        autoCapitalize="none"
-        returnKeyType="search"
-      />
+      <SectionTitle
+        action={
+          onAddPlayer && members.length > 1 ? <Button label={t('new.addPlayer')} variant="quiet" onPress={onAddPlayer} /> : undefined
+        }>
+        {t('new.members')}
+      </SectionTitle>
+      {members.length < SEARCH_FROM ? null : (
+        <Field
+          label={t('new.search')}
+          value={query}
+          onChangeText={setQuery}
+          autoCorrect={false}
+          autoCapitalize="none"
+          returnKeyType="search"
+        />
+      )}
       {list}
     </View>
   )
@@ -115,6 +141,7 @@ const styles = StyleSheet.create({
   wrap: { gap: space.sm },
   pad: { paddingVertical: space.lg },
   error: { gap: space.sm, alignItems: 'flex-start' },
+  alone: { alignItems: 'center', gap: space.sm, paddingVertical: space.lg },
   row: {
     minHeight: HIT + space.sm,
     flexDirection: 'row',
