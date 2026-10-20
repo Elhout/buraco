@@ -1,0 +1,12 @@
+// Cloudflare Workers static assets: hosts the web build (iPhone home-screen app). Free plan.
+// Deploy: npx expo export --platform web && npx wrangler deploy
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "buraco-club",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    // Every route is the single-page app (deep links like /game/<id> from notifications).
+    "not_found_handling": "single-page-application",
+  },
+}

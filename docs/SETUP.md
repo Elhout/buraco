@@ -8,7 +8,7 @@ Going live needs the accounts below. Do the steps in order; each says what it un
 - Node 24, pnpm 10 (`corepack enable`), Git.
 - Supabase CLI (`npx supabase --version`); Docker only if you want the full local stack.
 - An Expo account and EAS CLI (`npx eas-cli@latest login`).
-- No developer accounts needed: Android gets an APK, iPhones use the web app (Cloudflare Pages, free).
+- No developer accounts needed: Android gets an APK, iPhones use the web app (hosted free on Cloudflare).
 
 ```bash
 pnpm install
@@ -118,14 +118,14 @@ own icon. No Apple account, nothing to install, nothing expires.
 1. **Notification keys (once)**: generate a VAPID key pair and set it as described in
    `supabase/functions/README.md`. Put the *public* key in `apps/mobile/.env.local` as
    `EXPO_PUBLIC_VAPID_PUBLIC_KEY`.
-2. **Build and host** on Cloudflare Pages (free). Create a Cloudflare account, then:
+2. **Build and host** on Cloudflare (Workers static assets, free). After `npx wrangler login` once:
    ```bash
    cd apps/mobile
    npx expo export --platform web             # writes dist/
-   npx wrangler@latest pages deploy dist --project-name buraco-club
+   npx wrangler deploy                        # uses apps/mobile/wrangler.jsonc
    ```
-   You get `https://buraco-club.pages.dev` (a custom domain is optional). `public/_redirects`
-   and `public/_headers` are already set up for Cloudflare Pages; Netlify reads the same files.
+   Live: **https://buraco-club.sherifelhout.workers.dev** (a custom domain is optional).
+   `wrangler.jsonc` serves every route as the single-page app; `public/_headers` adds the headers.
    Run the same two commands again for every update. Players get it the next time they open the app.
 3. **Each iPhone player**: open the link in **Safari**, sign in, tap *Share* → *Add to Home
    Screen*, then open *Buraco* from the home screen and tap *Turn on notifications* (iOS 16.4+).

@@ -1,4 +1,4 @@
-# Cloudflare Pages / Netlify response headers.
+# Cloudflare response headers for the web build (Workers static assets).
 /sw.js
   Cache-Control: no-cache
 /manifest.webmanifest
