@@ -4,6 +4,7 @@ import { kv as Storage } from '../../lib/kv'
 import { type ReactNode, createContext, useContext, useState } from 'react'
 import { useSession } from '@/features/auth/SessionProvider'
 import { qk } from '@/lib/queryKeys'
+import { rpc } from '@/lib/rpc'
 import { supabase } from '@/lib/supabase'
 
 export type Club = Tables<'clubs'>
@@ -48,13 +49,26 @@ export function ClubProvider({ children }: { children: ReactNode }) {
     },
   })
 
+  // No visible clubs: someone who isn't in the group yet is put in it (the very first account
+  // creates it). The server does the work; this just asks once and reloads the list.
+  const needsGroup = userId !== null && query.isSuccess && query.data.length === 0
+  const ensure = useQuery({
+    queryKey: ['membership', userId],
+    enabled: needsGroup,
+    queryFn: async () => {
+      await rpc('ensure_membership', {})
+      await query.refetch()
+      return true
+    },
+  })
+
   const clubs = query.data ?? []
   const current = clubs.find((c) => c.club.id === selected) ?? clubs[0] ?? null
 
   const value: ClubValue = {
     clubs,
-    loading: query.isPending,
-    failed: query.isError && query.data === undefined,
+    loading: query.isPending || (needsGroup && !ensure.isError),
+    failed: (query.isError && query.data === undefined) || (needsGroup && ensure.isError),
     current,
     select: (clubId) => {
       setSelected(clubId)

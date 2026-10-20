@@ -7,7 +7,7 @@
     "pairs": "Pairs",
     "h2h": "Head-to-head"
   },
-  "footnote": "Stats count finished games. Start now games count right away, unless the club asks players to confirm them.",
+  "footnote": "Stats count finished games.",
   "games_one": "{{n}} game",
   "games_other": "{{n}} games",
   "a11y": {

@@ -34,7 +34,7 @@
   "notifications": {
     "section": "Notifications",
     "notify_game_started": "Games starting",
-    "notify_game_started_hint": "When club members start a game",
+    "notify_game_started_hint": "When someone starts a game",
     "notify_tournament": "Tournaments",
     "notify_tournament_hint": "Table assignments and round clocks"
   },
@@ -114,12 +114,12 @@
     "promote": "Make admin",
     "demote": "Remove admin role",
     "transfer": "Make owner",
-    "remove": "Remove from club",
+    "remove": "Remove player",
     "transferTitle": "Make {{name}} the owner?",
-    "transferBody": "{{name}} will own the club and you'll become an admin. Only the new owner can undo this.",
+    "transferBody": "{{name}} becomes the owner and you become an admin. Only the new owner can undo this.",
     "transferConfirm": "Hand over to {{name}}",
     "removeTitle": "Remove {{name}}?",
-    "removeBody": "{{name}} will lose access to the club. Their past games stay in the history.",
+    "removeBody": "{{name}} will be removed from the players. Their past games stay in the history.",
     "removeConfirm": "Remove {{name}}"
   },
   "accounts": {
@@ -148,9 +148,9 @@
     "password_long": "That password is too long."
   },
   "clubErrors": {
-    "ownerOnly": "Only the club owner can do this.",
+    "ownerOnly": "Only the owner can do this.",
     "notAllowed": "You're not allowed to do this.",
-    "memberGone": "That player is no longer in the club.",
+    "memberGone": "That player was removed.",
     "nameInvalid": "Club names must be 1 to 60 characters."
   },
   "account": {
@@ -171,7 +171,7 @@
     "subtitle": "This can't be undone.",
     "profile": "Your name, PIN and devices are removed.",
     "history": "Past games stay for the other players, shown as \"Former member\".",
-    "clubs": "Clubs you own pass to the longest-standing admin, or member if there's none. A club with only you in it is deleted.",
+    "clubs": "If you're the owner, ownership passes to the longest-standing admin, or player if there's none.",
     "games": "Unfinished games you're in are abandoned.",
     "typeLabel": "Type {{word}} to confirm",
     "word": "DELETE",

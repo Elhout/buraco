@@ -35,8 +35,9 @@ pnpm typecheck
 ## 2. Player accounts (username and password)
 
 There is no SMS, Apple or Google sign-in, so signing in costs nothing. Players sign in with a
-username and password that a club owner or admin creates for them, and stay signed in on that
-phone: the session refreshes itself and only ends when they sign out.
+username and password that an admin creates for them, and stay signed in on that phone: the
+session refreshes itself and only ends when they sign out. There are no clubs in the app: all
+players form one group (stored as a single club in the database, created by the first sign-in).
 
 1. Authentication → Providers → **Email**: enabled, **Confirm email off**. Authentication →
    Sign In / Providers: **Allow new users to sign up off**, because only admins create accounts.
@@ -49,14 +50,14 @@ phone: the session refreshes itself and only ends when they sign out.
 4. **Your own first account**: Authentication → Users → *Add user* → *Create new user*. Email
    `<your-username>@users.buraco.app` (the app adds this suffix to every username; no email is
    ever sent to it), a password, and tick *Auto Confirm User*. Sign in to the app with just the
-   username, finish setup and create the club: you are its owner.
-5. **Everyone else**: in the app, Club settings → Members → *Add player*. Choose their name,
-   username and password and hand those over; they join your club straight away. *Set a new
-   password* on a member replaces a forgotten one (phones already signed in stay signed in).
-   The owner can do this for anyone in the club; admins only for plain members.
+   username. The first account to sign in becomes the owner.
+5. **Everyone else**: in the app, Players → *Add player* (or *Add player* on New game). Type
+   their name (the username fills in), a password, and hand those over; they appear in the list
+   straight away. *Manage player* → *Set a new password* replaces a forgotten one (phones already
+   signed in stay signed in). The owner can do this for anyone; admins only for plain players.
 
-Players change their own password in Profile → Change password (they type the current one first).
-A forgotten **PIN** is reset by the player in Profile → Forgot PIN, after re-entering their password.
+Players change their own password in Settings → Change password (they type the current one first).
+There is no PIN: whoever starts a game enters its scores.
 
 ## 3. Push notifications
 
@@ -132,8 +133,7 @@ own icon. No Apple account, nothing to install, nothing expires.
    Screen*, then open *Buraco* from the home screen and tap *Turn on notifications* (iOS 16.4+).
    Notifications only work from the home-screen icon, not from a Safari tab.
 
-Differences from the Android app: no Face ID shortcut for the PIN (the PIN is typed), the club
-invite is typed instead of scanned, and notifications need the home-screen step above.
+The only difference from the Android app: notifications need the home-screen step above.
 
 If the web app isn't good enough, a friend's paid Apple developer account can build the real
 iPhone app (ad hoc, up to 100 iPhones): `eas device:create` for each iPhone, then

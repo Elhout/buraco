@@ -1,7 +1,7 @@
 {
   "title": "Players",
-  "subtitle_one": "{{n}} player in the club",
-  "subtitle_other": "{{n}} players in the club",
+  "subtitle_one": "{{n}} player",
+  "subtitle_other": "{{n}} players",
   "add": "Add player",
   "you": "{{name}} (you)",
   "noGames": "No games yet",

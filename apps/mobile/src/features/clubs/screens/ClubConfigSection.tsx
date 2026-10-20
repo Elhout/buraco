@@ -7,7 +7,7 @@ import { type Club, useClubs } from '@/features/clubs/ClubProvider'
 import { formatNumber } from '@/lib/format'
 import { supabase } from '@/lib/supabase'
 import { color, space } from '@/theme/tokens'
-import { CLUB_NAME_MAX, type ClubDraft, type ClubErrors, draftFromClub, isDraftDirty, validateClubDraft } from './settingsForm'
+import { type ClubDraft, type ClubErrors, draftFromClub, isDraftDirty, validateClubDraft } from './settingsForm'
 import { useClubErrorText } from './useClubErrorText'
 
 export interface ClubConfigSectionProps {
@@ -68,13 +68,6 @@ function ConfigForm({ club }: { club: Club }) {
 
   return (
     <Card>
-      <Field
-        label={t('clubSettings.name')}
-        value={draft.name}
-        onChangeText={(name) => edit({ name })}
-        maxLength={CLUB_NAME_MAX + 5}
-        error={errors.name ? t(`clubSettings.error_${errors.name}`, { max: CLUB_NAME_MAX }) : null}
-      />
       <RuleFields draft={draft} errors={errors} onEdit={edit} />
       <Text variant="caption" tone={color.inkFaint}>
         {t('clubSettings.snapshotNote')}

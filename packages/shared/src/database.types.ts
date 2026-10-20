@@ -1017,6 +1017,7 @@ export type Database = {
       create_tournament: { Args: { p_club_id: string; p_name: string; p_format: Database['public']['Enums']['tournament_format']; p_pairing: Database['public']['Enums']['tournament_pairing']; p_round_minutes?: number; p_target_score?: number; p_starts_on?: string }; Returns: string }
       dispute_round: { Args: { p_round_id: string }; Returns: undefined }
       edit_match_result: { Args: { p_match_id: string; p_result: Database['public']['Enums']['match_result']; p_points_a: number; p_points_b: number; p_reason: string }; Returns: undefined }
+      ensure_membership: { Args: Record<PropertyKey, never>; Returns: string }
       entry_name: { Args: { p_entry_id: string }; Returns: string }
       finish_tournament: { Args: { p_tournament_id: string; p_cancel?: boolean }; Returns: undefined }
       generate_invite_code: { Args: Record<PropertyKey, never>; Returns: string }

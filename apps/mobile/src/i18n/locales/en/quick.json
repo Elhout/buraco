@@ -1,7 +1,7 @@
 {
   "entry": "Quick game, no sign-in needed",
   "title": "Quick game",
-  "subtitle": "Saved only on this phone. Not part of club history or stats.",
+  "subtitle": "Saved only on this phone. Not part of the history or stats.",
   "back": "Back",
   "team": "Team {{team}}",
   "renameA11y": "Rename team {{team}}",

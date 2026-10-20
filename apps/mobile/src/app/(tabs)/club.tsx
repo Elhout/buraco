@@ -78,7 +78,7 @@ export default function PlayScreen() {
     <Screen refreshing={lobby.isRefetching} onRefresh={lobby.refetch}>
       <View style={styles.header}>
         <Text variant="display" accessibilityRole="header" numberOfLines={1} style={styles.flex}>
-          {club.name}
+          {t('common:appName')}
         </Text>
         <Pressable
           accessibilityRole="button"

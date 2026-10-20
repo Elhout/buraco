@@ -1,6 +1,6 @@
 {
   "title": "History",
-  "subtitle": "Finished games in {{club}}",
+  "subtitle": "Finished games",
   "filters": {
     "label": "Filters",
     "mine": "My games",
@@ -35,7 +35,7 @@
   },
   "empty": {
     "title": "No games yet",
-    "body": "Finished games in this club will show up here.",
+    "body": "Finished games will show up here.",
     "filteredTitle": "No games match these filters",
     "filteredBody": "Try a wider date range or clear the filters."
   },

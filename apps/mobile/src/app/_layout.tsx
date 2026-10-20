@@ -65,7 +65,7 @@ function RootLayout() {
   )
 }
 
-/** Route guards: signed out → (auth); no club yet → club-setup; otherwise the app. */
+/** Route guards: signed out → (auth); otherwise the app (joining the group happens at sign-in). */
 function RootNavigator() {
   const { stage, refreshProfile } = useSession()
   const { clubs, loading: clubsLoading, failed: clubsFailed, refresh: refreshClubs } = useClubs()
@@ -105,9 +105,6 @@ function RootNavigator() {
         <Stack.Screen name="quick" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Protected guard={stage === 'signedOut'}>
           <Stack.Screen name="(auth)" />
-        </Stack.Protected>
-        <Stack.Protected guard={ready && !hasClub}>
-          <Stack.Screen name="club-setup" />
         </Stack.Protected>
         <Stack.Protected guard={ready && hasClub}>
           <Stack.Screen name="(tabs)" />

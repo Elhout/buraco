@@ -45,7 +45,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ['expo-localization', { supportsRTL: true, supportedLocales: { ios: ['en', 'ar'], android: ['en', 'ar'] } }],
     ['expo-notifications', { color: '#F2B33D', defaultChannel: 'default' }],
     ['expo-local-authentication', { faceIDPermission: 'Allow $(PRODUCT_NAME) to use Face ID instead of typing your PIN.' }],
-    ['expo-camera', { cameraPermission: 'Allow $(PRODUCT_NAME) to scan a club invite QR code.', recordAudioAndroid: false }],
     'expo-sharing',
     ['@sentry/react-native/expo', { organization: env.SENTRY_ORG, project: env.SENTRY_PROJECT, url: 'https://sentry.io/' }],
     'expo-font',

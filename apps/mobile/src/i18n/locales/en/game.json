@@ -78,7 +78,7 @@
     "error": {
       "missing": "Enter a score",
       "not_integer": "Whole numbers only",
-      "negative_not_allowed": "No negative scores in this club",
+      "negative_not_allowed": "Negative scores aren’t allowed",
       "out_of_range": "That score looks too large"
     }
   },
