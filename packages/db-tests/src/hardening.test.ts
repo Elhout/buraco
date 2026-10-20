@@ -88,12 +88,17 @@ describe('tournament close-out', () => {
     return tid
   }
 
-  it('finishes a round whose only match expired, and refuses edits once the tournament is closed', async () => {
+  it('finishes a round whose only match was abandoned, and refuses edits once the tournament is closed', async () => {
     await inTx(db, async (tx) => {
       const tid = await startOneTable(tx)
       await tx.exec('reset role')
-      await tx.query(`update public.games set invite_expires_at = now() - interval '1 second' where tournament_match_id is not null`)
-      await asService(tx, () => tx.query(`select public.expire_invites()`))
+      const { rows: g } = await tx.query<{ id: string; host_id: string }>(
+        `select g.id, g.host_id from public.games g join public.v_tournament_matches m on m.game_id = g.id where m.tournament_id = $1`,
+        [tid],
+      )
+      await actAs(tx, g[0]!.host_id)
+      await tx.query(`select public.abandon_game($1)`, [g[0]!.id])
+      await tx.exec('reset role')
       const { rows } = await tx.query(`select status from public.tournament_rounds where tournament_id = $1`, [tid])
       expect(rows).toEqual([{ status: 'finished' }])
 

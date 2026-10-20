@@ -5,11 +5,11 @@ import { Avatar, Button, Card, ErrorText, Field, Stack, Text } from '@/component
 import type { Profile } from '@/features/auth/SessionProvider'
 import { LanguageToggle } from '@/features/auth/screens/LanguageToggle'
 import { NAME_MAX, validateDisplayName } from '@/features/auth/validation'
-import { type Lang, setLanguage } from '@/i18n'
+import i18n, { type Lang, setLanguage } from '@/i18n'
 import { color, space } from '@/theme/tokens'
 import { useUpdateProfile } from './useUpdateProfile'
 
-/** Avatar (initials; photo upload waits for Storage), editable name and language. */
+/** Initials avatar, editable name and language. */
 export function IdentitySection({ profile }: { profile: Profile }) {
   const { t } = useTranslation('profile')
   const update = useUpdateProfile()
@@ -18,23 +18,19 @@ export function IdentitySection({ profile }: { profile: Profile }) {
   const dirty = check.ok && check.name !== profile.display_name
 
   const changeLanguage = (lang: Lang): void => {
-    if (lang === profile.lang) return
-    // Save first: switching between EN and AR reloads the app to mirror the layout.
-    update.mutate({ lang }, { onSuccess: () => void setLanguage(lang) })
+    if (lang === i18n.language) return
+    // Save first (onboarded_at makes the choice follow the player to other phones), then switch:
+    // going between EN and AR reloads the app to mirror the layout.
+    update.mutate({ lang, onboarded_at: new Date().toISOString() }, { onSuccess: () => void setLanguage(lang) })
   }
 
   return (
-    <Card tone="raised">
+    <Card>
       <View style={styles.hero}>
         <Avatar name={check.ok ? check.name : profile.display_name} url={profile.avatar_url} size={72} ring={color.teamA} />
-        <View style={styles.heroText}>
-          <Text variant="title" numberOfLines={1}>
-            {profile.display_name}
-          </Text>
-          <Text variant="caption" tone={color.inkFaint}>
-            {t('identity.avatarNote')}
-          </Text>
-        </View>
+        <Text variant="title" numberOfLines={1} style={styles.heroText}>
+          {profile.display_name}
+        </Text>
       </View>
       <Field
         label={t('identity.name')}
@@ -58,7 +54,7 @@ export function IdentitySection({ profile }: { profile: Profile }) {
         <Text variant="label" tone={color.inkMuted}>
           {t('identity.language')}
         </Text>
-        <LanguageToggle value={profile.lang === 'ar' ? 'ar' : 'en'} onChange={changeLanguage} />
+        <LanguageToggle value={i18n.language === 'ar' ? 'ar' : 'en'} onChange={changeLanguage} />
       </Stack>
       <ErrorText error={update.error} />
     </Card>
@@ -67,5 +63,5 @@ export function IdentitySection({ profile }: { profile: Profile }) {
 
 const styles = StyleSheet.create({
   hero: { flexDirection: 'row', alignItems: 'center', gap: space.lg },
-  heroText: { flex: 1, gap: space.xxs },
+  heroText: { flex: 1 },
 })

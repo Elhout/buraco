@@ -7,8 +7,6 @@ export default function Index() {
   const { stage } = useSession()
   const { clubs } = useClubs()
   if (stage === 'signedOut') return <Redirect href="/sign-in" />
-  if (stage === 'needsProfile') return <Redirect href="/profile-setup" />
-  if (stage === 'needsPin') return <Redirect href="/pin" />
   if (stage === 'ready' && clubs.length === 0) return <Redirect href="/club-setup" />
   return <Redirect href="/club" />
 }

@@ -2,10 +2,10 @@ import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
-import { Banner, Button, ErrorText, Screen, Segmented, Stack, Text } from '@/components/ui'
+import { Button, ErrorText, Screen, Text } from '@/components/ui'
 import { useSession, useUserId } from '@/features/auth/SessionProvider'
 import { useCurrentClub } from '@/features/clubs/ClubProvider'
-import { type DraftIssue, type GameMode, filledCount } from '@/features/game/new/draft'
+import { type DraftIssue, filledCount } from '@/features/game/new/draft'
 import { GuestField } from '@/features/game/new/GuestField'
 import { MemberPicker } from '@/features/game/new/MemberPicker'
 import { TeamPanels } from '@/features/game/new/TeamPanels'
@@ -23,26 +23,6 @@ function CloseButton() {
       style={({ pressed }) => [styles.close, pressed && styles.pressed]}>
       <Ionicons name="close" size={24} color={color.ink} />
     </Pressable>
-  )
-}
-
-function ModePicker({ mode, trusted, onChange }: { mode: GameMode; trusted: boolean; onChange: (m: GameMode) => void }) {
-  const { t } = useTranslation(['lobby', 'common'])
-  return (
-    <Stack gap={space.sm}>
-      <Text variant="bodyStrong">{t('new.mode')}</Text>
-      <Segmented
-        value={mode}
-        onChange={onChange}
-        options={[
-          { value: 'ghost', label: t('common:mode.ghost') },
-          { value: 'normal', label: t('common:mode.normal') },
-        ]}
-      />
-      <Text variant="label" tone={color.inkMuted}>
-        {mode === 'normal' ? t('new.normalHint') : trusted ? t('new.ghostHint') : t('new.ghostHintConfirm')}
-      </Text>
-    </Stack>
   )
 }
 
@@ -64,19 +44,22 @@ function StartBar({ state }: { state: NewGameState }) {
       ) : null}
       <ErrorText error={state.startError} />
       <Button
-        label={state.mode === 'ghost' ? t('new.startGhost') : t('new.start')}
+        label={t('new.startGhost')}
         size="lg"
         block
         loading={state.starting}
         disabled={state.issues.length > 0}
         onPress={state.start}
-        icon={<Ionicons name={state.mode === 'ghost' ? 'play' : 'paper-plane'} size={20} color={color.onPrimary} />}
+        icon={<Ionicons name="play" size={20} color={color.onPrimary} />}
       />
     </View>
   )
 }
 
-/** /game/new (modal): pick four players, seat them in teams, choose verified or ghost, start. */
+/**
+ * /game/new (modal): tap four players from the club list (first two Team A, next two Team B), or
+ * add a guest, then start. No invites: whoever starts the game enters the scores.
+ */
 export default function NewGameScreen() {
   const { t } = useTranslation(['lobby', 'common'])
   const userId = useUserId()
@@ -93,10 +76,8 @@ export default function NewGameScreen() {
       edges={['top', 'bottom']}
       footer={<StartBar state={state} />}>
       <TeamPanels slots={state.slots} meId={userId} onClear={state.clear} onSwap={state.swap} onShuffle={state.reshuffle} />
-      <ModePicker mode={state.mode} trusted={club.trust_ghost_games} onChange={state.setMode} />
-      {state.guestsDropped ? <Banner tone="ghost">{t('new.guestsDropped')}</Banner> : null}
-      {state.mode === 'ghost' ? <GuestField slots={state.slots} onAdd={state.toggle} /> : null}
       <MemberPicker clubId={club.id} meId={userId} slots={state.slots} online={online} onToggle={state.toggle} />
+      <GuestField slots={state.slots} onAdd={state.toggle} />
     </Screen>
   )
 }

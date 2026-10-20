@@ -8,6 +8,7 @@ import { PasswordField } from '@/features/auth/screens/PasswordField'
 import { useAuthErrorText } from '@/features/auth/screens/useAuthErrorText'
 import { NAME_MAX, validateDisplayName } from '@/features/auth/validation'
 import { manageAccount } from '@/features/clubs/accounts'
+import { suggestUsername } from '@/features/clubs/usernameSuggestion'
 import { qk } from '@/lib/queryKeys'
 import { color, space } from '@/theme/tokens'
 
@@ -32,6 +33,8 @@ export function AddPlayerSheet({ clubId, visible, onClose }: AddPlayerSheetProps
   const errorText = useAuthErrorText()
   const [name, setName] = useState('')
   const [username, setUsername] = useState('')
+  // Follows the name until the admin edits the username themselves.
+  const [usernameEdited, setUsernameEdited] = useState(false)
   const [password, setPassword] = useState('')
   const [touched, setTouched] = useState(false)
   const [created, setCreated] = useState<Created | null>(null)
@@ -58,6 +61,7 @@ export function AddPlayerSheet({ clubId, visible, onClose }: AddPlayerSheetProps
   const close = (): void => {
     setName('')
     setUsername('')
+    setUsernameEdited(false)
     setPassword('')
     setTouched(false)
     setCreated(null)
@@ -95,11 +99,23 @@ export function AddPlayerSheet({ clubId, visible, onClose }: AddPlayerSheetProps
   return (
     <Sheet visible={visible} onClose={close} title={t('accounts.addTitle')} subtitle={t('accounts.addSubtitle')} locked={create.isPending}>
       <Stack gap={space.md}>
-        <Field label={t('accounts.nameLabel')} value={name} onChangeText={setName} maxLength={NAME_MAX} error={nameError} />
+        <Field
+          label={t('accounts.nameLabel')}
+          value={name}
+          onChangeText={(v) => {
+            setName(v)
+            if (!usernameEdited) setUsername(suggestUsername(v))
+          }}
+          maxLength={NAME_MAX}
+          error={nameError}
+        />
         <Field
           label={t('accounts.usernameLabel')}
           value={username}
-          onChangeText={setUsername}
+          onChangeText={(v) => {
+            setUsername(v)
+            setUsernameEdited(true)
+          }}
           autoCapitalize="none"
           autoCorrect={false}
           spellCheck={false}

@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase'
 /** Columns the client may update (see the column grants on public.profiles). */
 export type ProfilePatch = Pick<
   Database['public']['Tables']['profiles']['Update'],
-  'display_name' | 'lang' | 'notify_game_started' | 'notify_tournament'
+  'display_name' | 'lang' | 'onboarded_at' | 'notify_game_started' | 'notify_tournament'
 >
 
 export function useUpdateProfile() {

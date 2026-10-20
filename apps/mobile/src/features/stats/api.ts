@@ -91,3 +91,15 @@ export function usePairH2H(clubId: string, first: PairIds | null, second: PairId
     },
   })
 }
+
+/** Every player's totals in the club (one row per player with games), for the Players tab. */
+export function useClubPlayerStats(clubId: string) {
+  return useQuery({
+    queryKey: key(clubId, 'players'),
+    queryFn: async (): Promise<PlayerStatsRow[]> => {
+      const { data, error } = await supabase.from('v_player_stats').select('*').eq('club_id', clubId)
+      if (error) throw error
+      return data
+    },
+  })
+}

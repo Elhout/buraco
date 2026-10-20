@@ -1,0 +1,13 @@
+{
+  "title": "Players",
+  "subtitle_one": "{{n}} player in the club",
+  "subtitle_other": "{{n}} players in the club",
+  "add": "Add player",
+  "you": "{{name}} (you)",
+  "noGames": "No games yet",
+  "record_one": "{{games}} game · {{wins}} wins",
+  "record_other": "{{games}} games · {{wins}} wins",
+  "back": "Players",
+  "manage": "Manage player",
+  "username": "Username: {{username}}"
+}

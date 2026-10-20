@@ -5,13 +5,15 @@ import { type ReactNode, createContext, useContext, useEffect, useMemo, useState
 import i18n, { type Lang, setLanguage } from '@/i18n'
 import { registerForPush, unregisterPush } from '@/lib/push'
 import { qk } from '@/lib/queryKeys'
-import { rpc } from '@/lib/rpc'
 import { supabase } from '@/lib/supabase'
 
 export type Profile = Tables<'profiles'>
 
-/** Where the user is in the flow; the root layout guards routes on this. */
-export type Stage = 'loading' | 'error' | 'signedOut' | 'needsProfile' | 'needsPin' | 'ready'
+/**
+ * Where the user is in the flow; the root layout guards routes on this. Accounts are created by a
+ * club admin with a name already, so signing in goes straight into the app (no PIN, no setup).
+ */
+export type Stage = 'loading' | 'error' | 'signedOut' | 'ready'
 
 interface SessionValue {
   stage: Stage
@@ -49,32 +51,23 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     },
   })
 
-  const hasPin = useQuery({
-    queryKey: qk.hasPin(userId ?? 'none'),
-    enabled: userId !== null,
-    queryFn: () => rpc('has_pin', {}),
-  })
-
-  // The profile language wins once onboarding is done, so it follows the user across phones.
+  // A language chosen in Settings (which stamps onboarded_at) follows the player across phones.
   const profileLang = profile.data?.onboarded_at ? (profile.data.lang as Lang) : null
   useEffect(() => {
     if (profileLang && profileLang !== i18n.language) void setLanguage(profileLang)
   }, [profileLang])
 
   useEffect(() => {
-    if (userId && hasPin.data) void registerForPush().catch(() => undefined)
-  }, [userId, hasPin.data])
+    if (userId) void registerForPush().catch(() => undefined)
+  }, [userId])
 
   const stage: Stage = useMemo(() => {
     if (!restored) return 'loading'
     if (!session) return 'signedOut'
-    if (profile.isPending || hasPin.isPending) return 'loading'
-    // A failed load must not look like "not onboarded yet" (that would re-run setup).
-    if ((profile.isError && !profile.data) || (hasPin.isError && hasPin.data === undefined)) return 'error'
-    if (!profile.data?.onboarded_at) return 'needsProfile'
-    if (!hasPin.data) return 'needsPin'
+    if (profile.isPending) return 'loading'
+    if (profile.isError && !profile.data) return 'error'
     return 'ready'
-  }, [restored, session, profile.isPending, profile.isError, profile.data, hasPin.isPending, hasPin.isError, hasPin.data])
+  }, [restored, session, profile.isPending, profile.isError, profile.data])
 
   const value: SessionValue = {
     stage,
@@ -83,7 +76,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     profile: profile.data ?? null,
     refreshProfile: async () => {
       if (!userId) return
-      await Promise.all([client.invalidateQueries({ queryKey: qk.me(userId) }), client.invalidateQueries({ queryKey: qk.hasPin(userId) })])
+      await client.invalidateQueries({ queryKey: qk.me(userId) })
     },
     signOut: async () => {
       await unregisterPush()

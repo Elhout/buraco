@@ -1,3 +1,3 @@
-import { ProfileScreen } from '@/features/profile/ProfileScreen'
+import { SettingsScreen } from '@/features/profile/SettingsScreen'
 
-export default ProfileScreen
+export default SettingsScreen

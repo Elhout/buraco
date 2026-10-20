@@ -1,3 +1,6 @@
-import { ClubSettingsScreen } from '@/features/clubs/screens/ClubSettingsScreen'
+import { Redirect } from 'expo-router'
 
-export default ClubSettingsScreen
+/** Club settings moved into Settings (/profile); keep old links working. */
+export default function ClubSettingsRedirect() {
+  return <Redirect href="/profile" />
+}

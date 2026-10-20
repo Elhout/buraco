@@ -19,13 +19,14 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarActiveTintColor: color.teamA,
         tabBarInactiveTintColor: color.inkFaint,
-        tabBarStyle: { backgroundColor: color.sunken, borderTopColor: color.line, height: 64, paddingTop: 6 },
+        tabBarStyle: { backgroundColor: color.surface, borderTopColor: color.line, height: 64, paddingTop: 6 },
         tabBarLabelStyle: { fontFamily: font.medium, fontSize: 12 },
         sceneStyle: { backgroundColor: color.bg },
       }}>
-      <Tabs.Screen name="club" options={{ title: t('tabs.club'), tabBarIcon: icon('people-outline', 'people') }} />
+      {/* The Play home keeps the /club address so existing links and pushes still land. */}
+      <Tabs.Screen name="club" options={{ title: t('tabs.play'), tabBarIcon: icon('play-circle-outline', 'play-circle') }} />
       <Tabs.Screen name="history" options={{ title: t('tabs.history'), tabBarIcon: icon('time-outline', 'time') }} />
-      <Tabs.Screen name="stats" options={{ title: t('tabs.stats'), tabBarIcon: icon('stats-chart-outline', 'stats-chart') }} />
+      <Tabs.Screen name="players" options={{ title: t('tabs.players'), tabBarIcon: icon('people-outline', 'people') }} />
       <Tabs.Screen name="tournaments" options={{ title: t('tabs.tournaments'), tabBarIcon: icon('trophy-outline', 'trophy') }} />
     </Tabs>
   )

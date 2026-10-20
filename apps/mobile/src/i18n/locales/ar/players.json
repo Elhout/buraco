@@ -1,0 +1,21 @@
+{
+  "title": "اللاعبون",
+  "subtitle_zero": "لا لاعبين في النادي",
+  "subtitle_one": "لاعب واحد في النادي",
+  "subtitle_two": "لاعبان في النادي",
+  "subtitle_few": "{{n}} لاعبين في النادي",
+  "subtitle_many": "{{n}} لاعبًا في النادي",
+  "subtitle_other": "{{n}} لاعب في النادي",
+  "add": "إضافة لاعب",
+  "you": "{{name}} (أنت)",
+  "noGames": "لا مباريات بعد",
+  "record_zero": "{{games}} مباراة · {{wins}} فوز",
+  "record_one": "مباراة واحدة · {{wins}} فوز",
+  "record_two": "مباراتان · {{wins}} فوز",
+  "record_few": "{{games}} مباريات · {{wins}} فوز",
+  "record_many": "{{games}} مباراة · {{wins}} فوز",
+  "record_other": "{{games}} مباراة · {{wins}} فوز",
+  "back": "اللاعبون",
+  "manage": "إدارة اللاعب",
+  "username": "اسم المستخدم: {{username}}"
+}

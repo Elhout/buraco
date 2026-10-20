@@ -47,9 +47,11 @@ function SeatSlot({ seat, team, slots, meId, onClear }: SlotProps) {
         <Text variant="label" numberOfLines={1}>
           {name}
         </Text>
-        <Text variant="caption" tone={color.inkMuted} numberOfLines={1}>
-          {player.kind === 'guest' ? t('common:guest') : t('new.seated', { seat: seatNo })}
-        </Text>
+        {player.kind === 'guest' ? (
+          <Text variant="caption" tone={color.inkMuted} numberOfLines={1}>
+            {t('common:guest')}
+          </Text>
+        ) : null}
       </View>
       <Ionicons name="close" size={18} color={color.inkMuted} />
     </Pressable>

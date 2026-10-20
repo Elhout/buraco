@@ -65,10 +65,7 @@ function RootLayout() {
   )
 }
 
-/**
- * Route guards follow the onboarding stage: signed out → (auth); missing profile or PIN →
- * (onboarding); no club yet → club-setup; otherwise the app.
- */
+/** Route guards: signed out → (auth); no club yet → club-setup; otherwise the app. */
 function RootNavigator() {
   const { stage, refreshProfile } = useSession()
   const { clubs, loading: clubsLoading, failed: clubsFailed, refresh: refreshClubs } = useClubs()
@@ -109,15 +106,8 @@ function RootNavigator() {
         <Stack.Protected guard={stage === 'signedOut'}>
           <Stack.Screen name="(auth)" />
         </Stack.Protected>
-        <Stack.Protected guard={stage === 'needsProfile' || stage === 'needsPin'}>
-          <Stack.Screen name="(onboarding)" />
-        </Stack.Protected>
         <Stack.Protected guard={ready && !hasClub}>
           <Stack.Screen name="club-setup" />
-        </Stack.Protected>
-        <Stack.Protected guard={ready}>
-          {/* buraco://join/<CODE> from a club QR code, with or without a club already. */}
-          <Stack.Screen name="join/[code]" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
         </Stack.Protected>
         <Stack.Protected guard={ready && hasClub}>
           <Stack.Screen name="(tabs)" />
@@ -127,7 +117,7 @@ function RootNavigator() {
           <Stack.Screen name="game/[id]/result" />
           <Stack.Screen name="profile" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="club/settings" options={{ animation: 'slide_from_right' }} />
-          <Stack.Screen name="club/join" options={{ presentation: 'modal', animation: 'slide_from_bottom' }} />
+          <Stack.Screen name="player/[id]" options={{ animation: 'slide_from_right' }} />
         </Stack.Protected>
       </Stack>
     </LocaleProvider>

@@ -108,7 +108,9 @@
     "club": "Club",
     "history": "History",
     "stats": "Stats",
-    "tournaments": "Tournaments"
+    "tournaments": "Tournaments",
+    "play": "Play",
+    "players": "Players"
   },
   "theme": {
     "section": "Appearance",
@@ -116,5 +118,6 @@
     "light": "Light",
     "dark": "Dark",
     "hint": "System follows your phone's light or dark setting."
-  }
+  },
+  "settings": "Settings"
 }

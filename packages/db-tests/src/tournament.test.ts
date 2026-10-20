@@ -1,8 +1,8 @@
 import type { PGlite, Transaction } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { type Match, type PlayedMatch, computeStandings, createRng, rotatingTables, swissPairing } from '../../shared/src/tournament'
-import { type Club, PIN, type PinResult, rpc, seedClub } from './fixtures'
-import { actAs, asService, createDb, inTx, rejects } from './harness'
+import { type Club, rpc, seedClub } from './fixtures'
+import { actAs, asService, createDb, createUser, inTx, rejects } from './harness'
 
 let db: PGlite
 let club: Club
@@ -11,7 +11,7 @@ let stranger: string
 
 beforeAll(async () => {
   db = await createDb()
-  club = await seedClub(db, 'Cup', 8) // 12 members with PIN 1234
+  club = await seedClub(db, 'Cup', 8) // 12 members
   members = [...club.players, ...club.others]
   stranger = (await seedClub(db, 'Other')).players[0]
 }, 120_000)
@@ -74,24 +74,18 @@ const seatsOf = async (tx: Transaction, gameId: string) => {
   ).rows
 }
 
-/** Plays a tournament game on "four phones": PIN invites, one decisive round, both teams confirm. */
+/** Who scores a tournament game: its host (the first seated member at the table). */
+const hostOf = async (tx: Transaction, gameId: string): Promise<string> => {
+  await tx.exec('reset role')
+  return (await tx.query<{ host_id: string }>(`select host_id from public.games where id = $1`, [gameId])).rows[0]!.host_id
+}
+
+/** Plays a tournament game the "start now" way: the host enters one decisive round and the result, no PIN. */
 const playMatch = async (tx: Transaction, gameId: string, a: number, b: number): Promise<void> => {
-  for (const s of await seatsOf(tx, gameId)) {
-    if (!s.user_id) continue
-    await actAs(tx, s.user_id)
-    expect(await rpc<PinResult>(tx, 'public.respond_invite($1, true, $2)', [gameId, PIN])).toMatchObject({ ok: true })
-  }
-  const seats = await seatsOf(tx, gameId)
-  const keeperA = seats.find((s) => s.team === 'A' && s.is_scorekeeper)!.user_id!
-  const keeperB = seats.find((s) => s.team === 'B' && s.is_scorekeeper)!.user_id!
-  await actAs(tx, keeperA)
+  await actAs(tx, await hostOf(tx, gameId))
   const roundId = await rpc<string>(tx, 'public.submit_round($1, $2, $3)', [gameId, a, b])
-  await actAs(tx, keeperB)
-  await rpc(tx, 'public.confirm_round($1, $2)', [roundId, PIN])
-  for (const keeper of [keeperA, keeperB]) {
-    await actAs(tx, keeper)
-    await rpc(tx, 'public.confirm_result($1, $2)', [gameId, PIN])
-  }
+  await rpc(tx, 'public.confirm_round($1)', [roundId])
+  await rpc(tx, 'public.confirm_result($1)', [gameId])
 }
 
 const played = (rows: MatchRow[], unitOf: (entry: string) => string): PlayedMatch[] =>
@@ -247,7 +241,7 @@ describe('draw validation', () => {
       ]
       await tx.query(`select public.start_round($1, $2::jsonb)`, [tid, JSON.stringify(draw)])
       await rejects(tx, () => tx.query(`select public.start_round($1, $2::jsonb)`, [tid, JSON.stringify(draw)]), /still being played/)
-      // The ghost seat is pre-confirmed, so its table goes live once the 3 members accept.
+      // Every seat, the guest's too, is confirmed at once: tables start without invites.
       await tx.exec('reset role')
       const { rows } = await tx.query<{ n: number }>(
         `select count(*)::int as n from public.game_seats s join public.v_tournament_matches m on m.game_id = s.game_id
@@ -279,20 +273,13 @@ describe('round clock', () => {
       JSON.stringify([{ table_no: 1, team_a: ids.slice(0, 2), team_b: ids.slice(2) }]),
     ])
     const [match] = await matchesOf(tx, tid)
-    for (const s of await seatsOf(tx, match!.game_id)) {
-      await actAs(tx, s.user_id!)
-      await rpc(tx, 'public.respond_invite($1, true, $2)', [match!.game_id, PIN])
-    }
     return { tid, roundId, gameId: match!.game_id }
   }
-
-  const keeper = async (tx: Transaction, gameId: string, team: 'A' | 'B') =>
-    (await seatsOf(tx, gameId)).find((s) => s.team === team && s.is_scorekeeper)!.user_id!
 
   it('warns at 5 minutes, then ends the match after the deal in progress — a draw on equal totals', async () => {
     await inTx(db, async (tx) => {
       const { roundId, gameId } = await liveTable(tx)
-      await actAs(tx, await keeper(tx, gameId, 'A'))
+      await actAs(tx, await hostOf(tx, gameId))
       const r = await rpc<string>(tx, 'public.submit_round($1, 300, 300)', [gameId])
 
       await tx.exec('reset role')
@@ -303,12 +290,9 @@ describe('round clock', () => {
       await tx.query(`update public.tournament_rounds set ends_at = now() - interval '1 second' where id = $1`, [roundId])
       await asService(tx, () => rpc(tx, 'public.tournament_clock_tick()'))
       // The pending deal is still confirmed, and that ends the match even far below target.
-      await actAs(tx, await keeper(tx, gameId, 'B'))
-      await rpc(tx, 'public.confirm_round($1, $2)', [r, PIN])
-      for (const team of ['A', 'B'] as const) {
-        await actAs(tx, await keeper(tx, gameId, team))
-        await rpc(tx, 'public.confirm_result($1, $2)', [gameId, PIN])
-      }
+      await actAs(tx, await hostOf(tx, gameId))
+      await rpc(tx, 'public.confirm_round($1)', [r])
+      await rpc(tx, 'public.confirm_result($1)', [gameId])
       await tx.exec('reset role')
       const { rows } = await tx.query(`select status, winner_team from public.games where id = $1`, [gameId])
       expect(rows[0]).toEqual({ status: 'finished', winner_team: null })
@@ -325,10 +309,9 @@ describe('round clock', () => {
   it('scores a match between deals as soon as the clock stops', async () => {
     await inTx(db, async (tx) => {
       const { roundId, gameId } = await liveTable(tx)
-      await actAs(tx, await keeper(tx, gameId, 'A'))
+      await actAs(tx, await hostOf(tx, gameId))
       const r = await rpc<string>(tx, 'public.submit_round($1, 400, 100)', [gameId])
-      await actAs(tx, await keeper(tx, gameId, 'B'))
-      await rpc(tx, 'public.confirm_round($1, $2)', [r, PIN])
+      await rpc(tx, 'public.confirm_round($1)', [r])
       await tx.exec('reset role')
       await tx.query(`update public.tournament_rounds set ends_at = now() - interval '1 second' where id = $1`, [roundId])
       await asService(tx, () => rpc(tx, 'public.tournament_clock_tick()'))
@@ -350,7 +333,7 @@ describe('round clock', () => {
 })
 
 describe('organizer operations', () => {
-  it('substitutes a late arrival into an inviting game and logs it', async () => {
+  it('substitutes a late arrival into the live game and logs it', async () => {
     await inTx(db, async (tx) => {
       const tid = await createTournament(tx, 'rotating')
       await tx.query(`select public.set_entries($1, $2::jsonb)`, [tid, JSON.stringify(members.slice(0, 4).map((u) => ({ user_id: u })))])
@@ -409,6 +392,102 @@ describe('organizer operations', () => {
           ),
         /permission denied/,
       )
+    })
+  })
+})
+
+describe('tournament tables start now (no invites, no PIN)', () => {
+  /** One table from four entries; returns the game. */
+  const oneTable = async (tx: Transaction, people: readonly ({ user_id: string } | { guest_name: string })[]) => {
+    const tid = await createTournament(tx, 'rotating')
+    await tx.query(`select public.set_entries($1, $2::jsonb)`, [tid, JSON.stringify(people)])
+    await tx.query(`select public.start_tournament($1)`, [tid])
+    const ids = (await entries(tx, tid)).map((e) => e.id)
+    await actAs(tx, organizer())
+    await tx.query(`select public.start_round($1, $2::jsonb)`, [
+      tid,
+      JSON.stringify([{ table_no: 1, team_a: ids.slice(0, 2), team_b: ids.slice(2) }]),
+    ])
+    const [m] = await matchesOf(tx, tid)
+    return { tid, gameId: m!.game_id }
+  }
+
+  it('starts every table live as a start-now game, hosted by its first seated member', async () => {
+    await inTx(db, async (tx) => {
+      const { tid, gameId } = await oneTable(
+        tx,
+        members.slice(4, 8).map((u) => ({ user_id: u })),
+      )
+      await tx.exec('reset role')
+      const { rows } = await tx.query<{ mode: string; status: string; host_id: string }>(
+        `select mode::text as mode, status::text as status, host_id from public.games where id = $1`,
+        [gameId],
+      )
+      const seats = await seatsOf(tx, gameId)
+      const firstMember = seats.filter((s) => s.team === 'A' && s.user_id).sort((a, b) => a.seat - b.seat)[0]!.user_id
+      expect(rows[0]).toEqual({ mode: 'ghost', status: 'live', host_id: firstMember })
+      expect(
+        seats
+          .filter((s) => s.is_scorekeeper)
+          .map((s) => s.team)
+          .sort(),
+      ).toEqual(['A', 'B'])
+      const { rows: invites } = await tx.query(`select 1 from public.game_seats where game_id = $1 and invite_status <> 'confirmed'`, [
+        gameId,
+      ])
+      expect(invites).toHaveLength(0)
+      // Players hear about their table; nobody gets an invite or a "game started" push.
+      const { rows: pushes } = await tx.query<{ event: string }>(
+        `select distinct event from public.notification_queue where tournament_id = $1 or game_id = $2`,
+        [tid, gameId],
+      )
+      expect(pushes.map((p) => p.event)).toEqual(['tournament_table'])
+    })
+  })
+
+  it('lets the organizer score a table of guests', async () => {
+    await inTx(db, async (tx) => {
+      const { gameId } = await oneTable(
+        tx,
+        ['G1', 'G2', 'G3', 'G4'].map((g) => ({ guest_name: g })),
+      )
+      expect(await hostOf(tx, gameId)).toBe(organizer())
+      await playMatch(tx, gameId, 700, 100)
+      const { rows } = await tx.query(`select result::text as result from public.tournament_matches where game_id = $1`, [gameId])
+      expect(rows).toEqual([{ result: 'a' }])
+    })
+  })
+
+  it('needs no PIN: a member without one hosts and finishes the match, which counts', async () => {
+    const newcomer = await createUser(db, 'No PIN')
+    await inTx(db, async (tx) => {
+      await tx.query(`insert into public.club_members (club_id, user_id) values ($1, $2)`, [club.clubId, newcomer])
+      expect((await tx.query(`select 1 from public.pins where user_id = $1`, [newcomer])).rows).toHaveLength(0)
+      // The only member at the table, so they host it whatever the seating order.
+      const { gameId } = await oneTable(tx, [{ user_id: newcomer }, { guest_name: 'G1' }, { guest_name: 'G2' }, { guest_name: 'G3' }])
+      expect(await hostOf(tx, gameId)).toBe(newcomer)
+      await playMatch(tx, gameId, 600, 200)
+      await tx.exec('reset role')
+      const { rows } = await tx.query(`select status::text as status, verified from public.games where id = $1`, [gameId])
+      expect(rows).toEqual([{ status: 'finished', verified: true }])
+    })
+  })
+
+  it('hands scoring to a late arrival who replaces the host', async () => {
+    await inTx(db, async (tx) => {
+      const { gameId } = await oneTable(
+        tx,
+        members.slice(4, 8).map((u) => ({ user_id: u })),
+      )
+      const host = await hostOf(tx, gameId)
+      const tid = (
+        await tx.query<{ tournament_id: string }>(`select tournament_id from public.v_tournament_matches where game_id = $1`, [gameId])
+      ).rows[0]!.tournament_id
+      const hostEntry = (await entries(tx, tid)).find((e) => e.user_id === host)!
+      await actAs(tx, organizer())
+      await tx.query(`select public.substitute_entry($1, $2)`, [hostEntry.id, members[11]!])
+      expect(await hostOf(tx, gameId)).toBe(members[11])
+      await playMatch(tx, gameId, 600, 100)
     })
   })
 })

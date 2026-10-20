@@ -55,11 +55,11 @@
   "newGame": "New game",
   "new": {
     "title": "New game",
-    "subtitle": "Pick four players and seat them",
+    "subtitle": "Tap 4 players: the first two are Team A, the next two Team B",
     "close": "Close",
-    "seatEmpty": "Seat {{seat}}",
+    "seatEmpty": "Add player",
     "seatHint": "Tap a player below",
-    "seatClear": "Remove {{name}} from seat {{seat}}",
+    "seatClear": "Remove {{name}}",
     "swapTeams": "Swap teams",
     "shuffle": "Shuffle",
     "mode": "How will you play?",
@@ -71,11 +71,11 @@
     "noMatch": "No member matches “{{query}}”",
     "guest": "Add a guest",
     "guestPlaceholder": "Guest's name",
-    "guestAdd": "Seat guest",
+    "guestAdd": "Add guest",
     "guestHint": "Guests can play in Start now games",
     "guestInvalid": "Use a new name of 1 to 40 characters.",
-    "full": "All four seats are taken. Tap a seat to free it.",
-    "seated": "Seat {{seat}}",
+    "full": "All four places are taken. Tap a player to free a place.",
+    "seated": "Team",
     "start": "Send invites",
     "startGhost": "Start game",
     "playersLeft_one": "Pick {{count}} more player",
@@ -140,5 +140,11 @@
     "newGame": "Start a new game",
     "loadError": "Couldn't load this game.",
     "ghostBodyConfirm": "The game starts now without waiting. Anyone who already accepted counts as confirmed; everyone else confirms the result later with their PIN. Until then it doesn't count toward rankings."
+  },
+  "home": {
+    "newGame": "New game",
+    "newGameBody": "Pick 4 players and start",
+    "quick": "Quick calculator",
+    "quickBody": "Just add up the scores, nothing saved to the club"
   }
 }

@@ -5,7 +5,6 @@ import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native'
 import { Avatar, Button, ErrorText, Field, SectionTitle, TeamBadge, Text } from '@/components/ui'
 import { type Member, useClubMembers } from '@/features/clubs/members'
 import { sortByPresence } from '@/features/lobby/model'
-import { formatNumber } from '@/lib/format'
 import { HIT, color, radius, space } from '@/theme/tokens'
 import { type Player, type Slots, nextFreeSeat, seatOf, teamOfSeat } from './draft'
 
@@ -48,10 +47,7 @@ function MemberRow({
       </Text>
       {seat !== null ? (
         <View style={styles.seated}>
-          <TeamBadge team={teamOfSeat(seat)} size="sm" />
-          <Text variant="caption" tone={color.inkMuted}>
-            {t('new.seated', { seat: formatNumber(seat) })}
-          </Text>
+          <TeamBadge team={teamOfSeat(seat)} />
         </View>
       ) : (
         <Ionicons name="add-circle-outline" size={26} color={blocked ? color.inkFaint : color.ink} />

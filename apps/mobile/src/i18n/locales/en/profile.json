@@ -40,7 +40,7 @@
   },
   "webPush": {
     "install": "To get notifications on this iPhone, add the app to your home screen: tap Share, then \"Add to Home Screen\", and open Buraco from there.",
-    "prompt": "Turn on notifications to hear about invites and rounds to confirm.",
+    "prompt": "Turn on notifications to hear when games start and finish.",
     "enable": "Turn on notifications",
     "denied": "Notifications are blocked. Turn them on in Settings → Notifications → Buraco."
   },
@@ -125,12 +125,12 @@
   "accounts": {
     "add": "Add player",
     "addTitle": "New player account",
-    "addSubtitle": "Give the player this username and password. They sign in once and stay signed in.",
-    "nameLabel": "Name at the table",
-    "usernameLabel": "Username",
-    "usernameHint": "Letters a–z, numbers, dot, dash or underscore. 3 to 24 characters.",
+    "addSubtitle": "They sign in once with the username and password and stay signed in.",
+    "nameLabel": "Name",
+    "usernameLabel": "Username (for signing in)",
+    "usernameHint": "Filled in from the name. Letters a–z and numbers, at least 3.",
     "passwordLabel": "Password",
-    "passwordHint": "At least 8 characters.",
+    "passwordHint": "At least 8 characters. They can change it later in Settings.",
     "create": "Create account",
     "createdTitle": "Account ready",
     "createdBody": "{{name}} can now sign in. Share these details with them privately:",
