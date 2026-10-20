@@ -5,6 +5,7 @@
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2'
 import { type AccountRequest, loginEmail, parseAccountRequest } from '../_shared/accounts.ts'
 import { json } from '../_shared/auth.ts'
+import { preflight, withCors } from '../_shared/cors.ts'
 import { errorMessage, readEnv, type ServiceEnv } from '../_shared/service.ts'
 
 const bearer = (req: Request): string | null => {
@@ -74,11 +75,14 @@ const handle = async (req: Request, env: ServiceEnv): Promise<Response> => {
   return request.action === 'create' ? await create(admin, data.user.id, request) : await setPassword(admin, data.user.id, request)
 }
 
+// Called from the app, including the web build in a browser: answer preflights, add CORS headers.
 Deno.serve(async (req: Request): Promise<Response> => {
+  const early = preflight(req)
+  if (early) return early
   try {
-    return await handle(req, readEnv())
+    return withCors(await handle(req, readEnv()))
   } catch (e: unknown) {
     console.error(JSON.stringify({ fn: 'manage-accounts', error: errorMessage(e) }))
-    return json({ ok: false, error: 'failed' }, 500)
+    return withCors(json({ ok: false, error: 'failed' }, 500))
   }
 })

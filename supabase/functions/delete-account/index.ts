@@ -4,6 +4,7 @@
 
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { json } from '../_shared/auth.ts'
+import { preflight, withCors } from '../_shared/cors.ts'
 import { errorMessage, readEnv, type ServiceEnv } from '../_shared/service.ts'
 
 const bearer = (req: Request): string | null => {
@@ -30,11 +31,14 @@ const handle = async (req: Request, env: ServiceEnv): Promise<Response> => {
   return json({ ok: true })
 }
 
+// Called from the app, including the web build in a browser: answer preflights, add CORS headers.
 Deno.serve(async (req: Request): Promise<Response> => {
+  const early = preflight(req)
+  if (early) return early
   try {
-    return await handle(req, readEnv())
+    return withCors(await handle(req, readEnv()))
   } catch (e: unknown) {
     console.error(JSON.stringify({ fn: 'delete-account', error: errorMessage(e) }))
-    return json({ ok: false, error: 'delete failed' }, 500)
+    return withCors(json({ ok: false, error: 'delete failed' }, 500))
   }
 })
