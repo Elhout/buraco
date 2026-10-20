@@ -69,6 +69,10 @@ export interface GameView {
   readonly myTeam: Team | null
   readonly isHost: boolean
   readonly isGhost: boolean
+  /** The club trusted scorekeepers when this game started: start-now games count without PINs. */
+  readonly trustsScorekeeper: boolean
+  /** A start-now game in a club that asks players to confirm it with their PIN afterwards. */
+  readonly needsVerification: boolean
   /** I can enter scores / tap cuts: ghost host, or my team's scorekeeper in a live normal game. */
   readonly canScore: boolean
   readonly openRound: RoundView | null
@@ -152,6 +156,9 @@ export function buildGameView(
   const mySeat = seats.find((s) => s.isMe) ?? null
   const isHost = me !== null && game.host_id === me
   const isGhost = game.mode === 'ghost'
+  const snapshot = game.config_snapshot as { trust_ghost?: unknown } | null
+  const trustsScorekeeper = snapshot?.trust_ghost === true
+  const needsVerification = isGhost && !trustsScorekeeper
   const live = game.status === 'live'
   const canScore = live && (isGhost ? isHost : Boolean(mySeat?.isScorekeeper))
   const openRound = rounds.find((r) => r.status === 'open') ?? null
@@ -172,6 +179,8 @@ export function buildGameView(
   return {
     game,
     config,
+    trustsScorekeeper,
+    needsVerification,
     seats,
     rounds,
     totals: t,

@@ -84,7 +84,9 @@ function Waiting({ view, phase, now, userId }: { view: GameView; phase: InvitePh
         onSwap={setSwapping}
       />
       {canRespond(phase, view.mySeat) ? <PlayerActions gameId={game.id} userId={userId} /> : null}
-      {hostCanAct(phase, view.isHost) ? <HostActions gameId={game.id} clubId={game.club_id} /> : null}
+      {hostCanAct(phase, view.isHost) ? (
+        <HostActions gameId={game.id} clubId={game.club_id} needsVerification={!view.trustsScorekeeper} />
+      ) : null}
       <SwapSheet gameId={game.id} clubId={game.club_id} seat={swapping} seats={view.seats} onClose={() => setSwapping(null)} />
     </>
   )

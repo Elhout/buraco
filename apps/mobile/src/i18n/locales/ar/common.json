@@ -23,8 +23,8 @@
     "short": "{{team}}"
   },
   "mode": {
-    "normal": "موثّقة",
-    "ghost": "شبحية"
+    "normal": "بدعوات",
+    "ghost": "ابدأ الآن"
   },
   "status": {
     "draft": "مسودة",

@@ -87,7 +87,7 @@ function GameBanners({ view }: { view: GameView }) {
     <>
       {live && game.tournament_match_id && game.clock_expired_at ? <Banner tone="warning">{t('live.clockExpired')}</Banner> : null}
       {live && view.outcome.kind === 'tie_at_target' ? <Banner tone="warning">{t('live.tie')}</Banner> : null}
-      {view.isGhost ? <Banner tone="ghost">{t('live.ghostNote')}</Banner> : null}
+      {view.needsVerification ? <Banner tone="ghost">{t('live.ghostNote')}</Banner> : null}
     </>
   )
 }

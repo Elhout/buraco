@@ -26,7 +26,7 @@ function CloseButton() {
   )
 }
 
-function ModePicker({ mode, onChange }: { mode: GameMode; onChange: (m: GameMode) => void }) {
+function ModePicker({ mode, trusted, onChange }: { mode: GameMode; trusted: boolean; onChange: (m: GameMode) => void }) {
   const { t } = useTranslation(['lobby', 'common'])
   return (
     <Stack gap={space.sm}>
@@ -35,12 +35,12 @@ function ModePicker({ mode, onChange }: { mode: GameMode; onChange: (m: GameMode
         value={mode}
         onChange={onChange}
         options={[
-          { value: 'normal', label: t('common:mode.normal') },
           { value: 'ghost', label: t('common:mode.ghost') },
+          { value: 'normal', label: t('common:mode.normal') },
         ]}
       />
-      <Text variant="label" tone={mode === 'ghost' ? color.ghost : color.inkMuted}>
-        {mode === 'ghost' ? t('new.ghostHint') : t('new.normalHint')}
+      <Text variant="label" tone={color.inkMuted}>
+        {mode === 'normal' ? t('new.normalHint') : trusted ? t('new.ghostHint') : t('new.ghostHintConfirm')}
       </Text>
     </Stack>
   )
@@ -70,7 +70,7 @@ function StartBar({ state }: { state: NewGameState }) {
         loading={state.starting}
         disabled={state.issues.length > 0}
         onPress={state.start}
-        icon={<Ionicons name={state.mode === 'ghost' ? 'flash' : 'paper-plane'} size={20} color={color.onPrimary} />}
+        icon={<Ionicons name={state.mode === 'ghost' ? 'play' : 'paper-plane'} size={20} color={color.onPrimary} />}
       />
     </View>
   )
@@ -93,7 +93,7 @@ export default function NewGameScreen() {
       edges={['top', 'bottom']}
       footer={<StartBar state={state} />}>
       <TeamPanels slots={state.slots} meId={userId} onClear={state.clear} onSwap={state.swap} onShuffle={state.reshuffle} />
-      <ModePicker mode={state.mode} onChange={state.setMode} />
+      <ModePicker mode={state.mode} trusted={club.trust_ghost_games} onChange={state.setMode} />
       {state.guestsDropped ? <Banner tone="ghost">{t('new.guestsDropped')}</Banner> : null}
       {state.mode === 'ghost' ? <GuestField slots={state.slots} onAdd={state.toggle} /> : null}
       <MemberPicker clubId={club.id} meId={userId} slots={state.slots} online={online} onToggle={state.toggle} />

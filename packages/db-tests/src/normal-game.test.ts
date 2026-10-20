@@ -459,6 +459,8 @@ describe('scorekeepers and abandoning', () => {
 describe('ghost retro-verification', () => {
   it('asks every member seat to verify and counts the game once all have', async () => {
     await inTx(db, async (tx) => {
+      // Clubs that don't trust their scorekeepers (the default trusts them; see trusted-ghost.test.ts).
+      await tx.query(`update public.clubs set trust_ghost_games = false where id = $1`, [club.clubId])
       await actAs(tx, player(HOST))
       const seatsJson = JSON.stringify(normalSeats(club).map((s) => (s.seat === 4 ? { seat: 4, team: 'B', guest_name: 'Ali' } : s)))
       const id = await rpc<string>(tx, `public.create_game($1, $2::jsonb, 'ghost')`, [club.clubId, seatsJson])

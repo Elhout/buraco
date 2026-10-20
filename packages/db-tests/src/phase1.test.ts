@@ -175,7 +175,7 @@ describe('create_ghost_game', () => {
       expect(game.status).toBe('live')
       expect(game.mode).toBe('ghost')
       expect(game.started_at).not.toBeNull()
-      expect(game.config_snapshot).toEqual({ target_score: 2000, cut_bonus: 100, allow_negative: true })
+      expect(game.config_snapshot).toEqual({ target_score: 2000, cut_bonus: 100, allow_negative: true, trust_ghost: true })
 
       const keepers = await tx.query<{ seat: number; team: string }>(
         `select seat, team from public.game_seats where game_id = $1 and is_scorekeeper order by team`,

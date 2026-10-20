@@ -10,7 +10,7 @@ import {
   validateClubName,
 } from './settingsForm'
 
-const club = { name: 'Doha Majlis', target_score: 2000, cut_bonus: 100, allow_negative: true, season_start: null }
+const club = { name: 'Doha Majlis', target_score: 2000, cut_bonus: 100, allow_negative: true, trust_ghost_games: true, season_start: null }
 const draft = (over: Partial<ClubDraft> = {}): ClubDraft => ({ ...draftFromClub(club), ...over })
 
 describe('parseWholeNumber', () => {
@@ -45,7 +45,14 @@ describe('validateClubDraft', () => {
   it('builds the update from a valid draft', () => {
     expect(validateClubDraft(draft({ name: '  New name ', target: '1500', seasonStart: '2026-10-01' }))).toEqual({
       ok: true,
-      value: { name: 'New name', target_score: 1500, cut_bonus: 100, allow_negative: true, season_start: '2026-10-01' },
+      value: {
+        name: 'New name',
+        target_score: 1500,
+        cut_bonus: 100,
+        allow_negative: true,
+        trust_ghost_games: true,
+        season_start: '2026-10-01',
+      },
     })
   })
 
@@ -76,5 +83,6 @@ describe('validateClubName / isDraftDirty', () => {
   it('detects changes', () => {
     expect(isDraftDirty(draft(), club)).toBe(false)
     expect(isDraftDirty(draft({ allowNegative: false }), club)).toBe(true)
+    expect(isDraftDirty(draft({ trustGhost: false }), club)).toBe(true)
   })
 })

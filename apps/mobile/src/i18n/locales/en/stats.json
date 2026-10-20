@@ -7,7 +7,7 @@
     "pairs": "Pairs",
     "h2h": "Head-to-head"
   },
-  "footnote": "Stats count verified games only. A ghost game counts once all its players confirm it.",
+  "footnote": "Stats count finished games. Start now games count right away, unless the club asks players to confirm them.",
   "games_one": "{{n}} game",
   "games_other": "{{n}} games",
   "a11y": {
@@ -18,7 +18,7 @@
   },
   "me": {
     "emptyTitle": "No verified games yet",
-    "emptyBody": "Play a game, or confirm a ghost game you played, to see your stats here.",
+    "emptyBody": "Play a game to see your stats here.",
     "winRate": "Win rate",
     "record": "{{wins}} W · {{losses}} L",
     "recordDraws": "{{wins}} W · {{losses}} L · {{draws}} D",

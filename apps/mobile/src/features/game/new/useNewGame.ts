@@ -39,7 +39,8 @@ export interface NewGameState {
 export function useNewGame(clubId: string, me: Player & { kind: 'member' }): NewGameState {
   const client = useQueryClient()
   const [slots, setSlots] = useState<Slots>(() => togglePlayer(EMPTY, me))
-  const [mode, setModeState] = useState<GameMode>('normal')
+  // Pick and start is the default (one private club, trusted scorekeepers); invites are optional.
+  const [mode, setModeState] = useState<GameMode>('ghost')
   const [guestsDropped, setGuestsDropped] = useState(false)
 
   const mutation = useMutation({

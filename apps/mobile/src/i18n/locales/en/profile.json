@@ -101,7 +101,9 @@
     "no": "Not allowed",
     "save": "Save rules",
     "saved": "Saved",
-    "rolesNote": "Admins can change the house rules, remove members and run tournaments. Only the owner can manage admins, make a new invite code or hand over the club."
+    "rolesNote": "Admins can change the house rules, remove members and run tournaments. Only the owner can manage admins, make a new invite code or hand over the club.",
+    "trustGhost": "Start now games count right away",
+    "trustGhostHint": "Off: players confirm each game with their PIN before it counts in stats. Applies to new games."
   },
   "members": {
     "title_one": "{{n}} member",

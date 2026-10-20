@@ -23,8 +23,8 @@
     "short": "{{team}}"
   },
   "mode": {
-    "normal": "Verified",
-    "ghost": "Ghost"
+    "normal": "With invites",
+    "ghost": "Start now"
   },
   "status": {
     "draft": "Draft",

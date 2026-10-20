@@ -39,7 +39,7 @@
     "title": "Waiting for you",
     "invite": "{{host}} invited you to a game",
     "inviteBody": "Accept with your PIN before the invite expires",
-    "verify": "Confirm a ghost game",
+    "verify": "Confirm a game you played",
     "verifyBody": "Played {{date}}. Your PIN verifies your seat",
     "verifyNoDate": "Your PIN verifies your seat"
   },
@@ -63,8 +63,8 @@
     "swapTeams": "Swap teams",
     "shuffle": "Shuffle",
     "mode": "How will you play?",
-    "normalHint": "Everyone confirms with their PIN on their own phone. Counts toward stats.",
-    "ghostHint": "Starts right away, no invites. Unverified until the real players confirm. Guests welcome.",
+    "normalHint": "Each player accepts on their own phone, and each team confirms rounds with their PIN.",
+    "ghostHint": "Pick the players and play. You enter all the scores. Counts in stats right away. Guests welcome.",
     "guestsDropped": "Guests were removed: verified games are members only.",
     "search": "Search members",
     "members": "Members",
@@ -72,28 +72,29 @@
     "guest": "Add a guest",
     "guestPlaceholder": "Guest's name",
     "guestAdd": "Seat guest",
-    "guestHint": "Guests play ghost games only",
+    "guestHint": "Guests can play in Start now games",
     "guestInvalid": "Use a new name of 1 to 40 characters.",
     "full": "All four seats are taken. Tap a seat to free it.",
     "seated": "Seat {{seat}}",
     "start": "Send invites",
-    "startGhost": "Start ghost game",
+    "startGhost": "Start game",
     "playersLeft_one": "Pick {{count}} more player",
     "playersLeft_other": "Pick {{count}} more players",
     "issue": {
       "needFour": "Pick four players, two per team.",
       "duplicate": "A player can only take one seat.",
-      "guestsNeedGhost": "Guests can only play ghost games.",
+      "guestsNeedGhost": "Guests can only play in Start now games.",
       "hostMustPlay": "Take a seat yourself to host a verified game.",
       "guestName": "Guest names need 1 to 40 characters."
-    }
+    },
+    "ghostHintConfirm": "Pick the players and play. You enter all the scores. Counts in stats once the players confirm with their PIN. Guests welcome."
   },
   "invite": {
     "title": "Waiting for players",
     "subtitle": "The game starts as soon as all four are in",
     "expiresIn": "Invites expire in",
     "timeUp": "Time's up",
-    "timeUpHost": "The invite window closed. Swap a player to restart the clock, or play as ghost.",
+    "timeUpHost": "The invite window closed. Swap a player to restart the clock, or start now without waiting.",
     "timeUpPlayer": "The invite window closed.",
     "progress": "{{n}} of 4 confirmed",
     "host": "Host",
@@ -103,7 +104,7 @@
       "declined": "Declined"
     },
     "seatLabel": "{{name}}, {{team}}, {{status}}",
-    "declinedBanner": "{{name}} declined. Swap in someone else or play as ghost.",
+    "declinedBanner": "{{name}} declined. Swap in someone else or start now.",
     "youDeclined": "You declined this game.",
     "youreIn": "You're in. Waiting for the others.",
     "accept": "Accept with PIN",
@@ -120,10 +121,10 @@
     "swapTitle": "Replace {{name}}",
     "swapSubtitle": "The new player gets an invite and the 10-minute clock restarts.",
     "swapNone": "Every member is already at this table.",
-    "ghost": "Play as ghost",
-    "ghostTitle": "Switch to ghost mode?",
-    "ghostBody": "The game starts now without waiting. Anyone who already confirmed counts as verified; everyone else confirms the result later with their PIN. Until then it doesn't count toward rankings.",
-    "ghostConfirm": "Start as ghost",
+    "ghost": "Start now",
+    "ghostTitle": "Start without waiting?",
+    "ghostBody": "The game starts now and you enter all the scores. It counts in stats right away.",
+    "ghostConfirm": "Start now",
     "cancel": "Cancel game",
     "cancelTitle": "Cancel this game?",
     "cancelBody": "All invites are withdrawn. This can't be undone.",
@@ -137,6 +138,7 @@
     "overBody": "You'll find it in the history.",
     "backToClub": "Back to the club",
     "newGame": "Start a new game",
-    "loadError": "Couldn't load this game."
+    "loadError": "Couldn't load this game.",
+    "ghostBodyConfirm": "The game starts now without waiting. Anyone who already accepted counts as confirmed; everyone else confirms the result later with their PIN. Until then it doesn't count toward rankings."
   }
 }

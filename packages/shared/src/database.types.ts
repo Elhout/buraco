@@ -80,6 +80,7 @@ export type Database = {
           allow_negative: boolean
           created_at: string
           season_start: string | null
+          trust_ghost_games: boolean
         }
         Insert: {
           id?: string
@@ -91,6 +92,7 @@ export type Database = {
           allow_negative?: boolean
           created_at?: string
           season_start?: string | null
+          trust_ghost_games?: boolean
         }
         Update: {
           id?: string
@@ -102,6 +104,7 @@ export type Database = {
           allow_negative?: boolean
           created_at?: string
           season_start?: string | null
+          trust_ghost_games?: boolean
         }
         Relationships: [
           {

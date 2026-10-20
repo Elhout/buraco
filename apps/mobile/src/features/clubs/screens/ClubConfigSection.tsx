@@ -29,6 +29,7 @@ function ConfigReadOnly({ club }: { club: Club }) {
       <ListRow title={t('clubSettings.target')} trailing={<Value text={formatNumber(club.target_score)} />} />
       <ListRow title={t('clubSettings.cutBonus')} trailing={<Value text={`+${formatNumber(club.cut_bonus)}`} />} />
       <ListRow title={t('clubSettings.allowNegative')} trailing={<Value text={yesNo(club.allow_negative)} />} />
+      <ListRow title={t('clubSettings.trustGhost')} trailing={<Value text={yesNo(club.trust_ghost_games)} />} />
       <ListRow
         title={t('clubSettings.seasonStart')}
         trailing={<Value text={club.season_start ? formatDate(club.season_start, i18n.language) : t('clubSettings.noSeason')} />}
@@ -151,6 +152,21 @@ function RuleFields({ draft, errors, onEdit }: RuleFieldsProps) {
           trackColor={{ false: color.line, true: color.teamA }}
           thumbColor="#FFFFFF"
           accessibilityLabel={t('clubSettings.allowNegative')}
+        />
+      </Row>
+      <Row gap={space.md} style={styles.switchRow}>
+        <View style={styles.flex}>
+          <Text variant="bodyStrong">{t('clubSettings.trustGhost')}</Text>
+          <Text variant="caption" tone={color.inkMuted}>
+            {t('clubSettings.trustGhostHint')}
+          </Text>
+        </View>
+        <Switch
+          value={draft.trustGhost}
+          onValueChange={(trustGhost) => edit({ trustGhost })}
+          trackColor={{ false: color.line, true: color.teamA }}
+          thumbColor="#FFFFFF"
+          accessibilityLabel={t('clubSettings.trustGhost')}
         />
       </Row>
     </>

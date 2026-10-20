@@ -2,13 +2,15 @@ import { digitsOnly } from '../../../lib/digits'
 
 /**
  * Club settings form (owner/admin). Only these columns are granted to clients:
- * name, target_score, cut_bonus, allow_negative, season_start. Pure; tested in settingsForm.test.ts.
+ * name, target_score, cut_bonus, allow_negative, trust_ghost_games, season_start. Pure; tested in settingsForm.test.ts.
  */
 export interface ClubDraft {
   readonly name: string
   readonly target: string
   readonly cutBonus: string
   readonly allowNegative: boolean
+  /** Start-now games count in stats as soon as they finish (no PIN confirmations). */
+  readonly trustGhost: boolean
   /** YYYY-MM-DD or empty for no season. */
   readonly seasonStart: string
 }
@@ -18,6 +20,7 @@ export interface ClubUpdate {
   readonly target_score: number
   readonly cut_bonus: number
   readonly allow_negative: boolean
+  readonly trust_ghost_games: boolean
   readonly season_start: string | null
 }
 
@@ -39,6 +42,7 @@ export interface ClubRow {
   readonly target_score: number
   readonly cut_bonus: number
   readonly allow_negative: boolean
+  readonly trust_ghost_games: boolean
   readonly season_start: string | null
 }
 
@@ -47,6 +51,7 @@ export const draftFromClub = (club: ClubRow): ClubDraft => ({
   target: String(club.target_score),
   cutBonus: String(club.cut_bonus),
   allowNegative: club.allow_negative,
+  trustGhost: club.trust_ghost_games,
   seasonStart: club.season_start ?? '',
 })
 
@@ -76,7 +81,14 @@ export function validateClubDraft(d: ClubDraft): ClubValidation {
   const hasSeason = d.seasonStart.trim() !== ''
   const season = hasSeason ? parseIsoDate(d.seasonStart) : null
   if (nameProblem === null && target !== null && cut !== null && (!hasSeason || season !== null)) {
-    const value = { name: d.name.trim(), target_score: target, cut_bonus: cut, allow_negative: d.allowNegative, season_start: season }
+    const value = {
+      name: d.name.trim(),
+      target_score: target,
+      cut_bonus: cut,
+      allow_negative: d.allowNegative,
+      trust_ghost_games: d.trustGhost,
+      season_start: season,
+    }
     return { ok: true, value }
   }
   const errors: ClubErrors = {

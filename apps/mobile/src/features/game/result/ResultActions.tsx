@@ -109,14 +109,14 @@ export function FinalActions({ view, summary }: ActionsProps) {
     const values = { ...params, team: params.winnerTeam ?? '', high: formatNumber(params.high), low: formatNumber(params.low) }
     const text = params.key === 'won' ? t('result.shareWon', values) : t('result.shareDraw', values)
     try {
-      await Share.share({ message: view.isGhost ? `${text} ${t('result.shareGhost')}` : text })
+      await Share.share({ message: view.needsVerification ? `${text} ${t('result.shareGhost')}` : text })
     } catch (e) {
       setShareError(e)
     }
   }
   return (
     <View style={styles.stack}>
-      {view.isGhost ? <Banner tone="ghost">{t('result.ghostNote')}</Banner> : null}
+      {view.needsVerification ? <Banner tone="ghost">{t('result.ghostNote')}</Banner> : null}
       {params ? <Button label={t('result.share')} size="lg" block onPress={() => void share()} /> : null}
       <ErrorText error={shareError} />
       <Button label={t('result.history')} variant="secondary" block onPress={() => router.push(`/history/${view.game.id}`)} />

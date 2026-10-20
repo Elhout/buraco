@@ -54,7 +54,7 @@ export function PlayerActions({ gameId, userId }: { gameId: string; userId: stri
 }
 
 /** Host: give up waiting and play as ghost, or call the game off. Both behind a sheet; the screen then shows the new state. */
-export function HostActions({ gameId, clubId }: { gameId: string; clubId: string }) {
+export function HostActions({ gameId, clubId, needsVerification }: { gameId: string; clubId: string; needsVerification: boolean }) {
   const { t } = useTranslation(['lobby', 'common'])
   const client = useQueryClient()
   const [sheet, setSheet] = useState<'ghost' | 'cancel' | null>(null)
@@ -77,7 +77,7 @@ export function HostActions({ gameId, clubId }: { gameId: string; clubId: string
         visible={sheet === 'ghost'}
         onClose={() => setSheet(null)}
         title={t('invite.ghostTitle')}
-        body={t('invite.ghostBody')}
+        body={needsVerification ? t('invite.ghostBodyConfirm') : t('invite.ghostBody')}
         confirmLabel={t('invite.ghostConfirm')}
         cancelLabel={t('invite.keepWaiting')}
         action={() => switchToGhost(gameId)}

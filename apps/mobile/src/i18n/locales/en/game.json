@@ -2,7 +2,7 @@
   "live": {
     "title": "Live game",
     "loadError": "Couldn't load this game.",
-    "ghost": "Ghost",
+    "ghost": "Start now",
     "ghostNote": "Unverified game: rounds are confirmed with one tap, no PIN.",
     "tie": "Tie at the target. The next round decides.",
     "toGo": "{{points}} to go",
@@ -158,7 +158,7 @@
     "waitingOther": "Waiting for Team {{team}} to confirm.",
     "undo": "Undo last round",
     "undoHint": "Something wrong? Undo the last round before the result is final.",
-    "ghostNote": "Unverified ghost game. Members will be asked to verify it with their PIN.",
+    "ghostNote": "Players will be asked to confirm this game with their PIN.",
     "verified": "Verified",
     "abandoned": "Abandoned",
     "abandonedBody": "This game ended without a result. It doesn't count in stats.",
@@ -171,6 +171,6 @@
     "shareWon_other": "Buraco: Team {{team}} ({{winners}}) beat {{losers}} {{high}} to {{low}} in {{count}} rounds.",
     "shareDraw_one": "Buraco: {{winners}} and {{losers}} drew at {{high}} after {{count}} round.",
     "shareDraw_other": "Buraco: {{winners}} and {{losers}} drew at {{high}} after {{count}} rounds.",
-    "shareGhost": "(unverified ghost game)"
+    "shareGhost": "(not confirmed yet)"
   }
 }

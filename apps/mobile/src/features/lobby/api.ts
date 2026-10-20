@@ -51,6 +51,8 @@ export async function fetchToVerify(clubId: string, userId: string): Promise<Gho
     .eq('games.club_id', clubId)
     .eq('games.status', 'finished')
     .eq('games.mode', 'ghost')
+    // Trusted start-now games already count; nothing to confirm.
+    .eq('games.verified', false)
   if (error) throw error
   const rows = data as unknown as { game_id: string; games: { finished_at: string | null } | null }[]
   return rows
