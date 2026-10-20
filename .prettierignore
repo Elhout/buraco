@@ -1,0 +1,7 @@
+node_modules
+dist
+coverage
+.expo
+packages/shared/src/database.types.ts
+supabase/.temp
+*.md

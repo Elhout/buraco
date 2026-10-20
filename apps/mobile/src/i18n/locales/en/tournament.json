@@ -1,0 +1,226 @@
+{
+  "list": {
+    "title": "Tournaments",
+    "new": "New tournament",
+    "emptyTitle": "No tournaments yet",
+    "emptyBody": "Club owners and admins can set up a round-robin, Swiss or knockout event.",
+    "emptyBodyMember": "When an organizer sets one up, it shows here.",
+    "error": "Couldn't load tournaments.",
+    "a11yCard": "{{name}}, {{status}}, {{date}}"
+  },
+  "status": {
+    "draft": "Draft",
+    "running": "Running",
+    "finished": "Finished",
+    "cancelled": "Cancelled"
+  },
+  "format": {
+    "round_robin": "Round-robin",
+    "swiss": "Swiss",
+    "knockout": "Knockout"
+  },
+  "formatHint": {
+    "round_robin": "≤ 6 pairs · everyone meets everyone",
+    "swiss": "8–40 players · equal scores meet",
+    "knockout": "Finals · single elimination"
+  },
+  "pairing": {
+    "fixed": "Fixed pairs",
+    "rotating": "Rotating partners"
+  },
+  "pairingHint": {
+    "fixed": "A pair plays together all event and is ranked together.",
+    "rotating": "New partners every round; each player is ranked alone."
+  },
+  "minutes_one": "{{count}} min",
+  "minutes_other": "{{count}} min",
+  "players_one": "{{count}} player",
+  "players_other": "{{count}} players",
+  "target": "Target {{points}}",
+  "create": {
+    "title": "New tournament",
+    "name": "Name",
+    "namePlaceholder": "Autumn Cup",
+    "date": "Date (YYYY-MM-DD)",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "format": "Format",
+    "pairing": "Partnership",
+    "roundMinutes": "Round length (minutes)",
+    "target": "Target score",
+    "targetHint": "Club target is {{points}}. Lower it to finish rounds on time.",
+    "entrants": "Entrants",
+    "entrantCount": "{{count}} selected",
+    "addMembers": "Club members",
+    "noMembers": "No other members in this club yet.",
+    "pairsTitle": "Pairs",
+    "pairHelp": "Tap two players to pair them. Tap a pair to split it.",
+    "unpaired": "Not paired yet",
+    "holding": "Now tap {{name}}'s partner",
+    "seedTitle": "Seeds",
+    "seedHelp": "Seed 1 is the strongest pair; top seeds get any byes.",
+    "seed": "Seed {{n}}",
+    "moveUp": "Move {{name}} up",
+    "moveDown": "Move {{name}} down",
+    "splitPair": "Split {{name}}",
+    "ghost": "Ghost seat {{n}}",
+    "addGhost": "Add ghost seat",
+    "removeGhost": "Remove {{name}}",
+    "ghostsNeeded_one": "Add {{count}} more player or ghost seat to fill a table.",
+    "ghostsNeeded_other": "Add {{count}} more players or ghost seats to fill a table.",
+    "submit": "Create tournament",
+    "fixProblems": "Fix the highlighted problems first.",
+    "selectMember": "Add {{name}}",
+    "deselectMember": "Remove {{name}}"
+  },
+  "error": {
+    "nameRequired": "Give the tournament a name.",
+    "nameTooLong": "Keep the name under 80 characters.",
+    "dateInvalid": "Use a real date like 2026-10-24.",
+    "minutesInvalid": "Round length must be 5 to 240 minutes.",
+    "targetInvalid": "The target must be a positive number.",
+    "tooFewEntrants": "Pick at least 4 players.",
+    "tooManyEntrants": "A tournament can have at most 64 players.",
+    "unpaired": "Every player needs a partner.",
+    "notMultipleOfFour": "Rotating partners needs a multiple of 4 players. Add a ghost seat to fill the table.",
+    "knockoutNeedsPairs": "Knockout is played in fixed pairs."
+  },
+  "warning": {
+    "roundRobinLarge": "Round-robin with more than 6 pairs makes a long evening. Consider Swiss.",
+    "swissSize": "Swiss works best with 8 to 40 players."
+  },
+  "detail": {
+    "notFound": "This tournament doesn't exist or you can't see it.",
+    "error": "Couldn't load the tournament.",
+    "tabs": {
+      "tables": "Tables",
+      "standings": "Standings",
+      "log": "Log"
+    },
+    "organizer": "Organizer: {{name}}",
+    "roundOf": "Round {{n}}",
+    "clockLabel": "Round {{n}} clock",
+    "timeLeft": "left",
+    "timesUp": "Time's up",
+    "timesUpHint": "Tables finish the deal in progress, then the match is scored as it stands.",
+    "myTable": "Round {{round}}, Table {{table}}: you and {{partner}} vs {{opponents}}",
+    "myBye": "Round {{round}}: you have a bye this round (counts as a win).",
+    "openMyTable": "Open my table",
+    "noRounds": "No rounds yet",
+    "noRoundsBody": "Tables appear here when the organizer starts a round.",
+    "draftBody": "Entries are set. The organizer starts the tournament when everyone is here.",
+    "table": "Table {{n}}",
+    "byes": "Bye: {{names}}",
+    "previousRounds": "Previous rounds",
+    "showRound": "Show round {{n}}",
+    "hideRound": "Hide round {{n}}",
+    "edited": "Edited: {{reason}}",
+    "noResult": "No result — organizer can enter one",
+    "result": {
+      "a": "Team A won",
+      "b": "Team B won",
+      "draw": "Draw"
+    },
+    "gameStatus": {
+      "draft": "Setting up",
+      "inviting": "Waiting for players",
+      "live": "Playing",
+      "finished": "Finished",
+      "abandoned": "Abandoned",
+      "expired": "Expired"
+    },
+    "a11yMatch": "Table {{table}}: {{a}} {{scoreA}}, {{b}} {{scoreB}}, {{status}}",
+    "champion": "Champion: {{name}}",
+    "allRoundsPlayed": "All rounds have been played."
+  },
+  "standings": {
+    "rank": "#",
+    "name": "Name",
+    "played": "P",
+    "wdl": "W-D-L",
+    "points": "MP",
+    "diff": "Diff",
+    "for": "Pts",
+    "empty": "Standings appear once entrants are set.",
+    "footnote": "Ranked by match points (win 2, draw 1, loss 0), then point differential capped at ±1000 per match, then head-to-head, then total points scored. A bye counts as a win. Ghost games never count.",
+    "a11yRow": "Rank {{rank}}, {{name}}, {{points}} match points, differential {{diff}}"
+  },
+  "log": {
+    "empty": "Nothing logged yet.",
+    "by": "{{actor}} · {{time}}",
+    "created": "Tournament created",
+    "entries_set_one": "{{count}} entrant set",
+    "entries_set_other": "{{count}} entrants set",
+    "started": "Tournament started",
+    "round_started_one": "Round {{round}} started with {{count}} table",
+    "round_started_other": "Round {{round}} started with {{count}} tables",
+    "substituted": "{{to}} replaced {{from}}",
+    "result_edited": "Result edited: round {{round}}, table {{table}}",
+    "result_edited_unknown": "Result edited",
+    "resultChange": "{{from}} → {{to}}",
+    "reason": "Reason: {{reason}}",
+    "finished": "Tournament finished",
+    "cancelled": "Tournament cancelled",
+    "other": "{{type}}",
+    "noResultShort": "no result"
+  },
+  "organizer": {
+    "title": "Organizer",
+    "start": "Start tournament",
+    "startHint": "Locks the entrant list. You can then draw round 1.",
+    "startRound": "Start round {{n}}",
+    "roundLive": "Round {{n}} is being played. Start the next one when every table has finished.",
+    "substitute": "Substitute a player",
+    "finish": "Finish or cancel",
+    "invalid": "These entrants can't form a round in this format.",
+    "export": "Export",
+    "exportStandings": "Standings CSV",
+    "exportResults": "Results CSV",
+    "exportFailed": "Couldn't share the file.",
+    "editResult": "Edit result",
+    "enterResult": "Enter result"
+  },
+  "draw": {
+    "title": "Round {{n}} draw",
+    "subtitle": "Check the tables, then start the round. Everyone gets a push with their table.",
+    "reshuffle": "Reshuffle",
+    "start": "Start round {{n}}",
+    "clockNote_one": "The clock starts now: {{count}} minute.",
+    "clockNote_other": "The clock starts now: {{count}} minutes."
+  },
+  "substitute": {
+    "title": "Substitute a player",
+    "pickEntry": "Who is leaving?",
+    "pickMember": "Who takes the seat?",
+    "noFreeMembers": "Every club member is already entered.",
+    "consequence": "{{to}} takes {{from}}'s place for the rest of the event, including any table still waiting for players. Results already played stay with the entry.",
+    "confirm": "Substitute",
+    "change": "Change"
+  },
+  "edit": {
+    "title": "Edit result",
+    "subtitle": "Round {{round}}, Table {{table}}",
+    "result": "Result",
+    "draw": "Draw",
+    "pointsA": "Team A points",
+    "pointsB": "Team B points",
+    "reason": "Reason (required)",
+    "reasonPlaceholder": "Phone died, scored on paper",
+    "consequence": "Standings update for everyone and the change is logged with your reason.",
+    "save": "Save result",
+    "pointsInvalid": "Enter whole numbers for both teams."
+  },
+  "close": {
+    "title": "Finish or cancel",
+    "finish": "Finish tournament",
+    "finishBody": "Final standings are frozen. No more rounds can be started.",
+    "finishBlocked": "Finish the live round first, or cancel the tournament.",
+    "cancel": "Cancel tournament",
+    "cancelBody": "Stops the event for everyone. Games already played stay in history. This can't be undone."
+  },
+  "start": {
+    "title": "Start tournament",
+    "body_one": "{{count}} entrant is locked in. Next you draw round 1.",
+    "body_other": "{{count}} entrants are locked in. Next you draw round 1."
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "title": "السجل",
+  "subtitle": "المباريات المنتهية في {{club}}",
+  "filters": {
+    "label": "عوامل التصفية",
+    "mine": "مبارياتي",
+    "player": "أي لاعب",
+    "playerValue": "مع {{name}}",
+    "playerTitle": "عرض المباريات مع",
+    "anyPlayer": "أي لاعب",
+    "rangeTitle": "الفترة الزمنية",
+    "range": {
+      "all": "كل الأوقات",
+      "7d": "آخر 7 أيام",
+      "30d": "آخر 30 يومًا",
+      "season": "هذا الموسم"
+    },
+    "verified": "الموثّقة فقط",
+    "tournament": "مباريات البطولات فقط",
+    "clear": "مسح عوامل التصفية"
+  },
+  "badge": {
+    "verified": "موثّقة",
+    "ghost": "شبحية · غير موثّقة",
+    "partly": "موثّقة جزئيًا",
+    "abandoned": "متروكة",
+    "tournament": "بطولة"
+  },
+  "card": {
+    "rounds_zero": "لا جولات",
+    "rounds_one": "جولة واحدة",
+    "rounds_two": "جولتان",
+    "rounds_few": "{{n}} جولات",
+    "rounds_many": "{{n}} جولة",
+    "rounds_other": "{{n}} جولة",
+    "won": "فاز {{team}}",
+    "noWinner": "لا فائز",
+    "a11y": "{{date}}. {{teamA}}: {{scoreA}}. {{teamB}}: {{scoreB}}. {{result}}. {{badge}}"
+  },
+  "empty": {
+    "title": "لا توجد مباريات بعد",
+    "body": "ستظهر هنا المباريات المنتهية في هذا النادي.",
+    "filteredTitle": "لا توجد مباريات مطابقة لعوامل التصفية",
+    "filteredBody": "جرّب فترة زمنية أوسع أو امسح عوامل التصفية."
+  },
+  "loadingMore": "جارٍ تحميل المزيد من المباريات…",
+  "end": "هذه كل المباريات",
+  "detail": {
+    "title": "المباراة",
+    "back": "رجوع",
+    "playedOn": "لُعبت في {{date}}",
+    "winner": "فاز {{team}}",
+    "noWinner": "لا فائز",
+    "notes": {
+      "ghost": "مباراة شبحية: لا تُحتسب في الإحصاءات حتى يؤكدها جميع اللاعبين.",
+      "partly": "أكّد بعض اللاعبين النتيجة. ستُحتسب في الإحصاءات بعد أن يؤكدها الجميع.",
+      "abandoned": "تُركت هذه المباراة ولا تُحتسب في الإحصاءات.",
+      "expired": "انتهت صلاحية الدعوة قبل أن تبدأ المباراة.",
+      "inProgress": "لم تنتهِ هذه المباراة بعد."
+    },
+    "players": "اللاعبون",
+    "seat": {
+      "verified": "موثّق",
+      "unverified": "لم يُوثَّق بعد",
+      "guest": "ضيف · لا يمكنه التوثيق",
+      "you": "أنت",
+      "a11y": "{{name}}، {{team}}، {{status}}"
+    },
+    "verify": {
+      "title": "تأكيد هذه النتيجة",
+      "body": "لعبتَ هذه المباراة الشبحية. أكّد النتيجة النهائية برمزك السري لتُحتسب في الإحصاءات.",
+      "button": "تأكيد هذه النتيجة",
+      "pinSubtitle": "يؤكد رمزك السري أنك لعبت هذه المباراة وأن النتيجة صحيحة.",
+      "done": "شكرًا. تم توثيق مقعدك."
+    },
+    "rounds": "الجولات",
+    "noRounds": "لم تُلعب أي جولة.",
+    "undone": "أُلغيت",
+    "roundStatus": {
+      "open": "قيد الإدخال",
+      "pending": "بانتظار التأكيد"
+    },
+    "cut": "قطع مضبوط {{points}} · {{name}}",
+    "enteredBy": "أدخلها {{name}}",
+    "confirmedBy": "أكّدها {{name}}",
+    "roundA11y": "الجولة {{n}}: الفريق A {{a}}، الفريق B {{b}}",
+    "audit": "سجل الأحداث",
+    "auditEmpty": "لم تُسجَّل أي أحداث لهذه المباراة."
+  },
+  "events": {
+    "someone": "أحد اللاعبين",
+    "created": "أنشأ {{actor}} المباراة",
+    "createdGhost": "بدأ {{actor}} مباراة شبحية",
+    "createdTournament": "أُنشئت مباراة البطولة",
+    "live": "أكّد الجميع. المباراة جارية الآن",
+    "inviteAccepted": "قبل {{actor}} الدعوة",
+    "inviteDeclined": "رفض {{actor}} الدعوة",
+    "seatSwapped": "أخذ {{to}} مقعد {{from}}",
+    "switchedToGhost": "حوّل {{actor}} المباراة إلى الوضع الشبحي",
+    "cancelled": "ألغى {{actor}} المباراة",
+    "expired": "انتهت صلاحية الدعوة",
+    "roundDisputed": "اعترض {{actor}} على الجولة {{round}} (A {{a}} – B {{b}})",
+    "resultProposed": "اقتُرحت النتيجة: فوز {{team}}، A {{a}} – B {{b}}",
+    "resultConfirmed": "أكّد {{actor}} النتيجة",
+    "finished": "انتهت المباراة: فاز {{team}}",
+    "undoRequested": "طلب {{actor}} التراجع عن الجولة الأخيرة",
+    "undo": "تراجع {{actor}} عن الجولة {{round}} (A {{a}} – B {{b}})",
+    "undoRejected": "رفض {{actor}} طلب التراجع",
+    "scorekeeperReassigned": "أصبح {{name}} مسجّل النقاط",
+    "abandonApproved": "وافق {{actor}} على ترك المباراة",
+    "abandoned": "تُركت المباراة",
+    "seatVerified": "أكّد {{actor}} النتيجة برمزه السري",
+    "unknown": "{{type}}"
+  }
+}

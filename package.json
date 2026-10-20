@@ -1,0 +1,17 @@
+{
+  "name": "buraco",
+  "private": true,
+  "packageManager": "pnpm@10.24.0",
+  "scripts": {
+    "test": "pnpm -r --if-present test",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "mobile": "pnpm --filter mobile start",
+    "db:types": "pnpm --filter @buraco/db-tests gen:types",
+    "format": "prettier --write \"apps/mobile/src/**/*.{ts,tsx}\" \"packages/*/src/**/*.ts\" \"supabase/functions/**/*.ts\"",
+    "format:check": "prettier --check \"apps/mobile/src/**/*.{ts,tsx}\" \"packages/*/src/**/*.ts\" \"supabase/functions/**/*.ts\"",
+    "db:types:linked": "supabase gen types typescript --linked --schema public > packages/shared/src/database.types.ts"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.10"
+  }
+}

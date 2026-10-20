@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Generated DB types are up to date
+        run: |
+          pnpm db:types
+          git diff --exit-code packages/shared/src/database.types.ts
+      - run: pnpm format:check
+      - run: pnpm typecheck
+      - run: pnpm --filter mobile exec expo lint
+      # shared scoring + tournament engine, every migration/RPC in PGlite, app unit tests
+      - run: pnpm test
+
+  edge-functions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type-check and lint Edge Functions
+        env:
+          DENO_NO_PACKAGE_JSON: '1'
+        run: |
+          deno check --no-config supabase/functions/push-dispatch/index.ts supabase/functions/game-cron/index.ts supabase/functions/delete-account/index.ts supabase/functions/manage-accounts/index.ts
+          deno lint --no-config supabase/functions

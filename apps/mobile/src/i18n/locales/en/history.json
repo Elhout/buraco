@@ -1,0 +1,111 @@
+{
+  "title": "History",
+  "subtitle": "Finished games in {{club}}",
+  "filters": {
+    "label": "Filters",
+    "mine": "My games",
+    "player": "Any player",
+    "playerValue": "With {{name}}",
+    "playerTitle": "Show games with",
+    "anyPlayer": "Any player",
+    "rangeTitle": "Date range",
+    "range": {
+      "all": "All time",
+      "7d": "Last 7 days",
+      "30d": "Last 30 days",
+      "season": "This season"
+    },
+    "verified": "Verified only",
+    "tournament": "Tournament only",
+    "clear": "Clear filters"
+  },
+  "badge": {
+    "verified": "Verified",
+    "ghost": "Ghost · unverified",
+    "partly": "Partly verified",
+    "abandoned": "Abandoned",
+    "tournament": "Tournament"
+  },
+  "card": {
+    "rounds_one": "{{n}} round",
+    "rounds_other": "{{n}} rounds",
+    "won": "{{team}} won",
+    "noWinner": "No winner",
+    "a11y": "{{date}}. {{teamA}}: {{scoreA}}. {{teamB}}: {{scoreB}}. {{result}}. {{badge}}"
+  },
+  "empty": {
+    "title": "No games yet",
+    "body": "Finished games in this club will show up here.",
+    "filteredTitle": "No games match these filters",
+    "filteredBody": "Try a wider date range or clear the filters."
+  },
+  "loadingMore": "Loading more games…",
+  "end": "That's every game",
+  "detail": {
+    "title": "Game",
+    "back": "Back",
+    "playedOn": "Played {{date}}",
+    "winner": "{{team}} won",
+    "noWinner": "No winner",
+    "notes": {
+      "ghost": "Ghost game: it doesn't count in stats until every player confirms it.",
+      "partly": "Some players have confirmed. It counts in stats once everyone has.",
+      "abandoned": "This game was abandoned and doesn't count in stats.",
+      "expired": "The invite expired before the game started.",
+      "inProgress": "This game hasn't finished yet."
+    },
+    "players": "Players",
+    "seat": {
+      "verified": "Verified",
+      "unverified": "Not verified yet",
+      "guest": "Guest · can't verify",
+      "you": "You",
+      "a11y": "{{name}}, {{team}}, {{status}}"
+    },
+    "verify": {
+      "title": "Confirm this result",
+      "body": "You played this ghost game. Confirm the final score with your PIN so it counts in stats.",
+      "button": "Confirm this result",
+      "pinSubtitle": "Your PIN confirms you played this game and the score is right.",
+      "done": "Thanks. Your seat is verified."
+    },
+    "rounds": "Rounds",
+    "noRounds": "No rounds were played.",
+    "undone": "Undone",
+    "roundStatus": {
+      "open": "Being entered",
+      "pending": "Awaiting confirmation"
+    },
+    "cut": "{{points}} exact cut · {{name}}",
+    "enteredBy": "Entered by {{name}}",
+    "confirmedBy": "Confirmed by {{name}}",
+    "roundA11y": "Round {{n}}: Team A {{a}}, Team B {{b}}",
+    "audit": "Audit log",
+    "auditEmpty": "No events were recorded for this game."
+  },
+  "events": {
+    "someone": "Someone",
+    "created": "{{actor}} created the game",
+    "createdGhost": "{{actor}} started a ghost game",
+    "createdTournament": "Tournament match created",
+    "live": "Everyone confirmed. The game is live",
+    "inviteAccepted": "{{actor}} accepted the invite",
+    "inviteDeclined": "{{actor}} declined the invite",
+    "seatSwapped": "{{to}} took {{from}}'s seat",
+    "switchedToGhost": "{{actor}} switched the game to ghost mode",
+    "cancelled": "{{actor}} cancelled the game",
+    "expired": "The invite expired",
+    "roundDisputed": "{{actor}} disputed round {{round}} (A {{a}} – B {{b}})",
+    "resultProposed": "Result proposed: {{team}} wins, A {{a}} – B {{b}}",
+    "resultConfirmed": "{{actor}} confirmed the result",
+    "finished": "Game over: {{team}} won",
+    "undoRequested": "{{actor}} asked to undo the last round",
+    "undo": "{{actor}} undid round {{round}} (A {{a}} – B {{b}})",
+    "undoRejected": "{{actor}} rejected the undo",
+    "scorekeeperReassigned": "{{name}} is now scorekeeper",
+    "abandonApproved": "{{actor}} agreed to abandon the game",
+    "abandoned": "The game was abandoned",
+    "seatVerified": "{{actor}} confirmed the result with their PIN",
+    "unknown": "{{type}}"
+  }
+}

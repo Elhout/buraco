@@ -1,0 +1,53 @@
+import type { ConfigContext, ExpoConfig } from 'expo/config'
+
+// Native/build-time settings come from the environment (see .env.example). Values here are
+// public identifiers, never secrets.
+const env = process.env
+
+const FELT = '#0B1410'
+
+export default ({ config }: ConfigContext): ExpoConfig => ({
+  ...config,
+  name: 'Buraco',
+  slug: 'buraco',
+  version: '1.0.0',
+  orientation: 'portrait',
+  icon: './assets/images/icon.png',
+  scheme: 'buraco',
+  userInterfaceStyle: 'dark',
+  backgroundColor: FELT,
+  ios: {
+    icon: './assets/expo.icon',
+    bundleIdentifier: env.APP_BUNDLE_ID ?? 'com.buraco.score',
+    supportsTablet: false,
+    infoPlist: { ITSAppUsesNonExemptEncryption: false },
+  },
+  android: {
+    package: env.APP_BUNDLE_ID ?? 'com.buraco.score',
+    adaptiveIcon: {
+      backgroundColor: FELT,
+      foregroundImage: './assets/images/android-icon-foreground.png',
+      backgroundImage: './assets/images/android-icon-background.png',
+      monochromeImage: './assets/images/android-icon-monochrome.png',
+    },
+    predictiveBackGestureEnabled: false,
+  },
+  web: { output: 'single', favicon: './assets/images/favicon.png' },
+  plugins: [
+    'expo-router',
+    ['expo-splash-screen', { backgroundColor: FELT, image: './assets/images/splash-icon.png', imageWidth: 76 }],
+    'expo-sqlite',
+    ['expo-localization', { supportsRTL: true, supportedLocales: { ios: ['en', 'ar'], android: ['en', 'ar'] } }],
+    ['expo-notifications', { color: '#F2B33D', defaultChannel: 'default' }],
+    ['expo-local-authentication', { faceIDPermission: 'Allow $(PRODUCT_NAME) to use Face ID instead of typing your PIN.' }],
+    ['expo-camera', { cameraPermission: 'Allow $(PRODUCT_NAME) to scan a club invite QR code.', recordAudioAndroid: false }],
+    'expo-sharing',
+    ['@sentry/react-native/expo', { organization: env.SENTRY_ORG, project: env.SENTRY_PROJECT, url: 'https://sentry.io/' }],
+    'expo-font',
+    'expo-updates',
+  ],
+  updates: env.EAS_PROJECT_ID ? { url: `https://u.expo.dev/${env.EAS_PROJECT_ID}` } : undefined,
+  runtimeVersion: { policy: 'appVersion' },
+  extra: { eas: { projectId: env.EAS_PROJECT_ID } },
+  experiments: { typedRoutes: true, reactCompiler: true },
+})
