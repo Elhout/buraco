@@ -1,7 +1,9 @@
 // Service worker for the web build (iPhone home-screen app): push notifications, and an app-shell
 // cache so the app still opens with no signal at the table. Supabase calls are never cached.
 
-const CACHE = 'buraco-shell-v1'
+// Bump on any caching change: activate deletes every other cache. v2 drops HTML stored under
+// script URLs by v1 (a missing old file is answered with index.html by the SPA fallback).
+const CACHE = 'buraco-shell-v2'
 const SHELL = ['/', '/manifest.webmanifest', '/icon-192.png', '/apple-touch-icon.png']
 
 self.addEventListener('install', (event) => {
@@ -48,7 +50,9 @@ self.addEventListener('fetch', (event) => {
         (hit) =>
           hit ??
           fetch(request).then((response) => {
-            if (response.ok) {
+            // Only real assets: never keep the SPA's HTML fallback under a script or font URL.
+            const type = response.headers.get('content-type') || ''
+            if (response.ok && !type.includes('text/html')) {
               const copy = response.clone()
               caches.open(CACHE).then((cache) => cache.put(request, copy))
             }

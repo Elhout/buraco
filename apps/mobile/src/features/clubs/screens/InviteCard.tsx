@@ -38,7 +38,8 @@ export function InviteCard({ club, isOwner }: InviteCardProps) {
   return (
     <Card tone="raised" style={styles.card}>
       <View style={styles.qr} accessibilityRole="image" accessibilityLabel={t('clubSettings.qrLabel')}>
-        <QRCode value={link} size={188} color={color.onPrimary} backgroundColor={color.primary} quietZone={12} />
+        {/* Always dark on white: inverted QR codes fail on many scanners. */}
+        <QRCode value={link} size={188} color="#14161B" backgroundColor="#FFFFFF" quietZone={12} />
       </View>
       <View style={styles.codeBlock}>
         <Text variant="caption" tone={color.inkMuted} center>

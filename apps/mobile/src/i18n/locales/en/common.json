@@ -15,7 +15,8 @@
     "copied": "Copied",
     "edit": "Edit",
     "remove": "Remove",
-    "seeAll": "See all"
+    "seeAll": "See all",
+    "reload": "Reload"
   },
   "team": {
     "A": "Team A",
@@ -99,7 +100,9 @@
     "staleAction": "That was already handled on another phone. The screen is up to date now.",
     "notSeated": "You're not playing in this game.",
     "unknown": "Something went wrong. Please try again.",
-    "config": "The app isn't configured yet."
+    "config": "The app isn't configured yet.",
+    "screen": "Something went wrong on this screen.",
+    "updated": "The app was updated. Tap Reload to continue."
   },
   "tabs": {
     "club": "Club",

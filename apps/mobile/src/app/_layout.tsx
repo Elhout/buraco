@@ -17,6 +17,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { ConfigMissing } from '@/components/ConfigMissing'
 import { LoadFailed } from '@/components/LoadFailed'
+import { ScreenError } from '@/components/ScreenError'
 import { SessionProvider, useSession } from '@/features/auth/SessionProvider'
 import { ClubProvider, useClubs } from '@/features/clubs/ClubProvider'
 import { syncDirectionOnLaunch } from '@/i18n'
@@ -132,5 +133,8 @@ function RootNavigator() {
     </LocaleProvider>
   )
 }
+
+/** Any screen that throws shows a reload screen instead of a blank page (see ScreenError). */
+export const ErrorBoundary = ScreenError
 
 export default Sentry.wrap(RootLayout)
