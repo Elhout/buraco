@@ -109,8 +109,8 @@ describe('helpers', () => {
     expect(teamOf(g, 'B').map((s) => s.seat)).toEqual([2, 4])
   })
 
-  it('routes inviting games to the invite screen', () => {
-    expect(gameHref({ id: 'x', status: 'inviting' })).toBe('/game/x/invite')
+  it('opens every game on its own screen (there are no invites any more)', () => {
+    expect(gameHref({ id: 'x', status: 'inviting' })).toBe('/game/x')
     expect(gameHref({ id: 'x', status: 'live' })).toBe('/game/x')
   })
 

@@ -68,21 +68,12 @@ function CardTop({ game, spectators }: { game: LobbyGame; spectators: number }) 
       ) : (
         <Chip tone="inviting" label={t('playing.waiting')} />
       )}
-      {game.isGhost ? <Chip tone="ghost" icon="eye-off-outline" label={t('common:mode.ghost')} /> : null}
       <View style={styles.flex} />
       <Text variant="caption" tone={color.inkMuted}>
         {game.status === 'live'
           ? t('playing.round', { n: formatNumber(game.roundsPlayed + 1) })
           : t('playing.confirmed', { count: confirmed })}
       </Text>
-      {spectators > 0 ? (
-        <Row gap={space.xxs}>
-          <Ionicons name="eye-outline" size={14} color={color.inkMuted} />
-          <Text variant="caption" tone={color.inkMuted} accessibilityLabel={t('playing.watching', { count: spectators })}>
-            {formatNumber(spectators)}
-          </Text>
-        </Row>
-      ) : null}
     </Row>
   )
 }
@@ -95,7 +86,7 @@ export function GameCard({ game, watch }: GameCardProps) {
     teamOf(game, team)
       .map((s) => s.name)
       .join(` ${t('common:and')} `)
-  const accent = game.myInvite ? color.warning : game.isGhost ? color.ghost : game.status === 'live' ? color.success : color.lineStrong
+  const accent = game.status === 'live' ? color.success : color.lineStrong
   const label = t('playing.cardLabel', {
     teamA: names('A'),
     teamB: names('B'),
@@ -110,17 +101,13 @@ export function GameCard({ game, watch }: GameCardProps) {
       <TeamLine team="A" game={game} />
       <View style={styles.rule} />
       <TeamLine team="B" game={game} />
-      {game.myInvite || game.imSeated ? (
-        <View style={[styles.strip, game.myInvite ? styles.stripInvite : null]}>
-          <Ionicons
-            name={game.myInvite ? 'mail-unread-outline' : 'person-outline'}
-            size={18}
-            color={game.myInvite ? color.warning : color.ink}
-          />
-          <Text variant="label" tone={game.myInvite ? color.warning : color.ink} style={styles.flex}>
-            {game.myInvite ? t('playing.yourInvite') : t('playing.yourGame')}
+      {game.imSeated ? (
+        <View style={styles.strip}>
+          <Ionicons name="person-outline" size={18} color={color.ink} />
+          <Text variant="label" tone={color.ink} style={styles.flex}>
+            {t('playing.yourGame')}
           </Text>
-          <Chevron tone={game.myInvite ? color.warning : color.inkMuted} />
+          <Chevron tone={color.inkMuted} />
         </View>
       ) : null}
     </Card>

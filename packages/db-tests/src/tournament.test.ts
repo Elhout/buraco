@@ -354,7 +354,7 @@ describe('organizer operations', () => {
     })
   })
 
-  it('edits a result only with a reason, never a knockout draw', async () => {
+  it('edits a result with or without a reason, never a knockout draw', async () => {
     await inTx(db, async (tx) => {
       const tid = await createTournament(tx, 'rotating', 'knockout')
       await tx.query(`select public.set_entries($1, $2::jsonb)`, [tid, JSON.stringify(members.slice(0, 4).map((u) => ({ user_id: u })))])
@@ -367,7 +367,13 @@ describe('organizer operations', () => {
       ])
       const [m] = await matchesOf(tx, tid)
       await actAs(tx, organizer())
-      await rejects(tx, () => tx.query(`select public.edit_match_result($1, 'a', 500, 0, '  ')`, [m!.match_id]), /reason is required/)
+      // A reason is optional (one private group); a blank one is stored as none.
+      await tx.query(`select public.edit_match_result($1, 'a', 500, 0, '  ')`, [m!.match_id])
+      await tx.exec('reset role')
+      expect((await tx.query(`select edited_reason from public.tournament_matches where id = $1`, [m!.match_id])).rows).toEqual([
+        { edited_reason: null },
+      ])
+      await actAs(tx, organizer())
       await rejects(tx, () => tx.query(`select public.edit_match_result($1, 'draw', 0, 0, 'clock')`, [m!.match_id]), /cannot be drawn/)
       await tx.query(`select public.edit_match_result($1, 'b', 100, 900, 'phone died, scored on paper')`, [m!.match_id])
       const [after] = await matchesOf(tx, tid)

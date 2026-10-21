@@ -54,7 +54,7 @@ export function Sheet({ visible, onClose, title, subtitle, children, locked }: S
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={close} statusBarTranslucent>
-      <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <Pressable style={styles.scrim} accessibilityLabel={t('actions.close')} onPress={close} />
         <Animated.View style={[styles.sheet, { paddingBottom: insets.bottom + space.lg, transform: [{ translateY: dragY }] }]}>
           <View {...(locked ? {} : pan.panHandlers)} style={styles.top}>

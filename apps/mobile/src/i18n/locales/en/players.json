@@ -5,8 +5,8 @@
   "add": "New player",
   "you": "{{name}} (you)",
   "noGames": "No games yet",
-  "record_one": "{{games}} game · {{wins}} wins",
-  "record_other": "{{games}} games · {{wins}} wins",
+  "record_one": "{{games}} game · {{wins}} won",
+  "record_other": "{{games}} games · {{wins}} won",
   "back": "Players",
   "manage": "Manage player",
   "username": "Username: {{username}}"

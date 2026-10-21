@@ -63,11 +63,11 @@
     "moveUp": "Move {{name}} up",
     "moveDown": "Move {{name}} down",
     "splitPair": "Split {{name}}",
-    "ghost": "Ghost seat {{n}}",
-    "addGhost": "Add ghost seat",
+    "ghost": "Empty seat {{n}}",
+    "addGhost": "Add empty seat",
     "removeGhost": "Remove {{name}}",
-    "ghostsNeeded_one": "Add {{count}} more player or ghost seat to fill a table.",
-    "ghostsNeeded_other": "Add {{count}} more players or ghost seats to fill a table.",
+    "ghostsNeeded_one": "Add {{count}} more player or empty seat to fill a table.",
+    "ghostsNeeded_other": "Add {{count}} more players or empty seats to fill a table.",
     "submit": "Create tournament",
     "fixProblems": "Fix the highlighted problems first.",
     "selectMember": "Add {{name}}",
@@ -82,7 +82,7 @@
     "tooFewEntrants": "Pick at least 4 players.",
     "tooManyEntrants": "A tournament can have at most 64 players.",
     "unpaired": "Every player needs a partner.",
-    "notMultipleOfFour": "Rotating partners needs a multiple of 4 players. Add a ghost seat to fill the table.",
+    "notMultipleOfFour": "Rotating partners needs a multiple of 4 players. Add an empty seat to fill the table.",
     "knockoutNeedsPairs": "Knockout is played in fixed pairs."
   },
   "warning": {
@@ -142,7 +142,7 @@
     "diff": "Diff",
     "for": "Pts",
     "empty": "Standings appear once entrants are set.",
-    "footnote": "Ranked by match points (win 2, draw 1, loss 0), then point differential capped at ±1000 per match, then head-to-head, then total points scored. A bye counts as a win. Ghost games never count.",
+    "footnote": "Ranked by match points (win 2, draw 1, loss 0), then point differential capped at ±1000 per match, then head-to-head, then total points scored. A bye counts as a win.",
     "a11yRow": "Rank {{rank}}, {{name}}, {{points}} match points, differential {{diff}}"
   },
   "log": {

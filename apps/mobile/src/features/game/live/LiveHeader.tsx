@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import { I18nManager, Pressable, StyleSheet, View } from 'react-native'
 import { Text } from '@/components/ui'
 import { HIT, color, radius, space } from '@/theme/tokens'
-import { WatchersChip } from './WatchersSheet'
 
 interface LiveHeaderProps {
   readonly title: string
@@ -18,8 +17,8 @@ export function goBackOrLobby(): void {
   else router.replace('/club')
 }
 
-/** Back, title, ghost badge and the spectator count. */
-export function LiveHeader({ title, isGhost, watchers }: LiveHeaderProps) {
+/** Back and title. (Every game is start-now and everyone sits at the same table: no mode badge or watcher count.) */
+export function LiveHeader({ title }: LiveHeaderProps) {
   const { t } = useTranslation(['game', 'common'])
   return (
     <View style={styles.header}>
@@ -33,15 +32,6 @@ export function LiveHeader({ title, isGhost, watchers }: LiveHeaderProps) {
       <Text variant="title" accessibilityRole="header" style={styles.title} numberOfLines={1}>
         {title}
       </Text>
-      {isGhost ? (
-        <View style={styles.ghost}>
-          <Ionicons name="eye-off-outline" size={14} color={color.ghost} />
-          <Text variant="caption" tone={color.ghost}>
-            {t('live.ghost')}
-          </Text>
-        </View>
-      ) : null}
-      {watchers ? <WatchersChip count={watchers.count} onPress={watchers.onPress} /> : null}
     </View>
   )
 }

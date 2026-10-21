@@ -76,7 +76,14 @@ const scoreFit = (text: string): { fontSize: number; lineHeight: number } | null
 }
 
 const styles = StyleSheet.create({
-  cut: { alignSelf: 'center', paddingHorizontal: space.md, paddingVertical: space.xs, borderRadius: radius.pill, borderWidth: 1.5 },
+  cut: {
+    alignSelf: 'center',
+    minHeight: 36,
+    justifyContent: 'center',
+    paddingHorizontal: space.lg,
+    borderRadius: radius.pill,
+    borderWidth: 1.5,
+  },
   card: {
     flex: 1,
     gap: space.sm,

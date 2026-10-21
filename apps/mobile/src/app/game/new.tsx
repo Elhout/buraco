@@ -14,7 +14,6 @@ import { TeamPanels } from '@/features/game/new/TeamPanels'
 import { type NewGameState, useNewGame } from '@/features/game/new/useNewGame'
 import { useLobby } from '@/features/lobby/api'
 import { busyPlayerIds } from '@/features/lobby/model'
-import { useOnlineMembers } from '@/features/lobby/presence'
 import { HIT, color, radius, space } from '@/theme/tokens'
 
 function CloseButton() {
@@ -74,7 +73,8 @@ export default function NewGameScreen() {
   const [pickSeat, setPickSeat] = useState<SeatNo | null>(null)
   // A seat waiting for the player being created in New player (seated as soon as it exists).
   const [seatForNew, setSeatForNew] = useState<SeatNo | null>(null)
-  const online = useOnlineMembers(club.id)
+  // No online dots: the list is just alphabetical (me first).
+  const online: ReadonlySet<string> = new Set<string>()
   // Who is at a table right now (games in progress, kept live by Realtime).
   const busy = busyPlayerIds(useLobby(club.id, userId).games)
   const state = useNewGame(club.id, { kind: 'member', userId, name: profile?.display_name ?? '' })

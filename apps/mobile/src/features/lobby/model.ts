@@ -115,8 +115,8 @@ export function buildLobby(
 export const teamOf = (game: LobbyGame, team: Team): readonly LobbySeat[] => game.seats.filter((s) => s.team === team)
 
 /** Where tapping a lobby card goes: the invite screen while players are still confirming. */
-export const gameHref = (game: Pick<LobbyGame, 'id' | 'status'>): `/game/${string}` =>
-  game.status === 'inviting' ? `/game/${game.id}/invite` : `/game/${game.id}`
+/** Always the game itself: there are no invites any more (an old inviting game shows its state there). */
+export const gameHref = (game: Pick<LobbyGame, 'id' | 'status'>): `/game/${string}` => `/game/${game.id}`
 
 export interface PresenceEntry {
   readonly key: string

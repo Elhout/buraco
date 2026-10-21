@@ -252,12 +252,13 @@ describe('rounds and scoring', () => {
     })
   })
 
-  it('excludes a pending round from totals and blocks a second pending round', async () => {
+  it('counts a start-now round as soon as it is entered, so the next one can follow', async () => {
     await asUser(db, owner, async (tx) => {
       const gameId = await createGhost(tx)
       await submit(tx, gameId, 500, 100)
-      expect(await totalsOf(tx, gameId)).toMatchObject({ team_a_total: 0, team_b_total: 0, rounds_played: 0 })
-      await expect(submit(tx, gameId, 10, 10)).rejects.toThrow(/already waiting/)
+      expect(await totalsOf(tx, gameId)).toMatchObject({ team_a_total: 500, team_b_total: 100, rounds_played: 1 })
+      await submit(tx, gameId, 10, 10)
+      expect(await totalsOf(tx, gameId)).toMatchObject({ team_a_total: 510, team_b_total: 110, rounds_played: 2 })
     })
   })
 
@@ -319,19 +320,21 @@ describe('rounds and scoring', () => {
     await expect(asUser(db, leaver, (tx) => submit(tx, gameId, 100, 0))).rejects.toThrow(/not a member/)
   })
 
-  it('refuses to confirm the same round twice', async () => {
+  it('answers a repeated confirm (older apps) without counting the round twice', async () => {
     await asUser(db, owner, async (tx) => {
       const gameId = await createGhost(tx)
       const roundId = await submit(tx, gameId, 100, 100)
       await confirm(tx, roundId)
-      await expect(confirm(tx, roundId)).rejects.toThrow(/not waiting for confirmation/)
+      await confirm(tx, roundId)
+      expect(await totalsOf(tx, gameId)).toMatchObject({ team_a_total: 100, team_b_total: 100, rounds_played: 1 })
     })
   })
 
-  it('only lets the host score a ghost game', async () => {
+  it('lets anyone at the table score, but nobody from outside the group', async () => {
     await freePlayers()
     const gameId = await asUserCommit(db, owner, (tx) => createGhost(tx))
-    await expect(asUser(db, p2, (tx) => submit(tx, gameId, 100, 0))).rejects.toThrow(/only the host/)
+    await expect(asUser(db, p2, (tx) => submit(tx, gameId, 100, 0))).resolves.toMatch(/^[0-9a-f-]{36}$/)
+    await expect(asUser(db, outsider, (tx) => submit(tx, gameId, 100, 0))).rejects.toThrow(/not a member/)
   })
 
   it('rejects out-of-range round scores', async () => {
@@ -343,14 +346,14 @@ describe('rounds and scoring', () => {
 })
 
 describe('game end rules', () => {
-  it('proposes the result when a team reaches the target, and the host confirms it', async () => {
+  it('finishes the game by itself when a team reaches the target (a later confirm is a no-op)', async () => {
     await asUser(db, owner, async (tx) => {
       const gameId = await createGhost(tx)
       expect(await playRound(tx, gameId, 1900, 500)).toMatchObject({ status: 'live', proposed_winner: null })
-      expect(await playRound(tx, gameId, 100, 100)).toMatchObject({ status: 'live', proposed_winner: 'A' })
-      const game = await confirmResult(tx, gameId)
-      expect(game).toMatchObject({ status: 'finished', winner_team: 'A' })
-      expect(game.finished_at).not.toBeNull()
+      const won = await playRound(tx, gameId, 100, 100)
+      expect(won).toMatchObject({ status: 'finished', winner_team: 'A' })
+      expect(won.finished_at).not.toBeNull()
+      expect(await confirmResult(tx, gameId)).toMatchObject({ status: 'finished', winner_team: 'A' })
     })
   })
 
@@ -384,16 +387,10 @@ describe('game end rules', () => {
     })
   })
 
-  it('blocks new rounds while the result awaits confirmation, and after the game ends', async () => {
+  it('blocks new rounds once the game has ended', async () => {
     await asUser(db, owner, async (tx) => {
       const gameId = await createGhost(tx)
       await playRound(tx, gameId, 2000, 0)
-      await expect(submit(tx, gameId, 10, 10)).rejects.toThrow(/awaiting confirmation/)
-    })
-    await asUser(db, owner, async (tx) => {
-      const gameId = await createGhost(tx)
-      await playRound(tx, gameId, 2000, 0)
-      await confirmResult(tx, gameId)
       await expect(submit(tx, gameId, 10, 10)).rejects.toThrow(/not live/)
     })
   })

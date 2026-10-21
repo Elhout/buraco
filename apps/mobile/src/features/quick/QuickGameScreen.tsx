@@ -125,7 +125,9 @@ export function QuickGameScreen() {
                 ? undefined
                 : () => {
                     const result = addCutBonus(game, team)
-                    if (result.ok) setGame(result.game)
+                    if (!result.ok) return
+                    void Haptics.selectionAsync()
+                    setGame(result.game)
                   }
             }
           />
@@ -133,7 +135,16 @@ export function QuickGameScreen() {
       </View>
       <SectionTitle
         action={
-          game.rounds.length > 0 ? <Button label={t('undo')} variant="quiet" onPress={() => setGame(undoLastRound(game))} /> : undefined
+          game.rounds.length > 0 ? (
+            <Button
+              label={t('undo')}
+              variant="quiet"
+              onPress={() => {
+                void Haptics.selectionAsync()
+                setGame(undoLastRound(game))
+              }}
+            />
+          ) : undefined
         }>
         {t('rounds')}
       </SectionTitle>

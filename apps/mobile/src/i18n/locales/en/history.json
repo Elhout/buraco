@@ -74,13 +74,13 @@
     "undone": "Undone",
     "roundStatus": {
       "open": "Being entered",
-      "pending": "Awaiting confirmation"
+      "pending": "Saving"
     },
     "cut": "{{points}} exact cut · {{name}}",
     "enteredBy": "Entered by {{name}}",
     "confirmedBy": "Confirmed by {{name}}",
     "roundA11y": "Round {{n}}: Team A {{a}}, Team B {{b}}",
-    "audit": "Audit log",
+    "audit": "What happened",
     "auditEmpty": "No events were recorded for this game.",
     "editRound": "Edit round {{n}}",
     "editTitle": "Edit round {{n}}",
@@ -98,7 +98,7 @@
     "created": "{{actor}} created the game",
     "createdGhost": "{{actor}} started a game without invites",
     "createdTournament": "Tournament match created",
-    "live": "Everyone confirmed. The game is live",
+    "live": "The game started",
     "inviteAccepted": "{{actor}} accepted the invite",
     "inviteDeclined": "{{actor}} declined the invite",
     "seatSwapped": "{{to}} took {{from}}'s seat",
@@ -107,15 +107,15 @@
     "expired": "The invite expired",
     "roundDisputed": "{{actor}} disputed round {{round}} (A {{a}} – B {{b}})",
     "resultProposed": "Result proposed: {{team}} wins, A {{a}} – B {{b}}",
-    "resultConfirmed": "{{actor}} confirmed the result",
+    "resultConfirmed": "{{actor}} ended the game",
     "finished": "Game over: {{team}} won",
     "undoRequested": "{{actor}} asked to undo the last round",
     "undo": "{{actor}} undid round {{round}} (A {{a}} – B {{b}})",
     "undoRejected": "{{actor}} rejected the undo",
-    "scorekeeperReassigned": "{{name}} is now scorekeeper",
+    "scorekeeperReassigned": "{{name}} now keeps score",
     "abandonApproved": "{{actor}} agreed to abandon the game",
     "abandoned": "The game was abandoned",
-    "seatVerified": "{{actor}} confirmed the result with their PIN",
+    "seatVerified": "{{actor}} confirmed the result",
     "unknown": "{{type}}",
     "roundEdited": "{{actor}} corrected round {{round}} to {{a}} – {{b}}"
   }

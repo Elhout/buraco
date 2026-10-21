@@ -26,9 +26,9 @@ function noteOf(view: GameView): { key: NoteKey; tone: BannerTone } | null {
   if (status === 'abandoned') return { key: 'abandoned', tone: 'danger' }
   if (status === 'expired') return { key: 'expired', tone: 'warning' }
   if (status !== 'finished') return { key: 'inProgress', tone: 'info' }
-  if (!view.isGhost || verified) return null
-  const partly = view.seats.some((s) => !s.isGuest && s.verified)
-  return { key: partly ? 'partly' : 'ghost', tone: 'ghost' }
+  // Every finished game counts (no PIN verification any more).
+  void verified
+  return null
 }
 
 /** Back control at the start edge, then the screen title. */

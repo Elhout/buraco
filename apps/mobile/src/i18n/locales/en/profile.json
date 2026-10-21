@@ -47,7 +47,7 @@
   "devices": {
     "section": "My devices",
     "empty": "No devices registered",
-    "emptyBody": "Allow notifications on this phone to receive invites and confirmations.",
+    "emptyBody": "Allow notifications on this phone to hear when games start and finish.",
     "platform_ios": "iPhone",
     "platform_android": "Android phone",
     "platform_web": "Browser",
@@ -157,7 +157,7 @@
     "section": "Account",
     "signOut": "Sign out",
     "signOutTitle": "Sign out of this phone?",
-    "signOutBody": "This phone stops getting invites and confirmations until you sign in again.",
+    "signOutBody": "This phone stops getting game notifications until you sign in again.",
     "delete": "Delete account",
     "deleteHint": "Permanently remove your account",
     "changePassword": "Change password",
@@ -169,7 +169,7 @@
   "delete": {
     "title": "Delete your account?",
     "subtitle": "This can't be undone.",
-    "profile": "Your name, PIN and devices are removed.",
+    "profile": "Your name and devices are removed.",
     "history": "Past games stay for the other players, shown as \"Former member\".",
     "clubs": "If you're the owner, ownership passes to the longest-standing admin, or player if there's none.",
     "games": "Unfinished games you're in are abandoned.",

@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import * as Haptics from 'expo-haptics'
 import { router } from 'expo-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -35,15 +36,20 @@ export function EditRoundSheet({ gameId, clubId, round, onClose }: EditRoundShee
   const refresh = useRefresh(gameId, clubId)
   const [a, setA] = useState(String(round?.teamA ?? 0))
   const [b, setB] = useState(String(round?.teamB ?? 0))
-  const scoreA = parseScore(a)
-  const scoreB = parseScore(b)
+  const [attempted, setAttempted] = useState(false)
+  // An empty field counts as 0, like round entry.
+  const scoreA = a.trim() === '' ? 0 : parseScore(a)
+  const scoreB = b.trim() === '' ? 0 : parseScore(b)
   const save = useMutation({
     mutationFn: async () => {
       if (!round || scoreA === null || scoreB === null) return
       await rpc('edit_round_scores', { p_round_id: round.id, p_team_a: scoreA, p_team_b: scoreB })
       await refresh()
     },
-    onSuccess: onClose,
+    onSuccess: () => {
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+      onClose()
+    },
   })
 
   return (
@@ -64,7 +70,7 @@ export function EditRoundSheet({ gameId, clubId, round, onClose }: EditRoundShee
                 onChangeText={team === 'A' ? setA : setB}
                 keyboardType="numbers-and-punctuation"
                 maxLength={7}
-                error={(team === 'A' ? scoreA : scoreB) === null ? t('detail.scoreInvalid') : null}
+                error={attempted && (team === 'A' ? scoreA : scoreB) === null ? t('detail.scoreInvalid') : null}
               />
             </View>
           ))}
@@ -75,8 +81,10 @@ export function EditRoundSheet({ gameId, clubId, round, onClose }: EditRoundShee
           size="lg"
           block
           loading={save.isPending}
-          disabled={scoreA === null || scoreB === null}
-          onPress={() => save.mutate()}
+          onPress={() => {
+            setAttempted(true)
+            if (scoreA !== null && scoreB !== null) save.mutate()
+          }}
         />
         <Button label={t('common:actions.cancel')} variant="quiet" block disabled={save.isPending} onPress={onClose} />
       </Stack>

@@ -44,7 +44,8 @@ export function SeatsPanel({ view, userId, onVerified }: SeatsPanelProps) {
   const { t } = useTranslation(['history', 'common'])
   const [pinOpen, setPinOpen] = useState(false)
   const [done, setDone] = useState(false)
-  const canVerify = view.isGhost && view.game.status === 'finished' && view.mySeat !== null && !view.mySeat.verified
+  // There is no PIN any more: nothing to verify.
+  const canVerify = false
 
   return (
     <Card>

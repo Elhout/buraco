@@ -56,7 +56,7 @@ export function QuickRoundList({
               accessibilityRole="button"
               accessibilityLabel={t('removeCut')}
               onPress={() => onRemove(row.index)}
-              hitSlop={8}
+              hitSlop={14}
               style={styles.chevron}>
               <Ionicons name="close" size={18} color={color.inkMuted} />
             </Pressable>

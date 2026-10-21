@@ -78,13 +78,13 @@
     "undone": "أُلغيت",
     "roundStatus": {
       "open": "قيد الإدخال",
-      "pending": "بانتظار التأكيد"
+      "pending": "جارٍ الحفظ"
     },
     "cut": "قطع مضبوط {{points}} · {{name}}",
     "enteredBy": "أدخلها {{name}}",
     "confirmedBy": "أكّدها {{name}}",
     "roundA11y": "الجولة {{n}}: الفريق A {{a}}، الفريق B {{b}}",
-    "audit": "سجل الأحداث",
+    "audit": "ماذا حدث",
     "auditEmpty": "لم تُسجَّل أي أحداث لهذه المباراة.",
     "editRound": "تعديل الجولة {{n}}",
     "editTitle": "تعديل الجولة {{n}}",
@@ -102,7 +102,7 @@
     "created": "أنشأ {{actor}} المباراة",
     "createdGhost": "بدأ {{actor}} مباراة بلا دعوات",
     "createdTournament": "أُنشئت مباراة البطولة",
-    "live": "أكّد الجميع. المباراة جارية الآن",
+    "live": "بدأت المباراة",
     "inviteAccepted": "قبل {{actor}} الدعوة",
     "inviteDeclined": "رفض {{actor}} الدعوة",
     "seatSwapped": "أخذ {{to}} مقعد {{from}}",
@@ -111,15 +111,15 @@
     "expired": "انتهت صلاحية الدعوة",
     "roundDisputed": "اعترض {{actor}} على الجولة {{round}} (A {{a}} – B {{b}})",
     "resultProposed": "اقتُرحت النتيجة: فوز {{team}}، A {{a}} – B {{b}}",
-    "resultConfirmed": "أكّد {{actor}} النتيجة",
+    "resultConfirmed": "أنهى {{actor}} المباراة",
     "finished": "انتهت المباراة: فاز {{team}}",
     "undoRequested": "طلب {{actor}} التراجع عن الجولة الأخيرة",
     "undo": "تراجع {{actor}} عن الجولة {{round}} (A {{a}} – B {{b}})",
     "undoRejected": "رفض {{actor}} طلب التراجع",
-    "scorekeeperReassigned": "أصبح {{name}} مسجّل النقاط",
+    "scorekeeperReassigned": "أصبح {{name}} يسجّل النتائج",
     "abandonApproved": "وافق {{actor}} على ترك المباراة",
     "abandoned": "تُركت المباراة",
-    "seatVerified": "أكّد {{actor}} النتيجة برمزه السري",
+    "seatVerified": "أكّد {{actor}} النتيجة",
     "unknown": "{{type}}",
     "roundEdited": "صحّح {{actor}} الجولة {{round}} إلى {{a}} – {{b}}"
   }

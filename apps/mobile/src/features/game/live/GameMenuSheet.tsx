@@ -62,7 +62,6 @@ export function GameMenuSheet({ visible, view, onClose, onSelect }: GameMenuShee
             onPress={() => onSelect('reassign')}
           />
         ) : null}
-        <ListRow title={t('menu.watching')} leading={icon('eye-outline')} onPress={() => onSelect('watchers')} />
         <ListRow
           title={t('menu.abandon')}
           subtitle={t('menu.abandonHint')}

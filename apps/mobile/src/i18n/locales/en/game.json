@@ -37,14 +37,14 @@
   "rounds": {
     "title": "Rounds",
     "empty": "No rounds yet",
-    "emptyBody": "The first deal is on. Scores appear here as soon as they're confirmed.",
+    "emptyBody": "The first deal is on. Scores appear here as soon as they are saved.",
     "open": "Deal in progress",
     "pending": "Waiting for Team {{team}} to confirm",
-    "pendingGhost": "Waiting for confirmation",
+    "pendingGhost": "Saving…",
     "voided": "Undone",
     "sending": "Sending…",
     "entered": "Entered by {{name}}",
-    "confirmed": "{{entered}} entered · {{confirmed}} confirmed",
+    "confirmed": "Entered by {{entered}}",
     "cut": "{{points}} {{name}}",
     "rowA11y": "Round {{n}}. Team A {{a}}, Team B {{b}}. {{status}}",
     "noScore": "–"
@@ -55,7 +55,7 @@
     "menu": "Game menu",
     "block": {
       "notLive": "The game isn't live.",
-      "resultPending": "The final result is waiting for confirmation.",
+      "resultPending": "Finishing the game…",
       "confirmFirst": "Confirm the round that's waiting for you first.",
       "waitingOther": "Waiting for Team {{team}} to confirm the last round.",
       "waitingGhost": "Confirm the last round first.",
@@ -102,7 +102,7 @@
     "title": "Game menu",
     "undo": "Undo last round",
     "undoHint": "The other team approves with their PIN.",
-    "undoHintGhost": "Removes the last confirmed round now.",
+    "undoHintGhost": "Removes the last round.",
     "undoRequested": "Undo requested",
     "undoReview": "Approve or reject the undo",
     "reassign": "Make {{name}} scorekeeper",
@@ -110,7 +110,7 @@
     "abandon": "Abandon game",
     "abandonHint": "Ends the game without a result.",
     "watching": "Who's watching",
-    "nothingToUndo": "No confirmed round to undo yet."
+    "nothingToUndo": "No round to undo yet."
   },
   "undo": {
     "requestTitle": "Undo the last round?",

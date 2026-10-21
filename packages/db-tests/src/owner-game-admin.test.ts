@@ -157,8 +157,11 @@ describe('edit_round_scores (owner only)', () => {
     await inTx(db, async (tx) => {
       await actAs(tx, owner())
       const gameId = await startGame(tx)
-      const pending = await rpc<string>(tx, 'public.submit_round($1, 300, 200)', [gameId])
-      await rejects(tx, () => rpc(tx, 'public.edit_round_scores($1, 1, 2)', [pending]), /only confirmed rounds can be edited/)
+      // Start-now rounds are confirmed on entry; a tapped exact cut opens the deal's round before that.
+      await rpc(tx, 'public.add_cut($1, 1::smallint)', [gameId])
+      const open = (await tx.query<{ id: string }>(`select id from public.rounds where game_id = $1 and status = 'open'`, [gameId]))
+        .rows[0]!.id
+      await rejects(tx, () => rpc(tx, 'public.edit_round_scores($1, 1, 2)', [open]), /only confirmed rounds can be edited/)
     })
   })
 

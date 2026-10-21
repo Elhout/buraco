@@ -40,9 +40,9 @@ function SeatSlot({ seat, team, slots, meId, onClear, onPick }: SlotProps) {
   const name = player.kind === 'member' && player.userId === meId ? t('common:you') : player.name
   return (
     <Pressable
-      onPress={() => onClear(seat)}
+      onPress={() => onPick(seat)}
       accessibilityRole="button"
-      accessibilityLabel={t('new.seatClear', { name: player.name, seat: seatNo })}
+      accessibilityLabel={player.name}
       style={({ pressed }) => [styles.slot, { backgroundColor: teamSoft(team), borderColor: teamColor(team) }, pressed && styles.pressed]}>
       <Avatar name={player.name} size={36} ring={teamColor(team)} />
       <View style={styles.flex}>
@@ -55,7 +55,14 @@ function SeatSlot({ seat, team, slots, meId, onClear, onPick }: SlotProps) {
           </Text>
         ) : null}
       </View>
-      <Ionicons name="close" size={18} color={color.inkMuted} />
+      <Pressable
+        onPress={() => onClear(seat)}
+        accessibilityRole="button"
+        accessibilityLabel={t('new.seatClear', { name: player.name, seat: seatNo })}
+        hitSlop={10}
+        style={styles.clear}>
+        <Ionicons name="close" size={18} color={color.inkMuted} />
+      </Pressable>
     </Pressable>
   )
 }
@@ -112,6 +119,7 @@ export function TeamPanels({ slots, meId, onClear, onPick, onSwap, onShuffle }: 
 }
 
 const styles = StyleSheet.create({
+  clear: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
   flex: { flex: 1 },
   wrap: { gap: space.md },
   panels: { flexDirection: 'row', gap: space.sm },

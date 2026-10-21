@@ -1,6 +1,6 @@
 {
   "title": "Stats",
-  "subtitle": "{{club}} · verified games",
+  "subtitle": "Finished games",
   "tabs": {
     "me": "Me",
     "leaderboard": "Leaderboard",
@@ -17,7 +17,7 @@
     "split": "{{first}} {{winsFirst}} wins, {{second}} {{winsSecond}} wins"
   },
   "me": {
-    "emptyTitle": "No verified games yet",
+    "emptyTitle": "No games yet",
     "emptyBody": "Play a game to see your stats here.",
     "winRate": "Win rate",
     "record": "{{wins}} W · {{losses}} L",
@@ -35,10 +35,10 @@
     "wins_one": "{{n}} win",
     "wins_other": "{{n}} wins",
     "bestPartner": "Best partner",
-    "bestPartnerNone": "Play 5 verified games with the same partner to see this.",
+    "bestPartnerNone": "Play 5 games with the same partner to see this.",
     "partnerLine": "{{rate}} won together · {{games}}",
     "toughest": "Toughest opponents",
-    "toughestNone": "Play at least 3 verified games against someone to see this.",
+    "toughestNone": "Play at least 3 games against someone to see this.",
     "opponentLine": "{{wins}}–{{losses}} · {{diff}} pts"
   },
   "leaderboard": {
@@ -50,7 +50,7 @@
     "winPct": "Win %",
     "diff": "+/−",
     "emptyTitle": "No one is ranked yet",
-    "emptyBody": "Players are ranked after {{min}} verified games.",
+    "emptyBody": "Players are ranked after {{min}} games.",
     "unrankedTitle": "Not yet ranked (needs {{min}} games)",
     "unrankedGames_one": "{{n}} of {{min}} games",
     "unrankedGames_other": "{{n}} of {{min}} games"
@@ -61,7 +61,7 @@
     "sortGames": "Games",
     "avgScore": "Avg {{score}}",
     "emptyTitle": "No pairs yet",
-    "emptyBody": "Pairs appear once two players have teamed up in a verified game."
+    "emptyBody": "Pairs appear once two players have teamed up in a game."
   },
   "h2h": {
     "players": "Players",
@@ -74,7 +74,7 @@
     "pickTitle": "Choose a player",
     "promptPlayers": "Choose two players to compare.",
     "promptPairs": "Choose two pairs of four different players.",
-    "noGames": "No verified games between them yet.",
+    "noGames": "No games between them yet.",
     "wins": "Wins",
     "draws_one": "{{n}} draw",
     "draws_other": "{{n}} draws",
