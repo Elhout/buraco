@@ -45,6 +45,30 @@
       html[data-theme='dark'] body {
         background-color: #0f1115;
       }
+      .boot {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+      }
+      .boot img {
+        border-radius: 20px;
+      }
+      .boot-spinner {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 3px solid rgba(128, 128, 128, 0.25);
+        border-top-color: #d97706;
+        animation: boot-spin 0.8s linear infinite;
+      }
+      @keyframes boot-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
     </style>
     <!-- The player's Light/Dark choice (theme/scheme.ts stores it under "theme"), before the app loads. -->
     <script>
@@ -57,6 +81,12 @@
 
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <!-- Shown at once while the app downloads; the app replaces it when it starts. -->
+    <div id="root">
+      <div class="boot" role="progressbar" aria-label="Loading Buraco">
+        <img src="/icon-192.png" width="88" height="88" alt="" />
+        <div class="boot-spinner"></div>
+      </div>
+    </div>
   </body>
 </html>

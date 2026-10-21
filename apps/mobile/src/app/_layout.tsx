@@ -7,14 +7,13 @@ import {
   IBMPlexSansArabic_600SemiBold,
   IBMPlexSansArabic_700Bold,
 } from '@expo-google-fonts/ibm-plex-sans-arabic'
-import * as Sentry from '@sentry/react-native'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { useFonts } from 'expo-font'
 import { LocaleProvider, Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
-import { ActivityIndicator, I18nManager, View } from 'react-native'
+import { ActivityIndicator, I18nManager, Platform, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { ConfigMissing } from '@/components/ConfigMissing'
@@ -24,6 +23,7 @@ import { SessionProvider, useSession } from '@/features/auth/SessionProvider'
 import { ClubProvider, useClubs } from '@/features/clubs/ClubProvider'
 import { syncDirectionOnLaunch } from '@/i18n'
 import { env } from '@/lib/env'
+import { initMonitoring, wrapRoot } from '@/lib/monitoring'
 import { startOutbox } from '@/lib/outbox'
 import { startPushRouting } from '@/lib/push'
 import { PERSIST_BUSTER, PERSIST_MAX_AGE, persister, queryClient, wireQueryEnvironment } from '@/lib/queryClient'
@@ -33,7 +33,7 @@ import { color, scheme } from '@/theme/tokens'
 void SplashScreen.preventAutoHideAsync()
 syncDirectionOnLaunch()
 wireQueryEnvironment()
-if (env?.sentryDsn) Sentry.init({ dsn: env.sentryDsn, tracesSampleRate: 0.1, sendDefaultPii: false })
+initMonitoring(env?.sentryDsn)
 
 const FONT_WAIT_MS = 3000
 
@@ -63,7 +63,8 @@ function RootLayout() {
 
   // Never block on fonts: a slow or failed font load (seen on iPhone Safari) used to leave a black
   // page forever. Start after FONT_WAIT_MS at the latest; the fonts swap in when they arrive.
-  if (!fontsLoaded && !fontError && !fontWaitOver) return null
+  // On the web, draw at once with the system font; the page already shows a splash meanwhile.
+  if (!fontsLoaded && !fontError && !fontWaitOver && Platform.OS !== 'web') return null
   if (!env) {
     void SplashScreen.hideAsync()
     return <ConfigMissing />
@@ -144,4 +145,4 @@ function RootNavigator() {
 /** Any screen that throws shows a reload screen instead of a blank page (see ScreenError). */
 export const ErrorBoundary = ScreenError
 
-export default Sentry.wrap(RootLayout)
+export default wrapRoot(RootLayout)
