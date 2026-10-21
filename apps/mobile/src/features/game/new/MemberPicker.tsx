@@ -6,7 +6,7 @@ import { Avatar, Button, ErrorText, Field, SectionTitle, TeamBadge, Text } from 
 import { type Member, useClubMembers } from '@/features/clubs/members'
 import { sortByPresence } from '@/features/lobby/model'
 import { HIT, color, radius, space } from '@/theme/tokens'
-import { type Player, type Slots, nextFreeSeat, seatOf, teamOfSeat } from './draft'
+import { type Player, type Slots, nextFreeSeat, nextGuest, seatOf, teamOfSeat } from './draft'
 
 export interface MemberPickerProps {
   clubId: string
@@ -132,6 +132,20 @@ export function MemberPicker({ clubId, meId, slots, online, onToggle, onAddPlaye
         />
       )}
       {list}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={t('new.guest')}
+        disabled={nextFreeSeat(slots) === null}
+        onPress={() => onToggle(nextGuest(slots, t('new.guestLabel')))}
+        style={({ pressed }) => [styles.row, nextFreeSeat(slots) === null && styles.blocked, pressed && styles.pressed]}>
+        <View style={styles.guestIcon}>
+          <Ionicons name="person-outline" size={20} color={color.inkMuted} />
+        </View>
+        <Text variant="bodyStrong" numberOfLines={1} style={styles.flex}>
+          {t('new.guest')}
+        </Text>
+        <Ionicons name="add-circle-outline" size={26} color={color.ink} />
+      </Pressable>
     </View>
   )
 }
@@ -141,6 +155,7 @@ const styles = StyleSheet.create({
   wrap: { gap: space.sm },
   pad: { paddingVertical: space.lg },
   error: { gap: space.sm, alignItems: 'flex-start' },
+  guestIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: color.raised },
   alone: { alignItems: 'center', gap: space.sm, paddingVertical: space.lg },
   row: {
     minHeight: HIT + space.sm,

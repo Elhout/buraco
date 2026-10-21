@@ -50,6 +50,17 @@ export function togglePlayer(slots: Slots, player: Player): Slots {
 
 export const clearSeat = (slots: Slots, seat: SeatNo): Slots => withSeat(slots, seat, null)
 
+/**
+ * The next numbered guest for this game ("Guest 1", "Guest 2", …): the smallest number not
+ * already seated, so Guest can be picked as many times as there are free seats.
+ */
+export function nextGuest(slots: Slots, label: string): Player {
+  const taken = new Set(slots.flatMap((p) => (p?.kind === 'guest' ? [p.name.trim().toLowerCase()] : [])))
+  let n = 1
+  while (taken.has(`${label} ${n}`.toLowerCase())) n += 1
+  return { kind: 'guest', name: `${label} ${n}` }
+}
+
 /** Picking a player for one particular seat: moves them there if they already sit elsewhere. */
 export function placeInSeat(slots: Slots, seat: SeatNo, player: Player): Slots {
   const current = seatOf(slots, player)

@@ -26,7 +26,7 @@ export function useClubAccounts(clubId: string, enabled: boolean) {
 }
 
 export type AccountRequest =
-  | { action: 'create'; club_id: string; username: string; password: string; display_name: string }
+  | { action: 'create'; club_id: string; display_name: string; username?: string; password?: string }
   | { action: 'set_password'; club_id: string; user_id: string; password: string }
 
 /** The manage-accounts error code, readable by authErrorKey (`username_taken`, `forbidden`, …). */

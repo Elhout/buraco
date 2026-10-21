@@ -40,7 +40,8 @@ export const loginEmail = (username: string): string => `${normalizeUsername(use
 export const NAME_MAX = 40
 
 export type AccountRequest =
-  | { action: 'create'; clubId: string; username: string; password: string; displayName: string }
+  // username/password null: a name-only player who can't sign in (until an admin sets a password).
+  | { action: 'create'; clubId: string; username: string | null; password: string | null; displayName: string }
   | { action: 'set_password'; clubId: string; userId: string; password: string }
 
 export type RequestError = 'invalid_request' | 'invalid_username' | 'weak_password' | 'invalid_name'
@@ -63,11 +64,11 @@ export function parseAccountRequest(body: unknown): { ok: true; request: Account
   const b = body as Record<string, unknown>
   const clubId = uuid(b, 'club_id')
   const password = str(b, 'password')
-  if (clubId === null || password === null) return { ok: false, error: 'invalid_request' }
+  if (clubId === null) return { ok: false, error: 'invalid_request' }
 
   if (b.action === 'set_password') {
     const userId = uuid(b, 'user_id')
-    if (userId === null) return { ok: false, error: 'invalid_request' }
+    if (userId === null || password === null) return { ok: false, error: 'invalid_request' }
     if (!validatePassword(password).ok) return { ok: false, error: 'weak_password' }
     return { ok: true, request: { action: 'set_password', clubId, userId, password } }
   }
@@ -75,14 +76,31 @@ export function parseAccountRequest(body: unknown): { ok: true; request: Account
   if (b.action === 'create') {
     const rawUsername = str(b, 'username')
     const rawName = str(b, 'display_name')
-    if (rawUsername === null || rawName === null) return { ok: false, error: 'invalid_request' }
-    const username = validateUsername(rawUsername)
-    if (!username.ok) return { ok: false, error: 'invalid_username' }
-    if (!validatePassword(password).ok) return { ok: false, error: 'weak_password' }
+    if (rawName === null) return { ok: false, error: 'invalid_request' }
+    const username = rawUsername === null || rawUsername.trim() === '' ? null : validateUsername(rawUsername)
+    if (username && !username.ok) return { ok: false, error: 'invalid_username' }
+    if (password !== null && !validatePassword(password).ok) return { ok: false, error: 'weak_password' }
     const displayName = rawName.trim().replace(/\s+/g, ' ')
     if (displayName.length === 0 || [...displayName].length > NAME_MAX) return { ok: false, error: 'invalid_name' }
-    return { ok: true, request: { action: 'create', clubId, username: username.username, password, displayName } }
+    return { ok: true, request: { action: 'create', clubId, username: username?.username ?? null, password, displayName } }
   }
 
   return { ok: false, error: 'invalid_request' }
+}
+
+/**
+ * Usernames to try for a name-only player, in order: the name in Latin letters ("Abu Ali" →
+ * "abuali"), then with a random suffix in case it's taken. Names without enough Latin letters
+ * ("AK", Arabic) start from "player". `random` is injectable for tests.
+ */
+export function usernameCandidates(name: string, random: () => number = Math.random): string[] {
+  const latin = name
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+    .slice(0, USERNAME_MAX - 5)
+  const base = validateUsername(latin).ok ? latin : 'player'
+  const suffixed = (): string => `${base}-${1000 + Math.floor(random() * 9000)}`
+  return [...(base === 'player' ? [] : [base]), suffixed(), suffixed(), suffixed()]
 }

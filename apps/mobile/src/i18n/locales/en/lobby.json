@@ -69,7 +69,7 @@
     "search": "Search members",
     "members": "Members",
     "noMatch": "No member matches “{{query}}”",
-    "guest": "Add a guest",
+    "guest": "Guest",
     "guestPlaceholder": "Guest's name",
     "guestAdd": "Add guest",
     "guestHint": "Guests can play in Start now games",
@@ -89,11 +89,12 @@
     },
     "ghostHintConfirm": "Pick the players and play. You enter all the scores. Counts in stats once the players confirm with their PIN. Guests welcome.",
     "aloneTitle": "You're the only player so far",
-    "aloneBody": "Add the other players once, then pick them here for every game.",
+    "aloneBody": "Add each player once (just their name), then pick them here for every game.",
     "aloneAsk": "Ask an admin to add the other players.",
     "addPlayer": "New player",
     "pickTitle": "Pick a player for Team {{team}}",
-    "newPlayer": "New player (no account yet)"
+    "newPlayer": "New player",
+    "guestLabel": "Guest"
   },
   "invite": {
     "title": "Waiting for players",

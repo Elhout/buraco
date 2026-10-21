@@ -16,6 +16,7 @@ import {
   togglePlayer,
   validateDraft,
   withoutGuests,
+  nextGuest,
   placeInSeat,
 } from './draft'
 
@@ -148,5 +149,19 @@ describe('placeInSeat', () => {
 
   it('replaces whoever was in that seat', () => {
     expect(placeInSeat([sam, null, null, null], 1, ak)).toEqual([ak, null, null, null])
+  })
+})
+
+describe('nextGuest', () => {
+  it('numbers guests from 1 and fills gaps', () => {
+    expect(nextGuest(EMPTY, 'Guest')).toEqual({ kind: 'guest', name: 'Guest 1' })
+    const g1 = { kind: 'guest' as const, name: 'Guest 1' }
+    const g3 = { kind: 'guest' as const, name: 'Guest 3' }
+    expect(nextGuest([g1, null, null, null], 'Guest')).toEqual({ kind: 'guest', name: 'Guest 2' })
+    expect(nextGuest([g1, g3, null, null], 'Guest').name).toBe('Guest 2')
+  })
+
+  it('uses the label it is given (Arabic too)', () => {
+    expect(nextGuest(EMPTY, 'ضيف').name).toBe('ضيف 1')
   })
 })

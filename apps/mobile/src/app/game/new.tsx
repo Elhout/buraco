@@ -8,7 +8,6 @@ import { goBackOr } from '@/features/auth/screens/BackButton'
 import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { AddPlayerSheet } from '@/features/clubs/screens/AddPlayerSheet'
 import { type DraftIssue, type SeatNo, filledCount } from '@/features/game/new/draft'
-import { GuestField } from '@/features/game/new/GuestField'
 import { MemberPicker } from '@/features/game/new/MemberPicker'
 import { SeatPickerSheet } from '@/features/game/new/SeatPickerSheet'
 import { TeamPanels } from '@/features/game/new/TeamPanels'
@@ -99,7 +98,6 @@ export default function NewGameScreen() {
         onToggle={state.toggle}
         onAddPlayer={canAdd ? () => setAdding(true) : undefined}
       />
-      <GuestField slots={state.slots} onAdd={state.toggle} />
       <SeatPickerSheet
         clubId={club.id}
         meId={userId}

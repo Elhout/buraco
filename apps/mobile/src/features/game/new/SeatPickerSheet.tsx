@@ -5,7 +5,7 @@ import { Avatar, Button, ErrorText, Sheet, TeamBadge, Text } from '@/components/
 import { useClubMembers } from '@/features/clubs/members'
 import i18n from '@/i18n'
 import { HIT, color, radius, space } from '@/theme/tokens'
-import { type Player, type SeatNo, type Slots, seatOf, teamOfSeat } from './draft'
+import { type Player, type SeatNo, type Slots, nextGuest, seatOf, teamOfSeat } from './draft'
 
 export interface SeatPickerSheetProps {
   clubId: string
@@ -34,6 +34,22 @@ export function SeatPickerSheet({ clubId, meId, seat, slots, onPick, onNewPlayer
       {isPending ? <ActivityIndicator color={color.inkMuted} /> : null}
       <ErrorText error={error} />
       <ScrollView style={styles.list} contentContainerStyle={styles.listContent}>
+        {/* Guest can be picked again and again: Guest 1, Guest 2, … */}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('new.guest')}
+          onPress={() => seat && onPick(seat, nextGuest(slots, t('new.guestLabel')))}
+          style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
+          <View style={styles.guestIcon}>
+            <Ionicons name="person-outline" size={20} color={color.inkMuted} />
+          </View>
+          <Text variant="bodyStrong" numberOfLines={1} style={styles.flex}>
+            {t('new.guest')}
+          </Text>
+          <Text variant="caption" tone={color.inkFaint}>
+            {nextGuest(slots, t('new.guestLabel')).name}
+          </Text>
+        </Pressable>
         {sorted.map((m) => {
           const player: Player = { kind: 'member', userId: m.userId, name: m.name }
           const current = seatOf(slots, player)
@@ -87,5 +103,6 @@ const styles = StyleSheet.create({
   },
   pressed: { backgroundColor: color.raised },
   hint: { paddingVertical: space.lg },
+  guestIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: color.raised },
   footer: { paddingTop: space.sm },
 })
