@@ -38,6 +38,7 @@ export type ErrorCode =
   | 'tooManyJoinAttempts'
   | 'organizerAdminOnly'
   | 'accountsAdminOnly'
+  | 'playerBusy'
   | 'tournamentClosed'
   | 'unknown'
 
@@ -76,6 +77,7 @@ const RULES: readonly (readonly [RegExp, ErrorCode])[] = [
   [/too many invite code attempts/i, 'tooManyJoinAttempts'],
   [/owners and admins can organize/i, 'organizerAdminOnly'],
   [/owners and admins can manage accounts/i, 'accountsAdminOnly'],
+  [/already playing another game/i, 'playerBusy'],
   [/tournament is closed/i, 'tournamentClosed'],
 ]
 

@@ -32,9 +32,9 @@ export function QuickGameScreen() {
   const over = outcome.kind === 'won'
   const close = (): void => setOpen(null)
 
-  const saveRound = (a: number, b: number): void => {
+  const saveRound = (a: number, b: number, cut: Team | null): void => {
     if (open?.kind !== 'round') return
-    const result = open.editing === null ? addRound(game, a, b) : editRound(game, open.editing, a, b)
+    const result = open.editing === null ? addRound(game, a, b, cut) : editRound(game, open.editing, a, b, cut)
     if (!result.ok) return
     setGame(result.game)
     if (quickOutcome(result.game).kind === 'won') void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)

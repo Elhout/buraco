@@ -106,7 +106,8 @@
     "addPlayer": "لاعب جديد",
     "pickTitle": "اختر لاعبًا للفريق {{team}}",
     "newPlayer": "لاعب جديد",
-    "guestLabel": "ضيف"
+    "guestLabel": "ضيف",
+    "playing": "يلعب الآن"
   },
   "invite": {
     "title": "بانتظار اللاعبين",

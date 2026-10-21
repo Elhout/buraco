@@ -12,6 +12,8 @@ import { MemberPicker } from '@/features/game/new/MemberPicker'
 import { SeatPickerSheet } from '@/features/game/new/SeatPickerSheet'
 import { TeamPanels } from '@/features/game/new/TeamPanels'
 import { type NewGameState, useNewGame } from '@/features/game/new/useNewGame'
+import { useLobby } from '@/features/lobby/api'
+import { busyPlayerIds } from '@/features/lobby/model'
 import { useOnlineMembers } from '@/features/lobby/presence'
 import { HIT, color, radius, space } from '@/theme/tokens'
 
@@ -73,6 +75,8 @@ export default function NewGameScreen() {
   // A seat waiting for the player being created in New player (seated as soon as it exists).
   const [seatForNew, setSeatForNew] = useState<SeatNo | null>(null)
   const online = useOnlineMembers(club.id)
+  // Who is at a table right now (games in progress, kept live by Realtime).
+  const busy = busyPlayerIds(useLobby(club.id, userId).games)
   const state = useNewGame(club.id, { kind: 'member', userId, name: profile?.display_name ?? '' })
 
   return (
@@ -96,6 +100,7 @@ export default function NewGameScreen() {
         slots={state.slots}
         online={online}
         onToggle={state.toggle}
+        busy={busy}
         onAddPlayer={canAdd ? () => setAdding(true) : undefined}
       />
       <SeatPickerSheet
@@ -103,6 +108,7 @@ export default function NewGameScreen() {
         meId={userId}
         seat={pickSeat}
         slots={state.slots}
+        busy={busy}
         onPick={(seat, player) => {
           state.place(seat, player)
           setPickSeat(null)

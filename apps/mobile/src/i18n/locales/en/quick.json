@@ -37,5 +37,8 @@
   "gameOver": "The game is over. Start a new one to keep playing.",
   "difference": "Difference",
   "level": "Level",
-  "leadA11y": "Team {{team}} leads by {{points}}"
+  "leadA11y": "Team {{team}} leads by {{points}}",
+  "cut": "{{points}} exact cut",
+  "cutA11y": "Team {{team}} made the exact cut ({{points}})",
+  "cutTag": "incl. {{points}} cut"
 }

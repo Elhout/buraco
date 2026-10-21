@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { Card, Chevron, EmptyState, Score, TeamBadge, Text } from '@/components/ui'
-import { formatNumber } from '@/lib/format'
+import { formatNumber, formatSigned } from '@/lib/format'
 import { color, space, teamColor } from '@/theme/tokens'
-import { type RoundRow, leadOf } from './model'
+import { QUICK_CUT_BONUS, type RoundRow, leadOf, roundPoints } from './model'
 
 /**
  * Rounds, newest first: each deal's points (signed), the running totals and the difference after
@@ -39,7 +39,12 @@ export function QuickRoundList({ rows, onEdit }: { rows: readonly RoundRow[]; on
           </Text>
           {(['A', 'B'] as const).map((team) => (
             <View key={team} style={styles.cell}>
-              <Score value={team === 'A' ? row.round.a : row.round.b} size="scoreSm" signed tone={teamColor(team)} />
+              <Score value={roundPoints(row.round, team)} size="scoreSm" signed tone={teamColor(team)} />
+              {row.round.cut === team ? (
+                <Text variant="caption" tone={teamColor(team)}>
+                  {t('cutTag', { points: formatSigned(QUICK_CUT_BONUS) })}
+                </Text>
+              ) : null}
               <Text variant="caption" tone={color.inkFaint}>
                 {formatNumber(row.totals[team])}
               </Text>

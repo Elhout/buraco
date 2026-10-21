@@ -19,6 +19,8 @@ import {
 export interface QuickRound {
   readonly a: number
   readonly b: number
+  /** The team that made the exact cut this round (+QUICK_CUT_BONUS), if any. */
+  readonly cut?: Team
 }
 
 export interface QuickGame {
@@ -28,6 +30,13 @@ export interface QuickGame {
   readonly target: number
   readonly rounds: readonly QuickRound[]
 }
+
+/** The exact-cut bonus, added on top of the round points by the small +100 button. */
+export const QUICK_CUT_BONUS = 100
+
+/** A team's points for one round, including its exact-cut bonus. */
+export const roundPoints = (round: QuickRound, team: Team): number =>
+  (team === 'A' ? round.a : round.b) + (round.cut === team ? QUICK_CUT_BONUS : 0)
 
 export const TARGET_PRESETS = [1500, 2000, 3000] as const
 export const TARGET_MIN = 100
@@ -45,7 +54,7 @@ export const newQuickGame = (previous?: Pick<QuickGame, 'teamAName' | 'teamBName
 export const quickConfig = (game: QuickGame): ScoringConfig => ({ targetScore: game.target, cutBonus: 0, allowNegative: true })
 
 export function quickTotals(game: QuickGame): Totals {
-  return game.rounds.reduce<Totals>((acc, r) => ({ A: acc.A + r.a, B: acc.B + r.b }), { A: 0, B: 0 })
+  return game.rounds.reduce<Totals>((acc, r) => ({ A: acc.A + roundPoints(r, 'A'), B: acc.B + roundPoints(r, 'B') }), { A: 0, B: 0 })
 }
 
 export const quickOutcome = (game: QuickGame): GameOutcome => gameOutcome(quickTotals(game), quickConfig(game))
@@ -76,7 +85,7 @@ export function leadOf(totals: Totals): Lead {
 export function roundRows(game: QuickGame): RoundRow[] {
   let acc: Totals = { A: 0, B: 0 }
   const rows = game.rounds.map((round, index) => {
-    acc = { A: acc.A + round.a, B: acc.B + round.b }
+    acc = { A: acc.A + roundPoints(round, 'A'), B: acc.B + roundPoints(round, 'B') }
     return { n: index + 1, index, round, totals: acc }
   })
   return rows.reverse()
@@ -93,19 +102,21 @@ function checkRound(game: QuickGame, a: number, b: number): RoundScoreError | nu
   return null
 }
 
-export function addRound(game: QuickGame, a: number, b: number): QuickResult {
+const makeRound = (a: number, b: number, cut: Team | null): QuickRound => (cut ? { a, b, cut } : { a, b })
+
+export function addRound(game: QuickGame, a: number, b: number, cut: Team | null = null): QuickResult {
   if (isOver(game)) return { ok: false, error: 'game_over' }
   const error = checkRound(game, a, b)
   if (error) return { ok: false, error }
-  return { ok: true, game: { ...game, rounds: [...game.rounds, { a, b }] } }
+  return { ok: true, game: { ...game, rounds: [...game.rounds, makeRound(a, b, cut)] } }
 }
 
 /** Fixes a typo in any round. Totals and the outcome follow from the rounds, so they update too. */
-export function editRound(game: QuickGame, index: number, a: number, b: number): QuickResult {
+export function editRound(game: QuickGame, index: number, a: number, b: number, cut: Team | null = null): QuickResult {
   if (!Number.isInteger(index) || index < 0 || index >= game.rounds.length) return { ok: false, error: 'no_round' }
   const error = checkRound(game, a, b)
   if (error) return { ok: false, error }
-  return { ok: true, game: { ...game, rounds: game.rounds.map((r, i) => (i === index ? { a, b } : r)) } }
+  return { ok: true, game: { ...game, rounds: game.rounds.map((r, i) => (i === index ? makeRound(a, b, cut) : r)) } }
 }
 
 export const undoLastRound = (game: QuickGame): QuickGame => ({ ...game, rounds: game.rounds.slice(0, -1) })
@@ -125,7 +136,7 @@ export const setTarget = (game: QuickGame, target: number): QuickGame => (isVali
 const isRound = (v: unknown): v is QuickRound => {
   if (typeof v !== 'object' || v === null) return false
   const r = v as Record<string, unknown>
-  return Number.isInteger(r.a) && Number.isInteger(r.b)
+  return Number.isInteger(r.a) && Number.isInteger(r.b) && (r.cut === undefined || r.cut === 'A' || r.cut === 'B')
 }
 
 /** Reads a saved game back; anything malformed (old format, edited storage) starts fresh. */

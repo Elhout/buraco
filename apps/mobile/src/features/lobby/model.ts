@@ -135,3 +135,8 @@ export function sortByPresence<M extends NamedMember>(members: readonly M[], onl
   const group = (m: M): number => (m.userId === me ? 0 : online.has(m.userId) ? 1 : 2)
   return [...members].sort((a, b) => group(a) - group(b) || a.name.localeCompare(b.name))
 }
+
+/** Members sitting at a table that is inviting or live: they can't be picked for another game. */
+export function busyPlayerIds(games: readonly { readonly seats: readonly { readonly userId: string | null }[] }[]): ReadonlySet<string> {
+  return new Set(games.flatMap((g) => g.seats.flatMap((s) => (s.userId ? [s.userId] : []))))
+}

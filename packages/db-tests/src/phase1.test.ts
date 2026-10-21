@@ -57,6 +57,14 @@ const totalsOf = async (tx: Transaction, gameId: string) => {
   return rows[0]!
 }
 
+/**
+ * One game at a time per player (migration 20261103000000): tests reuse the same four players, so
+ * end any game still in progress before starting the next, as a player would by abandoning it.
+ */
+const freePlayers = async (): Promise<void> => {
+  await db.query(`update public.games set status = 'abandoned' where status in ('inviting', 'live')`)
+}
+
 beforeAll(async () => {
   db = await createDb()
   owner = await createUser(db, 'Omar')
@@ -72,6 +80,9 @@ beforeAll(async () => {
   // Joining by invite code is a phase 2 RPC; seed members directly as superuser.
   await db.query(`insert into public.club_members (club_id, user_id) select $1, unnest($2::uuid[])`, [clubId, [p2, p3, p4]])
 })
+
+// Outer hooks run before each describe's own: every test starts with nobody at a table.
+beforeEach(freePlayers)
 
 describe('accounts and clubs', () => {
   it('creates a profile for every new auth user', async () => {
@@ -122,6 +133,7 @@ describe('row level security', () => {
   let gameId: string
 
   beforeAll(async () => {
+    await freePlayers()
     gameId = await asUserCommit(db, owner, (tx) => createGhost(tx))
   })
 
@@ -299,6 +311,7 @@ describe('rounds and scoring', () => {
     const leaver = await createUser(db, 'Leaver')
     await db.query(`insert into public.club_members (club_id, user_id) values ($1, $2)`, [clubId, leaver])
     const seats = fourSeats().map((s) => (s.seat === 1 ? { ...s, user_id: leaver } : s))
+    await freePlayers()
     const gameId = await asUserCommit(db, leaver, (tx) => createGhost(tx, seats))
     await asUserCommit(db, leaver, (tx) =>
       tx.query(`delete from public.club_members where club_id = $1 and user_id = $2`, [clubId, leaver]),
@@ -316,6 +329,7 @@ describe('rounds and scoring', () => {
   })
 
   it('only lets the host score a ghost game', async () => {
+    await freePlayers()
     const gameId = await asUserCommit(db, owner, (tx) => createGhost(tx))
     await expect(asUser(db, p2, (tx) => submit(tx, gameId, 100, 0))).rejects.toThrow(/only the host/)
   })
@@ -391,6 +405,7 @@ describe('club config snapshot', () => {
   })
 
   it('keeps playing with the config a game started with', async () => {
+    await freePlayers()
     const gameId = await asUserCommit(db, owner, (tx) => createGhost(tx))
     await asUserCommit(db, owner, (tx) => tx.query(`update public.clubs set target_score = 500, cut_bonus = 50 where id = $1`, [clubId]))
     await asUser(db, owner, async (tx) => {

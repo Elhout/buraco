@@ -102,7 +102,8 @@
     "unknown": "Something went wrong. Please try again.",
     "config": "The app isn't configured yet.",
     "screen": "Something went wrong on this screen.",
-    "updated": "The app was updated. Tap Reload to continue."
+    "updated": "The app was updated. Tap Reload to continue.",
+    "playerBusy": "One of these players is already in a game. Finish or abandon that game first."
   },
   "tabs": {
     "club": "Club",

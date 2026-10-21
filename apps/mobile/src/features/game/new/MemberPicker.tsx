@@ -16,6 +16,8 @@ export interface MemberPickerProps {
   onToggle: (player: Player) => void
   /** Owners and admins can add a player to the club without leaving this screen. */
   onAddPlayer?: () => void
+  /** Members at a table in progress (they can't be picked). */
+  busy: ReadonlySet<string>
 }
 
 /** The search box only helps once the list is longer than a screen. */
@@ -28,20 +30,24 @@ function MemberRow({
   slots,
   online,
   isMe,
+  playing,
   onToggle,
 }: {
   member: Member
   slots: Slots
   online: boolean
   isMe: boolean
+  /** Sitting at another table right now: can't be picked. */
+  playing: boolean
   onToggle: () => void
 }) {
   const { t } = useTranslation(['lobby', 'common'])
   const seat = seatOf(slots, asPlayer(member))
-  const blocked = seat === null && nextFreeSeat(slots) === null
+  const blocked = seat === null && (playing || nextFreeSeat(slots) === null)
   return (
     <Pressable
       onPress={onToggle}
+      disabled={blocked}
       accessibilityRole="button"
       accessibilityState={{ selected: seat !== null, disabled: blocked }}
       accessibilityLabel={t(online ? 'online.label' : 'online.labelOffline', { name: member.name })}
@@ -54,6 +60,10 @@ function MemberRow({
         <View style={styles.seated}>
           <TeamBadge team={teamOfSeat(seat)} />
         </View>
+      ) : playing ? (
+        <Text variant="caption" tone={color.inkMuted}>
+          {t('new.playing')}
+        </Text>
       ) : (
         <Ionicons name="add-circle-outline" size={26} color={blocked ? color.inkFaint : color.ink} />
       )}
@@ -62,7 +72,7 @@ function MemberRow({
 }
 
 /** Searchable club members with presence dots; tap to seat or unseat. */
-export function MemberPicker({ clubId, meId, slots, online, onToggle, onAddPlayer }: MemberPickerProps) {
+export function MemberPicker({ clubId, meId, slots, online, onToggle, onAddPlayer, busy }: MemberPickerProps) {
   const { t } = useTranslation(['lobby', 'common'])
   const { members, isPending, error, refetch } = useClubMembers(clubId)
   const [query, setQuery] = useState('')
@@ -109,6 +119,7 @@ export function MemberPicker({ clubId, meId, slots, online, onToggle, onAddPlaye
         slots={slots}
         online={online.has(m.userId)}
         isMe={m.userId === meId}
+        playing={busy.has(m.userId)}
         onToggle={() => onToggle(asPlayer(m))}
       />
     ))

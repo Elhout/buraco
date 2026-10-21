@@ -21,6 +21,7 @@ describe('toAppError', () => {
     ['too many invite code attempts, try again later', 'tooManyJoinAttempts'],
     ['the tournament is closed', 'tournamentClosed'],
     ['only club owners and admins can manage accounts', 'accountsAdminOnly'],
+    ['player is already playing another game', 'playerBusy'],
     ['TypeError: Network request failed', 'network'],
     ['something entirely new', 'unknown'],
   ])('maps %j to %s', (message, code) => {

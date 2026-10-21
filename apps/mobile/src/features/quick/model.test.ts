@@ -15,6 +15,8 @@ import {
   setTarget,
   undoLastRound,
   leadOf,
+  QUICK_CUT_BONUS,
+  roundPoints,
 } from './model'
 
 const play = (rounds: readonly [number, number][], start: QuickGame = newQuickGame()): QuickGame =>
@@ -142,5 +144,43 @@ describe('leadOf', () => {
 
   it('reports a level score with no leader', () => {
     expect(leadOf({ A: 300, B: 300 })).toEqual({ team: null, margin: 0 })
+  })
+})
+
+describe('exact cut', () => {
+  it('adds the bonus to the team that cut, on top of its round points', () => {
+    const r = addRound(newQuickGame(), 500, 300, 'B')
+    if (!r.ok) throw new Error(r.error)
+    expect(r.game.rounds[0]).toEqual({ a: 500, b: 300, cut: 'B' })
+    expect(roundPoints(r.game.rounds[0]!, 'B')).toBe(300 + QUICK_CUT_BONUS)
+    expect(quickTotals(r.game)).toEqual({ A: 500, B: 400 })
+    expect(roundRows(r.game)[0]!.totals).toEqual({ A: 500, B: 400 })
+  })
+
+  it('can be moved or removed when a round is edited', () => {
+    const r = addRound(newQuickGame(), 500, 300, 'A')
+    if (!r.ok) throw new Error(r.error)
+    const moved = editRound(r.game, 0, 500, 300, 'B')
+    const removed = editRound(r.game, 0, 500, 300, null)
+    if (!moved.ok || !removed.ok) throw new Error('edit failed')
+    expect(quickTotals(moved.game)).toEqual({ A: 500, B: 400 })
+    expect(removed.game.rounds[0]).toEqual({ a: 500, b: 300 })
+  })
+
+  it('reads saved games with and without a cut, and rejects a bad one', () => {
+    const saved = JSON.stringify({
+      teamAName: '',
+      teamBName: '',
+      target: 2000,
+      rounds: [
+        { a: 10, b: 20, cut: 'A' },
+        { a: 5, b: 5 },
+      ],
+    })
+    expect(parseQuickGame(saved)?.rounds).toEqual([
+      { a: 10, b: 20, cut: 'A' },
+      { a: 5, b: 5 },
+    ])
+    expect(parseQuickGame(JSON.stringify({ teamAName: '', teamBName: '', target: 2000, rounds: [{ a: 1, b: 2, cut: 'C' }] }))).toBeNull()
   })
 })

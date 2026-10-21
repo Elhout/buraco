@@ -19,7 +19,8 @@ describe('abuse limits', () => {
   it('caps a host at 5 casual games in progress', async () => {
     await inTx(db, async (tx) => {
       await actAs(tx, club.players[0])
-      const create = () => rpc(tx, `public.create_game($1, $2::jsonb, 'ghost')`, [club.clubId, JSON.stringify(ghostSeats(club, 3))])
+      // All-guest tables: a player can only sit at one live table (one-game-at-a-time rule).
+      const create = () => rpc(tx, `public.create_game($1, $2::jsonb, 'ghost')`, [club.clubId, JSON.stringify(ghostSeats(club, 4))])
       for (let i = 0; i < 5; i++) await create()
       await rejects(tx, create, /too many games/)
     })

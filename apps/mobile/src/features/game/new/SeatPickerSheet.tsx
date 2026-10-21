@@ -16,6 +16,8 @@ export interface SeatPickerSheetProps {
   onPick: (seat: SeatNo, player: Player) => void
   /** Owners and admins can create someone who isn't a player yet. */
   onNewPlayer?: () => void
+  /** Members at a table in progress (they can't be picked). */
+  busy: ReadonlySet<string>
   onClose: () => void
 }
 
@@ -23,7 +25,7 @@ export interface SeatPickerSheetProps {
  * Tapping an empty seat on New game: the players you already have, to put in that seat. Someone
  * already seated elsewhere moves here. "New player" is only for people without an account yet.
  */
-export function SeatPickerSheet({ clubId, meId, seat, slots, onPick, onNewPlayer, onClose }: SeatPickerSheetProps) {
+export function SeatPickerSheet({ clubId, meId, seat, slots, onPick, onNewPlayer, busy, onClose }: SeatPickerSheetProps) {
   const { t } = useTranslation(['lobby', 'common'])
   const { members, isPending, error } = useClubMembers(clubId)
   const team = seat ? teamOfSeat(seat) : 'A'
@@ -53,18 +55,25 @@ export function SeatPickerSheet({ clubId, meId, seat, slots, onPick, onNewPlayer
         {sorted.map((m) => {
           const player: Player = { kind: 'member', userId: m.userId, name: m.name }
           const current = seatOf(slots, player)
+          const playing = current === null && busy.has(m.userId)
           return (
             <Pressable
               key={m.userId}
               accessibilityRole="button"
               accessibilityLabel={m.name}
+              disabled={playing}
               onPress={() => seat && onPick(seat, player)}
-              style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
+              style={({ pressed }) => [styles.row, playing && styles.blocked, pressed && styles.pressed]}>
               <Avatar name={m.name} url={m.avatarUrl} size={40} />
               <Text variant="bodyStrong" numberOfLines={1} style={styles.flex}>
                 {m.userId === meId ? `${m.name} · ${t('common:you')}` : m.name}
               </Text>
               {current ? <TeamBadge team={teamOfSeat(current)} size="sm" /> : null}
+              {playing ? (
+                <Text variant="caption" tone={color.inkMuted}>
+                  {t('new.playing')}
+                </Text>
+              ) : null}
             </Pressable>
           )
         })}
@@ -102,6 +111,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
   },
   pressed: { backgroundColor: color.raised },
+  blocked: { opacity: 0.45 },
   hint: { paddingVertical: space.lg },
   guestIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: color.raised },
   footer: { paddingTop: space.sm },

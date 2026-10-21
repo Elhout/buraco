@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest'
-import { type LobbyGameRow, type LobbySeatRow, buildLobby, gameHref, onlineIds, sortByPresence, teamOf, toLobbyGame } from './model'
+import {
+  type LobbyGameRow,
+  type LobbySeatRow,
+  buildLobby,
+  gameHref,
+  onlineIds,
+  sortByPresence,
+  teamOf,
+  toLobbyGame,
+  busyPlayerIds,
+} from './model'
 
 const ME = 'me'
 const seat = (n: number, userId: string | null, status: LobbySeatRow['invite_status'] = 'confirmed'): LobbySeatRow => ({
@@ -117,5 +127,14 @@ describe('helpers', () => {
       { userId: 'y', name: 'Amr' },
     ]
     expect(sortByPresence(members, new Set(['o1', 'o2', ME]), ME).map((m) => m.userId)).toEqual([ME, 'o1', 'o2', 'y', 'z'])
+  })
+})
+
+describe('busyPlayerIds', () => {
+  it('collects the members seated in games in progress, not guests', () => {
+    const seat = (userId: string | null) => ({ seat: 1, team: 'A' as const, userId, name: userId ?? 'Guest 1', isHost: false, isMe: false })
+    const games = [{ seats: [seat('samy'), seat(null), seat('ak')] }, { seats: [seat('noby')] }]
+    expect([...busyPlayerIds(games)].sort()).toEqual(['ak', 'noby', 'samy'])
+    expect(busyPlayerIds([]).size).toBe(0)
   })
 })
