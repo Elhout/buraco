@@ -1015,8 +1015,10 @@ export type Database = {
       create_game: { Args: { p_club_id: string; p_seats: Json; p_mode?: Database['public']['Enums']['game_mode'] }; Returns: string }
       create_ghost_game: { Args: { p_club_id: string; p_seats: Json }; Returns: string }
       create_tournament: { Args: { p_club_id: string; p_name: string; p_format: Database['public']['Enums']['tournament_format']; p_pairing: Database['public']['Enums']['tournament_pairing']; p_round_minutes?: number; p_target_score?: number; p_starts_on?: string }; Returns: string }
+      delete_game: { Args: { p_game_id: string }; Returns: undefined }
       dispute_round: { Args: { p_round_id: string }; Returns: undefined }
       edit_match_result: { Args: { p_match_id: string; p_result: Database['public']['Enums']['match_result']; p_points_a: number; p_points_b: number; p_reason: string }; Returns: undefined }
+      edit_round_scores: { Args: { p_round_id: string; p_team_a: number; p_team_b: number }; Returns: undefined }
       ensure_membership: { Args: Record<PropertyKey, never>; Returns: string }
       entry_name: { Args: { p_entry_id: string }; Returns: string }
       finish_tournament: { Args: { p_tournament_id: string; p_cancel?: boolean }; Returns: undefined }

@@ -1,5 +1,6 @@
+import { Ionicons } from '@expo/vector-icons'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
 import { Card, Divider, Row, Score, Text } from '@/components/ui'
 import type { RoundView } from '@/features/game/model'
 import { formatNumber, formatSigned } from '@/lib/format'
@@ -13,7 +14,7 @@ function RoundStatus({ round }: { round: RoundView }) {
   return null
 }
 
-function RoundRow({ round }: { round: RoundView }) {
+function RoundRow({ round, onEdit }: { round: RoundView; onEdit?: (round: RoundView) => void }) {
   const { t } = useTranslation(['history', 'common'])
   const voided = round.status === 'voided'
   const strike = voided ? styles.strike : null
@@ -31,6 +32,16 @@ function RoundRow({ round }: { round: RoundView }) {
         <RoundStatus round={round} />
         <Score value={a} signed size="scoreSm" tone={voided ? color.inkFaint : teamColor('A')} style={[styles.num, strike]} />
         <Score value={b} signed size="scoreSm" tone={voided ? color.inkFaint : teamColor('B')} style={[styles.num, strike]} />
+        {onEdit && round.status === 'confirmed' ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('detail.editRound', { n: formatNumber(round.displayNo) })}
+            onPress={() => onEdit(round)}
+            hitSlop={8}
+            style={styles.edit}>
+            <Ionicons name="pencil" size={16} color={color.inkMuted} />
+          </Pressable>
+        ) : null}
       </Row>
       {round.lines.map((l) => (
         <Text key={l.id} variant="caption" tone={voided ? color.inkFaint : teamColor(l.team)}>
@@ -52,7 +63,8 @@ function RoundRow({ round }: { round: RoundView }) {
 }
 
 /** Every round with scores, exact-cut bonuses, who entered and who confirmed; undone rounds struck through. */
-export function RoundsList({ rounds }: { rounds: readonly RoundView[] }) {
+/** `onEdit` (owner only) adds a pencil to every confirmed round. */
+export function RoundsList({ rounds, onEdit }: { rounds: readonly RoundView[]; onEdit?: (round: RoundView) => void }) {
   const { t } = useTranslation(['history', 'common'])
   return (
     <Card>
@@ -67,7 +79,7 @@ export function RoundsList({ rounds }: { rounds: readonly RoundView[] }) {
         rounds.map((r, i) => (
           <View key={r.id} style={styles.item}>
             {i > 0 ? <Divider /> : null}
-            <RoundRow round={r} />
+            <RoundRow round={r} onEdit={onEdit} />
           </View>
         ))
       )}
@@ -77,6 +89,7 @@ export function RoundsList({ rounds }: { rounds: readonly RoundView[] }) {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
+  edit: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
   item: { gap: space.sm },
   round: { gap: space.xxs },
   voided: { opacity: 0.7 },

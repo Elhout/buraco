@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons'
 import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { Card, Chevron, EmptyState, Score, TeamBadge, Text } from '@/components/ui'
@@ -9,7 +10,16 @@ import { QUICK_CUT_BONUS, type RoundRow, leadOf, roundPoints } from './model'
  * Rounds, newest first: each deal's points (signed), the running totals and the difference after
  * that round (who leads, by how much). Tap a round to fix it.
  */
-export function QuickRoundList({ rows, onEdit }: { rows: readonly RoundRow[]; onEdit: (index: number) => void }) {
+export function QuickRoundList({
+  rows,
+  onEdit,
+  onRemove,
+}: {
+  rows: readonly RoundRow[]
+  onEdit: (index: number) => void
+  /** Removes a +100 bonus row tapped by mistake. */
+  onRemove: (index: number) => void
+}) {
   const { t } = useTranslation('quick')
   if (rows.length === 0) return <EmptyState icon="albums-outline" title={t('noRounds')} />
   return (
@@ -27,33 +37,58 @@ export function QuickRoundList({ rows, onEdit }: { rows: readonly RoundRow[]; on
         </Text>
         <View style={styles.chevron} />
       </View>
-      {rows.map((row) => (
-        <Pressable
-          key={row.index}
-          accessibilityRole="button"
-          accessibilityLabel={t('editA11y', { n: formatNumber(row.n) })}
-          onPress={() => onEdit(row.index)}
-          style={({ pressed }) => [styles.row, styles.divider, pressed && { backgroundColor: color.raised }]}>
-          <Text variant="label" tone={color.inkMuted} style={styles.label}>
-            {t('roundRow', { n: formatNumber(row.n) })}
-          </Text>
-          {(['A', 'B'] as const).map((team) => (
-            <View key={team} style={styles.cell}>
-              <Score value={roundPoints(row.round, team)} size="scoreSm" signed tone={teamColor(team)} />
-              {row.round.cut === team ? (
-                <Text variant="caption" tone={teamColor(team)}>
-                  {t('cutTag', { points: formatSigned(QUICK_CUT_BONUS) })}
+      {rows.map((row) =>
+        row.bonus ? (
+          <View key={row.index} style={[styles.row, styles.divider]}>
+            <Text variant="label" tone={color.inkMuted} style={styles.label}>
+              {t('cutRow')}
+            </Text>
+            {(['A', 'B'] as const).map((team) => (
+              <View key={team} style={styles.cell}>
+                {row.round.cut === team ? <Score value={QUICK_CUT_BONUS} size="scoreSm" signed tone={teamColor(team)} /> : null}
+                <Text variant="caption" tone={color.inkFaint}>
+                  {formatNumber(row.totals[team])}
                 </Text>
-              ) : null}
-              <Text variant="caption" tone={color.inkFaint}>
-                {formatNumber(row.totals[team])}
-              </Text>
-            </View>
-          ))}
-          <Difference totals={row.totals} />
-          <Chevron />
-        </Pressable>
-      ))}
+              </View>
+            ))}
+            <Difference totals={row.totals} />
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('removeCut')}
+              onPress={() => onRemove(row.index)}
+              hitSlop={8}
+              style={styles.chevron}>
+              <Ionicons name="close" size={18} color={color.inkMuted} />
+            </Pressable>
+          </View>
+        ) : (
+          <Pressable
+            key={row.index}
+            accessibilityRole="button"
+            accessibilityLabel={t('editA11y', { n: formatNumber(row.n) })}
+            onPress={() => onEdit(row.index)}
+            style={({ pressed }) => [styles.row, styles.divider, pressed && { backgroundColor: color.raised }]}>
+            <Text variant="label" tone={color.inkMuted} style={styles.label}>
+              {t('roundRow', { n: formatNumber(row.n) })}
+            </Text>
+            {(['A', 'B'] as const).map((team) => (
+              <View key={team} style={styles.cell}>
+                <Score value={roundPoints(row.round, team)} size="scoreSm" signed tone={teamColor(team)} />
+                {row.round.cut === team ? (
+                  <Text variant="caption" tone={teamColor(team)}>
+                    {t('cutTag', { points: formatSigned(QUICK_CUT_BONUS) })}
+                  </Text>
+                ) : null}
+                <Text variant="caption" tone={color.inkFaint}>
+                  {formatNumber(row.totals[team])}
+                </Text>
+              </View>
+            ))}
+            <Difference totals={row.totals} />
+            <Chevron />
+          </Pressable>
+        ),
+      )}
     </Card>
   )
 }

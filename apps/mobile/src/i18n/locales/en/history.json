@@ -81,7 +81,17 @@
     "confirmedBy": "Confirmed by {{name}}",
     "roundA11y": "Round {{n}}: Team A {{a}}, Team B {{b}}",
     "audit": "Audit log",
-    "auditEmpty": "No events were recorded for this game."
+    "auditEmpty": "No events were recorded for this game.",
+    "editRound": "Edit round {{n}}",
+    "editTitle": "Edit round {{n}}",
+    "editBody": "Correct the points. Totals, the winner and stats follow.",
+    "teamScore": "Team {{team}}",
+    "scoreInvalid": "Enter a whole number",
+    "saveEdit": "Save correction",
+    "delete": "Delete game",
+    "deleteTitle": "Delete this game?",
+    "deleteBody": "It disappears from the history and everyone's stats. This can't be undone.",
+    "deleteConfirm": "Delete game"
   },
   "events": {
     "someone": "Someone",
@@ -106,6 +116,7 @@
     "abandonApproved": "{{actor}} agreed to abandon the game",
     "abandoned": "The game was abandoned",
     "seatVerified": "{{actor}} confirmed the result with their PIN",
-    "unknown": "{{type}}"
+    "unknown": "{{type}}",
+    "roundEdited": "{{actor}} corrected round {{round}} to {{a}} – {{b}}"
   }
 }

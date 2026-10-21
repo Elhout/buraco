@@ -3,8 +3,9 @@ import { Ionicons } from '@expo/vector-icons'
 import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { Score, TargetBar, TeamBadge, Text } from '@/components/ui'
-import { formatNumber } from '@/lib/format'
+import { formatNumber, formatSigned } from '@/lib/format'
 import { color, elevation, radius, space, teamColor } from '@/theme/tokens'
+import { QUICK_CUT_BONUS } from './model'
 
 export interface QuickTeamCardProps {
   team: Team
@@ -13,10 +14,12 @@ export interface QuickTeamCardProps {
   target: number
   leading: boolean
   onRename: () => void
+  /** +100 exact cut for this team, straight away (no round entry). Hidden once the game is over. */
+  onCut?: () => void
 }
 
-/** One team: name (tap to rename), big running total and progress to the target. */
-export function QuickTeamCard({ team, name, total, target, leading, onRename }: QuickTeamCardProps) {
+/** One team: name (tap to rename), big running total, progress to the target and the +100 cut. */
+export function QuickTeamCard({ team, name, total, target, leading, onRename, onCut }: QuickTeamCardProps) {
   const { t } = useTranslation('quick')
   const toGo = Math.max(0, target - total)
   return (
@@ -45,6 +48,20 @@ export function QuickTeamCard({ team, name, total, target, leading, onRename }: 
       <Text variant="caption" tone={toGo === 0 ? teamColor(team) : color.inkMuted}>
         {toGo === 0 ? t('atTarget') : t('toGo', { points: formatNumber(toGo) })}
       </Text>
+      {onCut ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('cutA11y', { team, points: formatSigned(QUICK_CUT_BONUS) })}
+          onPress={onCut}
+          hitSlop={6}
+          style={({ pressed }) => [styles.cut, { borderColor: teamColor(team) }, pressed && { backgroundColor: teamColor(team) }]}>
+          {({ pressed }) => (
+            <Text variant="label" tone={pressed ? color.onPrimary : teamColor(team)}>
+              {t('cut', { points: formatSigned(QUICK_CUT_BONUS) })}
+            </Text>
+          )}
+        </Pressable>
+      ) : null}
     </View>
   )
 }
@@ -59,6 +76,7 @@ const scoreFit = (text: string): { fontSize: number; lineHeight: number } | null
 }
 
 const styles = StyleSheet.create({
+  cut: { alignSelf: 'center', paddingHorizontal: space.md, paddingVertical: space.xs, borderRadius: radius.pill, borderWidth: 1.5 },
   card: {
     flex: 1,
     gap: space.sm,

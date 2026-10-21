@@ -40,5 +40,7 @@
   "leadA11y": "Team {{team}} leads by {{points}}",
   "cut": "{{points}} exact cut",
   "cutA11y": "Team {{team}} made the exact cut ({{points}})",
-  "cutTag": "incl. {{points}} cut"
+  "cutTag": "incl. {{points}} cut",
+  "cutRow": "Exact cut",
+  "removeCut": "Remove this exact cut"
 }

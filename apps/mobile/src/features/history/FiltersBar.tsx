@@ -21,7 +21,7 @@ export function memberOptions(members: readonly Member[], size = 32): SheetOptio
   return members.map((m) => ({ value: m.userId, label: m.name, leading: <Avatar name={m.name} url={m.avatarUrl} size={size} /> }))
 }
 
-/** Filter chips: my games, player, date range, verified only, tournament only. */
+/** Filter chips: my games, player, date range, tournament only. */
 export function FiltersBar({ filters, onChange, members, seasonStart, clear }: FiltersBarProps) {
   const { t } = useTranslation(['history', 'common'])
   const [sheet, setSheet] = useState<'player' | 'range' | null>(null)
@@ -34,6 +34,7 @@ export function FiltersBar({ filters, onChange, members, seasonStart, clear }: F
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
+        style={styles.bar}
         contentContainerStyle={styles.row}
         accessibilityLabel={t('filters.label')}>
         <Chip label={t('filters.mine')} selected={filters.mine} onPress={() => set({ mine: !filters.mine })} />
@@ -44,7 +45,6 @@ export function FiltersBar({ filters, onChange, members, seasonStart, clear }: F
           onPress={() => setSheet('player')}
         />
         <Chip label={t(`filters.range.${filters.range}`)} selected={filters.range !== 'all'} picker onPress={() => setSheet('range')} />
-        <Chip label={t('filters.verified')} selected={filters.verified} onPress={() => set({ verified: !filters.verified })} />
         <Chip label={t('filters.tournament')} selected={filters.tournament} onPress={() => set({ tournament: !filters.tournament })} />
         {activeFilterCount(filters) > 0 ? <Chip label={t('filters.clear')} selected={false} onPress={clear} /> : null}
       </ScrollView>
@@ -69,5 +69,8 @@ export function FiltersBar({ filters, onChange, members, seasonStart, clear }: F
 }
 
 const styles = StyleSheet.create({
-  row: { gap: space.sm, paddingVertical: space.xs },
+  // A horizontal ScrollView grows to fill the column on the web, which stretched the chips into
+  // tall pills; keep the bar its natural height.
+  bar: { flexGrow: 0, flexShrink: 0 },
+  row: { gap: space.sm, paddingVertical: space.xs, alignItems: 'center' },
 })

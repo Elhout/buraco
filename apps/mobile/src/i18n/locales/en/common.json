@@ -103,7 +103,10 @@
     "config": "The app isn't configured yet.",
     "screen": "Something went wrong on this screen.",
     "updated": "The app was updated. Tap Reload to continue.",
-    "playerBusy": "One of these players is already in a game. Finish or abandon that game first."
+    "playerBusy": "One of these players is already in a game. Finish or abandon that game first.",
+    "ownerOnly": "Only the owner can do this.",
+    "tournamentLocked": "Tournament games can't be changed: they count in the standings.",
+    "editWouldTie": "That correction would make the game a tie. Check the scores."
   },
   "tabs": {
     "club": "Club",

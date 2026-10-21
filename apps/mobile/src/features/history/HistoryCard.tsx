@@ -67,7 +67,8 @@ export function HistoryCard({ item, onPress }: { item: HistoryItem; onPress: () 
           {date}
         </Text>
         {item.tournament ? <Pill label={t('badge.tournament')} tone="neutral" icon="trophy-outline" /> : null}
-        <Pill label={badge} tone={style.tone} icon={style.icon} />
+        {/* Every finished game counts now, so only the exceptions get a badge. */}
+        {item.badge === 'verified' ? null : <Pill label={badge} tone={style.tone} icon={style.icon} />}
       </Row>
       <View style={styles.teams}>
         <TeamLine item={item} team="A" names={names.A} />

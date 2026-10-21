@@ -16,6 +16,8 @@ import {
   undoLastRound,
   leadOf,
   QUICK_CUT_BONUS,
+  addCutBonus,
+  removeRound,
   roundPoints,
 } from './model'
 
@@ -45,8 +47,8 @@ describe('rounds and totals', () => {
     ])
     expect(quickTotals(g)).toEqual({ A: 750, B: 480 })
     expect(roundRows(g)).toEqual([
-      { n: 2, index: 1, round: { a: 450, b: 600 }, totals: { A: 750, B: 480 } },
-      { n: 1, index: 0, round: { a: 300, b: -120 }, totals: { A: 300, B: -120 } },
+      { n: 2, bonus: false, index: 1, round: { a: 450, b: 600 }, totals: { A: 750, B: 480 } },
+      { n: 1, bonus: false, index: 0, round: { a: 300, b: -120 }, totals: { A: 300, B: -120 } },
     ])
   })
 
@@ -182,5 +184,35 @@ describe('exact cut', () => {
       { a: 5, b: 5 },
     ])
     expect(parseQuickGame(JSON.stringify({ teamAName: '', teamBName: '', target: 2000, rounds: [{ a: 1, b: 2, cut: 'C' }] }))).toBeNull()
+  })
+})
+
+describe('+100 button under the score', () => {
+  it('adds the bonus to that team at once, without a numbered round', () => {
+    const one = addRound(newQuickGame(), 300, 200)
+    if (!one.ok) throw new Error(one.error)
+    const cut = addCutBonus(one.game, 'A')
+    if (!cut.ok) throw new Error(cut.error)
+    expect(quickTotals(cut.game)).toEqual({ A: 300 + QUICK_CUT_BONUS, B: 200 })
+    const rows = roundRows(cut.game)
+    expect(rows.map((r) => [r.n, r.bonus])).toEqual([
+      [1, true],
+      [1, false],
+    ])
+    const next = addRound(cut.game, 10, 20)
+    if (!next.ok) throw new Error(next.error)
+    expect(roundRows(next.game)[0]!.n).toBe(2)
+  })
+
+  it('can be removed again', () => {
+    const cut = addCutBonus(newQuickGame(), 'B')
+    if (!cut.ok) throw new Error(cut.error)
+    expect(quickTotals(removeRound(cut.game, 0))).toEqual({ A: 0, B: 0 })
+  })
+
+  it('is refused once the game is over', () => {
+    const won = addRound(newQuickGame(), 2000, 0)
+    if (!won.ok) throw new Error(won.error)
+    expect(addCutBonus(won.game, 'B')).toEqual({ ok: false, error: 'game_over' })
   })
 })

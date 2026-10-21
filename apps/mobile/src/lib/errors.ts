@@ -39,6 +39,9 @@ export type ErrorCode =
   | 'organizerAdminOnly'
   | 'accountsAdminOnly'
   | 'playerBusy'
+  | 'ownerOnly'
+  | 'tournamentLocked'
+  | 'editWouldTie'
   | 'tournamentClosed'
   | 'unknown'
 
@@ -78,6 +81,9 @@ const RULES: readonly (readonly [RegExp, ErrorCode])[] = [
   [/owners and admins can organize/i, 'organizerAdminOnly'],
   [/owners and admins can manage accounts/i, 'accountsAdminOnly'],
   [/already playing another game/i, 'playerBusy'],
+  [/only the owner can do this/i, 'ownerOnly'],
+  [/tournament games cannot be (deleted|edited)/i, 'tournamentLocked'],
+  [/would make the game a tie/i, 'editWouldTie'],
   [/tournament is closed/i, 'tournamentClosed'],
 ]
 

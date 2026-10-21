@@ -22,6 +22,9 @@ describe('toAppError', () => {
     ['the tournament is closed', 'tournamentClosed'],
     ['only club owners and admins can manage accounts', 'accountsAdminOnly'],
     ['player is already playing another game', 'playerBusy'],
+    ['only the owner can do this', 'ownerOnly'],
+    ['tournament games cannot be deleted', 'tournamentLocked'],
+    ['the edit would make the game a tie', 'editWouldTie'],
     ['TypeError: Network request failed', 'network'],
     ['something entirely new', 'unknown'],
   ])('maps %j to %s', (message, code) => {

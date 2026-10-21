@@ -99,4 +99,12 @@ describe('describeEvent', () => {
   it('falls back for unknown event types', () => {
     expect(describeEvent(ev('teleported'), ctx)).toEqual({ key: 'unknown', values: { type: 'teleported' }, tone: 'neutral' })
   })
+
+  it('describes an owner editing a round', () => {
+    const d = describeEvent(
+      ev('round_edited', { actor_id: 'host', payload: { round_id: 'r3', round_no: 3, old_a: 100, old_b: 20, new_a: 120, new_b: -35 } }),
+      ctx,
+    )
+    expect(d).toMatchObject({ key: 'roundEdited', values: { round: '3', a: '120', b: '-35' }, tone: 'warning' })
+  })
 })

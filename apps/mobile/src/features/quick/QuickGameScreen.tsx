@@ -8,7 +8,19 @@ import { Banner, Button, Screen, SectionTitle, Stack, Text } from '@/components/
 import { BackButton } from '@/features/auth/screens/BackButton'
 import { formatNumber } from '@/lib/format'
 import { HIT, color, radius, space } from '@/theme/tokens'
-import { addRound, editRound, newQuickGame, quickOutcome, quickTotals, renameTeam, roundRows, setTarget, undoLastRound } from './model'
+import {
+  addCutBonus,
+  addRound,
+  removeRound,
+  editRound,
+  newQuickGame,
+  quickOutcome,
+  quickTotals,
+  renameTeam,
+  roundRows,
+  setTarget,
+  undoLastRound,
+} from './model'
 import { QuickRoundList } from './QuickRoundList'
 import { QuickRoundSheet } from './QuickRoundSheet'
 import { NewGameSheet, RenameSheet, TargetSheet } from './QuickSheets'
@@ -108,6 +120,14 @@ export function QuickGameScreen() {
             target={game.target}
             leading={game.rounds.length > 0 && totals[team] > totals[team === 'A' ? 'B' : 'A']}
             onRename={() => setOpen({ kind: 'rename', team })}
+            onCut={
+              over
+                ? undefined
+                : () => {
+                    const result = addCutBonus(game, team)
+                    if (result.ok) setGame(result.game)
+                  }
+            }
           />
         ))}
       </View>
@@ -117,7 +137,11 @@ export function QuickGameScreen() {
         }>
         {t('rounds')}
       </SectionTitle>
-      <QuickRoundList rows={roundRows(game)} onEdit={(index) => setOpen({ kind: 'round', editing: index })} />
+      <QuickRoundList
+        rows={roundRows(game)}
+        onEdit={(index) => setOpen({ kind: 'round', editing: index })}
+        onRemove={(index) => setGame(removeRound(game, index))}
+      />
 
       {open?.kind === 'round' ? <QuickRoundSheet game={game} editing={open.editing} onSave={saveRound} onClose={close} /> : null}
       {open?.kind === 'rename' ? (

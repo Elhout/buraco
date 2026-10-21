@@ -16,6 +16,7 @@ export interface EventRow {
 
 export type EventKey =
   | 'created'
+  | 'roundEdited'
   | 'createdGhost'
   | 'createdTournament'
   | 'live'
@@ -143,6 +144,17 @@ function describePayloadEvent(row: EventRow, ctx: EventContext, actor: string): 
     }
     case 'round_disputed':
       return { key: 'roundDisputed', values: { actor, round: roundLabel(row, ctx), ...scoreValues(row, ctx) }, tone: 'danger' }
+    case 'round_edited':
+      return {
+        key: 'roundEdited',
+        values: {
+          actor,
+          round: roundLabel(row, ctx),
+          a: ctx.formatNumber(numField(row.payload, 'new_a') ?? 0),
+          b: ctx.formatNumber(numField(row.payload, 'new_b') ?? 0),
+        },
+        tone: 'warning',
+      }
     case 'undo':
       return { key: 'undo', values: { actor, round: roundLabel(row, ctx), ...scoreValues(row, ctx) }, tone: 'warning' }
     case 'result_proposed':

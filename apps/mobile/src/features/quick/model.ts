@@ -21,6 +21,8 @@ export interface QuickRound {
   readonly b: number
   /** The team that made the exact cut this round (+QUICK_CUT_BONUS), if any. */
   readonly cut?: Team
+  /** Just the +100 from the button under a team's score: not a dealt round, no round number. */
+  readonly bonusOnly?: boolean
 }
 
 export interface QuickGame {
@@ -62,8 +64,10 @@ export const quickOutcome = (game: QuickGame): GameOutcome => gameOutcome(quickT
 export const isOver = (game: QuickGame): boolean => quickOutcome(game).kind === 'won'
 
 export interface RoundRow {
-  /** 1-based round number. */
+  /** 1-based round number (bonus-only rows repeat the previous round's number). */
   readonly n: number
+  /** A +100 exact cut added from the score card, not a round. */
+  readonly bonus: boolean
   readonly index: number
   readonly round: QuickRound
   /** Running totals after this round. */
@@ -84,9 +88,11 @@ export function leadOf(totals: Totals): Lead {
 /** Rounds with running totals, newest first (as listed on screen). */
 export function roundRows(game: QuickGame): RoundRow[] {
   let acc: Totals = { A: 0, B: 0 }
+  let n = 0
   const rows = game.rounds.map((round, index) => {
+    if (!round.bonusOnly) n += 1
     acc = { A: acc.A + roundPoints(round, 'A'), B: acc.B + roundPoints(round, 'B') }
-    return { n: index + 1, index, round, totals: acc }
+    return { n: Math.max(n, 1), bonus: round.bonusOnly === true, index, round, totals: acc }
   })
   return rows.reverse()
 }
@@ -119,6 +125,17 @@ export function editRound(game: QuickGame, index: number, a: number, b: number, 
   return { ok: true, game: { ...game, rounds: game.rounds.map((r, i) => (i === index ? makeRound(a, b, cut) : r)) } }
 }
 
+/** The +100 button under a team's score: adds the exact-cut bonus now, without a round. */
+export function addCutBonus(game: QuickGame, team: Team): QuickResult {
+  if (isOver(game)) return { ok: false, error: 'game_over' }
+  return { ok: true, game: { ...game, rounds: [...game.rounds, { a: 0, b: 0, cut: team, bonusOnly: true }] } }
+}
+
+/** Removes one entry (e.g. a +100 tapped by mistake). */
+export function removeRound(game: QuickGame, index: number): QuickGame {
+  return { ...game, rounds: game.rounds.filter((_, i) => i !== index) }
+}
+
 export const undoLastRound = (game: QuickGame): QuickGame => ({ ...game, rounds: game.rounds.slice(0, -1) })
 
 /** Trimmed, single spaces, at most TEAM_NAME_MAX characters. Empty clears it back to the default. */
@@ -136,7 +153,12 @@ export const setTarget = (game: QuickGame, target: number): QuickGame => (isVali
 const isRound = (v: unknown): v is QuickRound => {
   if (typeof v !== 'object' || v === null) return false
   const r = v as Record<string, unknown>
-  return Number.isInteger(r.a) && Number.isInteger(r.b) && (r.cut === undefined || r.cut === 'A' || r.cut === 'B')
+  return (
+    Number.isInteger(r.a) &&
+    Number.isInteger(r.b) &&
+    (r.cut === undefined || r.cut === 'A' || r.cut === 'B') &&
+    (r.bonusOnly === undefined || typeof r.bonusOnly === 'boolean')
+  )
 }
 
 /** Reads a saved game back; anything malformed (old format, edited storage) starts fresh. */
