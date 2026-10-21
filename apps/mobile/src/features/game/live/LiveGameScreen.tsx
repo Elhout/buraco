@@ -1,3 +1,5 @@
+import type { Team } from '@buraco/shared'
+import { useState } from 'react'
 import { useNetInfo } from '@react-native-community/netinfo'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
@@ -31,7 +33,7 @@ function DownBar() {
   )
 }
 
-function Bar({ view, sheets, sendingCount }: { view: GameView; sheets: Sheets; sendingCount: number }) {
+function Bar({ view, sheets, sendingCount, onEnter }: { view: GameView; sheets: Sheets; sendingCount: number; onEnter: () => void }) {
   const block = actionBlock({
     live: view.game.status === 'live',
     resultProposed: view.resultProposed,
@@ -47,7 +49,10 @@ function Bar({ view, sheets, sendingCount }: { view: GameView; sheets: Sheets; s
       waitingFor={waitingFor}
       isGhost={view.isGhost}
       cutBonus={view.config.cutBonus}
-      onEnter={() => sheets.open('enter')}
+      onEnter={() => {
+        onEnter()
+        sheets.open('enter')
+      }}
       onCut={() => sheets.open('cut')}
       onMenu={() => sheets.open('menu')}
     />
@@ -65,6 +70,7 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
   const watchers = useWatchers(gameId, view)
   const refusal = useOutboxRefusal(gameId)
   const sheets = useLiveSheets(view)
+  const [entryFocus, setEntryFocus] = useState<Team>('A')
   useLiveFocus(gameId, live)
   usePostedRoundHaptics(view ? view.rounds.filter((r) => r.status === 'confirmed').length : null)
 
@@ -78,9 +84,19 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
 
   const rows = buildRoundRows({ rounds: view.rounds, seats: view.seats, outbox, cutBonus: view.config.cutBonus })
   const showBar = view.canScore && live
+  // Tapping a team's score opens round entry for that team, when the Enter round button would work.
+  const canEnter =
+    showBar &&
+    actionBlock({
+      live,
+      resultProposed: view.resultProposed,
+      hasPendingRound: view.pendingRound !== null,
+      awaitingMyConfirmation: view.awaitingMyConfirmation !== null,
+      sendingCount: outbox.length,
+    }) === null
   return (
     <Screen
-      footer={showBar ? <Bar view={view} sheets={sheets} sendingCount={outbox.length} /> : undefined}
+      footer={showBar ? <Bar view={view} sheets={sheets} sendingCount={outbox.length} onEnter={() => setEntryFocus('A')} /> : undefined}
       onRefresh={() => void refetch()}>
       <LiveHeader
         title={t('live.title')}
@@ -88,7 +104,17 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
         watchers={{ count: watchers.length, onPress: () => sheets.open('watchers') }}
       />
       {down && live ? <DownBar /> : null}
-      <TotalsHeader view={view} />
+      <TotalsHeader
+        view={view}
+        onTeamPress={
+          canEnter
+            ? (team) => {
+                setEntryFocus(team)
+                sheets.open('enter')
+              }
+            : undefined
+        }
+      />
       <LiveBanners
         view={view}
         offline={net.isConnected === false}
@@ -98,7 +124,7 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
       />
       <GameStateCard view={view} />
       <RoundList rows={rows} isGhost={view.isGhost} updatedAt={dataUpdatedAt} />
-      <LiveSheets view={view} sheets={sheets} watchers={watchers} />
+      <LiveSheets view={view} sheets={sheets} watchers={watchers} entryFocus={entryFocus} />
     </Screen>
   )
 }

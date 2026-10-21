@@ -16,10 +16,12 @@ export interface QuickTeamCardProps {
   onRename: () => void
   /** +100 exact cut for this team, straight away (no round entry). Hidden once the game is over. */
   onCut?: () => void
+  /** Tapping the score opens round entry with this team selected. Hidden once the game is over. */
+  onAddRound?: () => void
 }
 
 /** One team: name (tap to rename), big running total, progress to the target and the +100 cut. */
-export function QuickTeamCard({ team, name, total, target, leading, onRename, onCut }: QuickTeamCardProps) {
+export function QuickTeamCard({ team, name, total, target, leading, onRename, onCut, onAddRound }: QuickTeamCardProps) {
   const { t } = useTranslation('quick')
   const toGo = Math.max(0, target - total)
   return (
@@ -36,15 +38,22 @@ export function QuickTeamCard({ team, name, total, target, leading, onRename, on
         </Text>
         <Ionicons name="pencil" size={14} color={color.inkFaint} />
       </Pressable>
-      <Score
-        value={total}
-        size="scoreXl"
-        tone={teamColor(team)}
-        numberOfLines={1}
-        adjustsFontSizeToFit
-        style={[styles.score, scoreFit(formatNumber(total))]}
-      />
-      <TargetBar team={team} value={total} target={target} />
+      <Pressable
+        disabled={!onAddRound}
+        onPress={onAddRound}
+        accessibilityRole="button"
+        accessibilityLabel={t('addRoundFor', { team })}
+        style={({ pressed }) => [styles.scoreTap, pressed && styles.pressed]}>
+        <Score
+          value={total}
+          size="scoreXl"
+          tone={teamColor(team)}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          style={[styles.score, scoreFit(formatNumber(total))]}
+        />
+        <TargetBar team={team} value={total} target={target} />
+      </Pressable>
       <Text variant="caption" tone={toGo === 0 ? teamColor(team) : color.inkMuted}>
         {toGo === 0 ? t('atTarget') : t('toGo', { points: formatNumber(toGo) })}
       </Text>
@@ -76,6 +85,7 @@ const scoreFit = (text: string): { fontSize: number; lineHeight: number } | null
 }
 
 const styles = StyleSheet.create({
+  scoreTap: { gap: space.sm, borderRadius: radius.md },
   cut: {
     alignSelf: 'center',
     minHeight: 36,

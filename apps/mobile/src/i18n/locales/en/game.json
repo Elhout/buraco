@@ -32,7 +32,8 @@
     "undoRequested": "Undo requested. Waiting for Team {{team}}.",
     "confirmWaiting": "Round {{n}} is waiting for your confirmation.",
     "confirmOpen": "Review",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "tapToEnter": "Tap to enter a round"
   },
   "rounds": {
     "title": "Rounds",

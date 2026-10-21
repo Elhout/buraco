@@ -28,7 +28,8 @@ import { QuickTeamCard } from './QuickTeamCard'
 import { useQuickGame } from './useQuickGame'
 import { useTeamLabel } from './useTeamLabel'
 
-type Open = { kind: 'round'; editing: number | null } | { kind: 'rename'; team: Team } | { kind: 'target' } | { kind: 'newGame' } | null
+type Open =
+  { kind: 'round'; editing: number | null; focus?: Team } | { kind: 'rename'; team: Team } | { kind: 'target' } | { kind: 'newGame' } | null
 
 /**
  * /quick: a score calculator anyone can use without signing in. Two teams (names optional),
@@ -120,6 +121,7 @@ export function QuickGameScreen() {
             target={game.target}
             leading={game.rounds.length > 0 && totals[team] > totals[team === 'A' ? 'B' : 'A']}
             onRename={() => setOpen({ kind: 'rename', team })}
+            onAddRound={over ? undefined : () => setOpen({ kind: 'round', editing: null, focus: team })}
             onCut={
               over
                 ? undefined
@@ -154,7 +156,9 @@ export function QuickGameScreen() {
         onRemove={(index) => setGame(removeRound(game, index))}
       />
 
-      {open?.kind === 'round' ? <QuickRoundSheet game={game} editing={open.editing} onSave={saveRound} onClose={close} /> : null}
+      {open?.kind === 'round' ? (
+        <QuickRoundSheet game={game} editing={open.editing} focus={open.focus} onSave={saveRound} onClose={close} />
+      ) : null}
       {open?.kind === 'rename' ? (
         <RenameSheet
           team={open.team}

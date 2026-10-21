@@ -1,3 +1,4 @@
+import type { Team } from '@buraco/shared'
 import type { GameView } from '../model'
 import { AbandonSheet } from './AbandonSheet'
 import { ConfirmRoundSheet } from './ConfirmRoundSheet'
@@ -14,10 +15,12 @@ interface LiveSheetsProps {
   readonly view: GameView
   readonly sheets: Sheets
   readonly watchers: readonly Watcher[]
+  /** Team selected when round entry was opened by tapping a score. */
+  readonly entryFocus?: Team
 }
 
 /** Every sheet of the live screen; `sheets.sheet` says which one is up. */
-export function LiveSheets({ view, sheets, watchers }: LiveSheetsProps) {
+export function LiveSheets({ view, sheets, watchers, entryFocus }: LiveSheetsProps) {
   const { sheet, close, swap } = sheets
   const scoring = view.canScore
   const confirmRound = view.awaitingMyConfirmation
@@ -25,7 +28,7 @@ export function LiveSheets({ view, sheets, watchers }: LiveSheetsProps) {
     <>
       {scoring ? (
         <>
-          <EnterRoundSheet visible={sheet === 'enter'} view={view} onClose={close} onSent={close} />
+          <EnterRoundSheet visible={sheet === 'enter'} view={view} onClose={close} onSent={close} focus={entryFocus} />
           <CutSheet visible={sheet === 'cut'} view={view} onClose={close} />
           <GameMenuSheet visible={sheet === 'menu'} view={view} onClose={close} onSelect={swap} />
           <UndoRequestSheet visible={sheet === 'undo'} view={view} onClose={close} />

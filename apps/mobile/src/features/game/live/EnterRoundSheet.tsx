@@ -1,3 +1,4 @@
+import type { Team } from '@buraco/shared'
 import * as Haptics from 'expo-haptics'
 import { useReducer, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -18,9 +19,11 @@ interface EnterRoundSheetProps {
   readonly view: GameView
   readonly onClose: () => void
   readonly onSent: () => void
+  /** The team whose score was tapped to open the sheet: its field starts selected. */
+  readonly focus?: Team
 }
 
-function useRoundEntry(view: GameView, visible: boolean, onSent: () => void) {
+function useRoundEntry(view: GameView, visible: boolean, onSent: () => void, focus: Team = 'A') {
   const allowNegative = view.config.allowNegative
   const [state, dispatch] = useReducer((s: EntryState, a: EntryAction) => entryReducer(s, a, allowNegative), initialEntry)
   const [attempted, setAttempted] = useState(false)
@@ -33,6 +36,7 @@ function useRoundEntry(view: GameView, visible: boolean, onSent: () => void) {
     setWasVisible(visible)
     if (visible) {
       dispatch({ type: 'reset' })
+      dispatch({ type: 'focus', side: focus })
       setAttempted(false)
       setError(null)
     }
@@ -65,9 +69,9 @@ function useRoundEntry(view: GameView, visible: boolean, onSent: () => void) {
 }
 
 /** Two big fields on one number pad, a live preview, then "Send for confirmation". */
-export function EnterRoundSheet({ visible, view, onClose, onSent }: EnterRoundSheetProps) {
+export function EnterRoundSheet({ visible, view, onClose, onSent, focus }: EnterRoundSheetProps) {
   const { t } = useTranslation(['game', 'common'])
-  const entry = useRoundEntry(view, visible, onSent)
+  const entry = useRoundEntry(view, visible, onSent, focus)
   const { state, dispatch } = entry
   const allowNegative = view.config.allowNegative
   const roundNo = view.rounds.filter((r) => r.status === 'confirmed').length + 1

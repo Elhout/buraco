@@ -42,5 +42,6 @@
   "cutA11y": "Team {{team}} made the exact cut ({{points}})",
   "cutTag": "incl. {{points}} cut",
   "cutRow": "Exact cut",
-  "removeCut": "Remove this exact cut"
+  "removeCut": "Remove this exact cut",
+  "addRoundFor": "Add a round, starting with Team {{team}}"
 }

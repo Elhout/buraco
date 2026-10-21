@@ -36,7 +36,8 @@
     "undoRequested": "طُلب التراجع. بانتظار الفريق {{team}}.",
     "confirmWaiting": "الجولة {{n}} بانتظار تأكيدك.",
     "confirmOpen": "مراجعة",
-    "dismiss": "إخفاء"
+    "dismiss": "إخفاء",
+    "tapToEnter": "اضغط لإدخال جولة"
   },
   "rounds": {
     "title": "الجولات",

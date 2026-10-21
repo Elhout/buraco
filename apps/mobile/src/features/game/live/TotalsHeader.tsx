@@ -1,6 +1,6 @@
 import { type Team, pointsToGo } from '@buraco/shared'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, View } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
 import { Score, TargetBar, TeamBadge, Text } from '@/components/ui'
 import { formatNumber } from '@/lib/format'
 import { color, radius, space, teamColor, teamSoft } from '@/theme/tokens'
@@ -9,17 +9,22 @@ import { type GameView, teamNames } from '../model'
 interface TeamTotalProps {
   readonly view: GameView
   readonly team: Team
+  /** Tap the score to enter a round with this team selected (scorers only). */
+  readonly onPress?: (team: Team) => void
 }
 
-function TeamTotal({ view, team }: TeamTotalProps) {
+function TeamTotal({ view, team, onPress }: TeamTotalProps) {
   const { t } = useTranslation(['game', 'common'])
   const total = view.totals[team]
   const toGo = pointsToGo(total, view.config)
   const leading = total > view.totals[team === 'A' ? 'B' : 'A']
   return (
-    <View
-      style={[styles.half, leading && { backgroundColor: teamSoft(team) }]}
-      accessible
+    <Pressable
+      disabled={!onPress}
+      onPress={() => onPress?.(team)}
+      accessibilityRole={onPress ? 'button' : undefined}
+      accessibilityHint={onPress ? t('live.tapToEnter') : undefined}
+      style={({ pressed }) => [styles.half, leading && { backgroundColor: teamSoft(team) }, pressed && { backgroundColor: color.raised }]}
       accessibilityLabel={t('live.totalA11y', { team, total: formatNumber(total), toGo: formatNumber(toGo) })}>
       <View style={styles.teamLine}>
         <TeamBadge team={team} size="sm" />
@@ -32,19 +37,19 @@ function TeamTotal({ view, team }: TeamTotalProps) {
       <Text variant="label" tone={toGo === 0 ? teamColor(team) : color.inkMuted}>
         {toGo === 0 ? t('live.atTarget') : t('live.toGo', { points: formatNumber(toGo) })}
       </Text>
-    </View>
+    </Pressable>
   )
 }
 
 /** Team A (start side) vs Team B (end side): the totals everyone at the table glances at. */
-export function TotalsHeader({ view }: { view: GameView }) {
+export function TotalsHeader({ view, onTeamPress }: { view: GameView; onTeamPress?: (team: Team) => void }) {
   const { t } = useTranslation(['game', 'common'])
   return (
     <View style={styles.board}>
       <View style={styles.row}>
-        <TeamTotal view={view} team="A" />
+        <TeamTotal view={view} team="A" onPress={onTeamPress} />
         <View style={styles.rule} />
-        <TeamTotal view={view} team="B" />
+        <TeamTotal view={view} team="B" onPress={onTeamPress} />
       </View>
       <Text variant="caption" tone={color.inkFaint} center>
         {t('live.target', { points: formatNumber(view.config.targetScore) })}

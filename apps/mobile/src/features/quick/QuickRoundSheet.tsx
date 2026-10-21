@@ -16,6 +16,8 @@ export interface QuickRoundSheetProps {
   editing: number | null
   onSave: (a: number, b: number, cut: Team | null) => void
   onClose: () => void
+  /** The team whose score was tapped to open this sheet: its field starts selected. */
+  focus?: Team
 }
 
 const fromRound = (r: QuickRound): EntryState => ({
@@ -28,12 +30,12 @@ const fromRound = (r: QuickRound): EntryState => ({
 const roundsBefore = (game: QuickGame, index: number): number => game.rounds.slice(0, index).filter((r) => !r.bonusOnly).length
 
 /** Mounted only while open (keyed by the parent), so each opening starts from a fresh form. */
-export function QuickRoundSheet({ game, editing, onSave, onClose }: QuickRoundSheetProps) {
+export function QuickRoundSheet({ game, editing, onSave, onClose, focus = 'A' }: QuickRoundSheetProps) {
   const { t } = useTranslation(['quick', 'common', 'game'])
   const editingRound = editing === null ? null : game.rounds[editing]
   const [state, dispatch] = useReducer(
     (s: EntryState, a: EntryAction) => entryReducer(s, a, true),
-    editingRound ? fromRound(editingRound) : initialEntry,
+    editingRound ? fromRound(editingRound) : { ...initialEntry, focus },
   )
   const [attempted, setAttempted] = useState(false)
   // The cut is added with the +100 button on the score card; editing keeps a round's cut as is.
