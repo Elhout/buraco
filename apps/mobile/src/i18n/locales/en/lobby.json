@@ -58,7 +58,7 @@
     "subtitle": "Tap 4 players: the first two are Team A, the next two Team B",
     "close": "Close",
     "seatEmpty": "Add player",
-    "seatHint": "Tap a player below",
+    "seatHint": "Tap to pick a player",
     "seatClear": "Remove {{name}}",
     "swapTeams": "Swap teams",
     "shuffle": "Shuffle",
@@ -91,7 +91,9 @@
     "aloneTitle": "You're the only player so far",
     "aloneBody": "Add the other players once, then pick them here for every game.",
     "aloneAsk": "Ask an admin to add the other players.",
-    "addPlayer": "Add player"
+    "addPlayer": "New player",
+    "pickTitle": "Pick a player for Team {{team}}",
+    "newPlayer": "New player (no account yet)"
   },
   "invite": {
     "title": "Waiting for players",

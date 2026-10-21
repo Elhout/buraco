@@ -13,9 +13,10 @@ interface SlotProps {
   slots: Slots
   meId: string
   onClear: (seat: SeatNo) => void
+  onPick: (seat: SeatNo) => void
 }
 
-function SeatSlot({ seat, team, slots, meId, onClear }: SlotProps) {
+function SeatSlot({ seat, team, slots, meId, onClear, onPick }: SlotProps) {
   const { t } = useTranslation(['lobby', 'common'])
   const player = slots[seat - 1] ?? null
   const isNext = nextFreeSeat(slots) === seat
@@ -23,15 +24,16 @@ function SeatSlot({ seat, team, slots, meId, onClear }: SlotProps) {
 
   if (!player) {
     return (
-      <View
-        style={[styles.slot, styles.empty, isNext && { borderColor: teamColor(team) }]}
-        accessible
-        accessibilityLabel={`${t('new.seatEmpty', { seat: seatNo })}. ${t('new.seatHint')}`}>
+      <Pressable
+        onPress={() => onPick(seat)}
+        accessibilityRole="button"
+        accessibilityLabel={`${t('new.seatEmpty', { seat: seatNo })}. ${t('new.seatHint')}`}
+        style={({ pressed }) => [styles.slot, styles.empty, isNext && { borderColor: teamColor(team) }, pressed && styles.pressed]}>
         <Ionicons name="person-add-outline" size={20} color={isNext ? teamColor(team) : color.inkFaint} />
         <Text variant="caption" tone={isNext ? teamColor(team) : color.inkFaint} numberOfLines={1}>
           {t('new.seatEmpty', { seat: seatNo })}
         </Text>
-      </View>
+      </Pressable>
     )
   }
 
@@ -62,12 +64,14 @@ export interface TeamPanelsProps {
   slots: Slots
   meId: string
   onClear: (seat: SeatNo) => void
+  /** Tapping an empty seat opens the player picker for it. */
+  onPick: (seat: SeatNo) => void
   onSwap: () => void
   onShuffle: () => void
 }
 
 /** Team A (seats 1 & 3) beside Team B (seats 2 & 4), the way the table sits. */
-export function TeamPanels({ slots, meId, onClear, onSwap, onShuffle }: TeamPanelsProps) {
+export function TeamPanels({ slots, meId, onClear, onPick, onSwap, onShuffle }: TeamPanelsProps) {
   const { t } = useTranslation(['lobby', 'common'])
   const any = slots.some((p) => p !== null)
   return (
@@ -82,7 +86,7 @@ export function TeamPanels({ slots, meId, onClear, onSwap, onShuffle }: TeamPane
               </Text>
             </View>
             {TEAM_SEATS[team].map((seat) => (
-              <SeatSlot key={seat} seat={seat} team={team} slots={slots} meId={meId} onClear={onClear} />
+              <SeatSlot key={seat} seat={seat} team={team} slots={slots} meId={meId} onClear={onClear} onPick={onPick} />
             ))}
           </View>
         ))}

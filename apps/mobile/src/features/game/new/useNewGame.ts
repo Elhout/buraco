@@ -11,6 +11,7 @@ import {
   type SeatNo,
   type Slots,
   clearSeat,
+  placeInSeat,
   shuffle,
   swapTeams,
   toSeats,
@@ -27,6 +28,8 @@ export interface NewGameState {
   guestsDropped: boolean
   toggle: (player: Player) => void
   clear: (seat: SeatNo) => void
+  /** Seat a player in one particular seat (from the seat picker). */
+  place: (seat: SeatNo, player: Player) => void
   swap: () => void
   reshuffle: () => void
   setMode: (mode: GameMode) => void
@@ -64,6 +67,7 @@ export function useNewGame(clubId: string, me: Player & { kind: 'member' }): New
     guestsDropped,
     toggle: (player) => edit((s) => togglePlayer(s, player)),
     clear: (seat) => edit((s) => clearSeat(s, seat)),
+    place: (seat, player) => edit((s) => placeInSeat(s, seat, player)),
     swap: () => edit(swapTeams),
     reshuffle: () => edit((s) => shuffle(s)),
     setMode: (next) => {

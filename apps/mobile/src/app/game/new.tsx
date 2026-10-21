@@ -1,15 +1,16 @@
 import { Ionicons } from '@expo/vector-icons'
-import { router } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { Button, ErrorText, Screen, Text } from '@/components/ui'
 import { useSession, useUserId } from '@/features/auth/SessionProvider'
 import { useState } from 'react'
+import { goBackOr } from '@/features/auth/screens/BackButton'
 import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { AddPlayerSheet } from '@/features/clubs/screens/AddPlayerSheet'
-import { type DraftIssue, filledCount } from '@/features/game/new/draft'
+import { type DraftIssue, type SeatNo, filledCount } from '@/features/game/new/draft'
 import { GuestField } from '@/features/game/new/GuestField'
 import { MemberPicker } from '@/features/game/new/MemberPicker'
+import { SeatPickerSheet } from '@/features/game/new/SeatPickerSheet'
 import { TeamPanels } from '@/features/game/new/TeamPanels'
 import { type NewGameState, useNewGame } from '@/features/game/new/useNewGame'
 import { useOnlineMembers } from '@/features/lobby/presence'
@@ -19,7 +20,7 @@ function CloseButton() {
   const { t } = useTranslation(['lobby', 'common'])
   return (
     <Pressable
-      onPress={() => router.back()}
+      onPress={() => goBackOr('/club')}
       accessibilityRole="button"
       accessibilityLabel={t('new.close')}
       style={({ pressed }) => [styles.close, pressed && styles.pressed]}>
@@ -69,6 +70,9 @@ export default function NewGameScreen() {
   const { club, role } = useCurrentClub()
   const canAdd = role === 'owner' || role === 'admin'
   const [adding, setAdding] = useState(false)
+  const [pickSeat, setPickSeat] = useState<SeatNo | null>(null)
+  // A seat waiting for the player being created in New player (seated as soon as it exists).
+  const [seatForNew, setSeatForNew] = useState<SeatNo | null>(null)
   const online = useOnlineMembers(club.id)
   const state = useNewGame(club.id, { kind: 'member', userId, name: profile?.display_name ?? '' })
 
@@ -79,7 +83,14 @@ export default function NewGameScreen() {
       actions={<CloseButton />}
       edges={['top', 'bottom']}
       footer={<StartBar state={state} />}>
-      <TeamPanels slots={state.slots} meId={userId} onClear={state.clear} onSwap={state.swap} onShuffle={state.reshuffle} />
+      <TeamPanels
+        slots={state.slots}
+        meId={userId}
+        onClear={state.clear}
+        onPick={setPickSeat}
+        onSwap={state.swap}
+        onShuffle={state.reshuffle}
+      />
       <MemberPicker
         clubId={club.id}
         meId={userId}
@@ -89,7 +100,41 @@ export default function NewGameScreen() {
         onAddPlayer={canAdd ? () => setAdding(true) : undefined}
       />
       <GuestField slots={state.slots} onAdd={state.toggle} />
-      {canAdd ? <AddPlayerSheet clubId={club.id} visible={adding} onClose={() => setAdding(false)} /> : null}
+      <SeatPickerSheet
+        clubId={club.id}
+        meId={userId}
+        seat={pickSeat}
+        slots={state.slots}
+        onPick={(seat, player) => {
+          state.place(seat, player)
+          setPickSeat(null)
+        }}
+        onNewPlayer={
+          canAdd
+            ? () => {
+                setSeatForNew(pickSeat)
+                setPickSeat(null)
+                setAdding(true)
+              }
+            : undefined
+        }
+        onClose={() => setPickSeat(null)}
+      />
+      {canAdd ? (
+        <AddPlayerSheet
+          clubId={club.id}
+          visible={adding}
+          onClose={() => {
+            setAdding(false)
+            setSeatForNew(null)
+          }}
+          onCreated={(p) => {
+            const player = { kind: 'member' as const, userId: p.userId, name: p.name }
+            if (seatForNew) state.place(seatForNew, player)
+            else state.toggle(player)
+          }}
+        />
+      ) : null}
     </Screen>
   )
 }

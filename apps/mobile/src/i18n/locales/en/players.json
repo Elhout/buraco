@@ -2,7 +2,7 @@
   "title": "Players",
   "subtitle_one": "{{n}} player",
   "subtitle_other": "{{n}} players",
-  "add": "Add player",
+  "add": "New player",
   "you": "{{name}} (you)",
   "noGames": "No games yet",
   "record_one": "{{games}} game · {{wins}} wins",

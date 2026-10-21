@@ -50,6 +50,12 @@ export function togglePlayer(slots: Slots, player: Player): Slots {
 
 export const clearSeat = (slots: Slots, seat: SeatNo): Slots => withSeat(slots, seat, null)
 
+/** Picking a player for one particular seat: moves them there if they already sit elsewhere. */
+export function placeInSeat(slots: Slots, seat: SeatNo, player: Player): Slots {
+  const current = seatOf(slots, player)
+  return withSeat(current === null ? slots : withSeat(slots, current, null), seat, player)
+}
+
 /** Team A ↔ Team B: partners stay together. */
 export const swapTeams = (slots: Slots): Slots => [slots[1], slots[0], slots[3], slots[2]]
 

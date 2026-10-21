@@ -16,6 +16,8 @@ export interface AddPlayerSheetProps {
   clubId: string
   visible: boolean
   onClose: () => void
+  /** Called with the new account, e.g. to seat the player straight away on New game. */
+  onCreated?: (player: { userId: string; name: string }) => void
 }
 
 interface Created {
@@ -25,7 +27,7 @@ interface Created {
 }
 
 /** Owners and admins create a player's login; the new account joins this club straight away. */
-export function AddPlayerSheet({ clubId, visible, onClose }: AddPlayerSheetProps) {
+export function AddPlayerSheet({ clubId, visible, onClose, onCreated }: AddPlayerSheetProps) {
   const { t } = useTranslation('profile')
   const { t: ta } = useTranslation('auth')
   const { t: tc } = useTranslation()
@@ -49,7 +51,14 @@ export function AddPlayerSheet({ clubId, visible, onClose }: AddPlayerSheetProps
   const create = useMutation({
     mutationFn: async () => {
       if (!nameCheck.ok || !userCheck.ok || !passCheck.ok) return
-      await manageAccount({ action: 'create', club_id: clubId, username: userCheck.username, password, display_name: nameCheck.name })
+      const { user_id } = await manageAccount({
+        action: 'create',
+        club_id: clubId,
+        username: userCheck.username,
+        password,
+        display_name: nameCheck.name,
+      })
+      if (user_id) onCreated?.({ userId: user_id, name: nameCheck.name })
       await Promise.all([
         client.invalidateQueries({ queryKey: qk.members(clubId) }),
         client.invalidateQueries({ queryKey: qk.accounts(clubId) }),

@@ -10,6 +10,7 @@ import { EntrantsSection } from '@/features/tournament/components/create/Entrant
 import { SettingsSection } from '@/features/tournament/components/create/SettingsSection'
 import { type SetupDraft, buildCreateArgs, buildEntries, emptyDraft, isoDay, validateDraft } from '@/features/tournament/setup'
 import { color, space } from '@/theme/tokens'
+import { goBackOr } from '@/features/auth/screens/BackButton'
 
 /** Create a tournament (owners and admins): settings, entrants, pairs or ghost seats, seeds. */
 export default function NewTournamentScreen() {
@@ -43,7 +44,7 @@ export default function NewTournamentScreen() {
     <Screen
       title={t('create.title')}
       subtitle={club.name}
-      actions={<Button variant="quiet" label={t('common:actions.cancel')} onPress={() => router.back()} />}
+      actions={<Button variant="quiet" label={t('common:actions.cancel')} onPress={() => goBackOr('/tournaments')} />}
       footer={
         <View style={styles.footer}>
           {attempted && check.errors.length > 0 ? <Banner tone="danger">{t('create.fixProblems')}</Banner> : null}

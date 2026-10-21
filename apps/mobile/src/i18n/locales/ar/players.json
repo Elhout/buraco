@@ -6,7 +6,7 @@
   "subtitle_few": "{{n}} لاعبين",
   "subtitle_many": "{{n}} لاعبًا",
   "subtitle_other": "{{n}} لاعب",
-  "add": "إضافة لاعب",
+  "add": "لاعب جديد",
   "you": "{{name}} (أنت)",
   "noGames": "لا مباريات بعد",
   "record_zero": "{{games}} مباراة · {{wins}} فوز",

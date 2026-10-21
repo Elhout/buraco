@@ -123,7 +123,7 @@
     "removeConfirm": "Remove {{name}}"
   },
   "accounts": {
-    "add": "Add player",
+    "add": "New player",
     "addTitle": "New player account",
     "addSubtitle": "They sign in once with the username and password and stay signed in.",
     "nameLabel": "Name",

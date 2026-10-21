@@ -1,3 +1,5 @@
+// Must run before any other module: older Safari lacks some newer built-ins.
+import '@/lib/polyfills'
 import { BarlowCondensed_600SemiBold, BarlowCondensed_700Bold } from '@expo-google-fonts/barlow-condensed'
 import {
   IBMPlexSansArabic_400Regular,
@@ -11,8 +13,8 @@ import { useFonts } from 'expo-font'
 import { LocaleProvider, Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
-import { useEffect } from 'react'
-import { I18nManager } from 'react-native'
+import { useEffect, useState } from 'react'
+import { ActivityIndicator, I18nManager, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { ConfigMissing } from '@/components/ConfigMissing'
@@ -33,8 +35,24 @@ syncDirectionOnLaunch()
 wireQueryEnvironment()
 if (env?.sentryDsn) Sentry.init({ dsn: env.sentryDsn, tracesSampleRate: 0.1, sendDefaultPii: false })
 
+const FONT_WAIT_MS = 3000
+
+/** Shown while the session and player list load, so a slow start never looks like a dead page. */
+function Starting() {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: color.bg }}>
+      <ActivityIndicator color={color.inkMuted} />
+    </View>
+  )
+}
+
 function RootLayout() {
-  const [fontsLoaded] = useFonts({
+  const [fontWaitOver, setFontWaitOver] = useState(false)
+  useEffect(() => {
+    const timer = setTimeout(() => setFontWaitOver(true), FONT_WAIT_MS)
+    return () => clearTimeout(timer)
+  }, [])
+  const [fontsLoaded, fontError] = useFonts({
     IBMPlexSansArabic_400Regular,
     IBMPlexSansArabic_500Medium,
     IBMPlexSansArabic_600SemiBold,
@@ -43,7 +61,9 @@ function RootLayout() {
     BarlowCondensed_700Bold,
   })
 
-  if (!fontsLoaded) return null
+  // Never block on fonts: a slow or failed font load (seen on iPhone Safari) used to leave a black
+  // page forever. Start after FONT_WAIT_MS at the latest; the fonts swap in when they arrive.
+  if (!fontsLoaded && !fontError && !fontWaitOver) return null
   if (!env) {
     void SplashScreen.hideAsync()
     return <ConfigMissing />
@@ -85,7 +105,7 @@ function RootNavigator() {
   // Only once the navigator is mounted and the app routes exist, so a tap that launched the app lands.
   useEffect(() => (inApp ? startPushRouting() : undefined), [inApp])
 
-  if (!settled) return null
+  if (!settled) return <Starting />
   if (failed) {
     return (
       <LoadFailed

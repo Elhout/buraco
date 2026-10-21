@@ -16,6 +16,7 @@ import {
   togglePlayer,
   validateDraft,
   withoutGuests,
+  placeInSeat,
 } from './draft'
 
 const m = (id: string): Player => ({ kind: 'member', userId: id, name: id.toUpperCase() })
@@ -130,5 +131,22 @@ describe('guestFrom', () => {
     expect(guestFrom('   ', EMPTY)).toBeNull()
     expect(guestFrom('x'.repeat(41), EMPTY)).toBeNull()
     expect(guestFrom('ali', [g('Ali'), null, null, null])).toBeNull()
+  })
+})
+
+describe('placeInSeat', () => {
+  const sam = { kind: 'member' as const, userId: 'sam', name: 'Samy' }
+  const ak = { kind: 'member' as const, userId: 'ak', name: 'AK' }
+
+  it('puts a player in the chosen seat', () => {
+    expect(placeInSeat(EMPTY, 2, sam)).toEqual([null, sam, null, null])
+  })
+
+  it('moves a player who already sits elsewhere instead of seating them twice', () => {
+    expect(placeInSeat([sam, ak, null, null], 4, sam)).toEqual([null, ak, null, sam])
+  })
+
+  it('replaces whoever was in that seat', () => {
+    expect(placeInSeat([sam, null, null, null], 1, ak)).toEqual([ak, null, null, null])
   })
 })
