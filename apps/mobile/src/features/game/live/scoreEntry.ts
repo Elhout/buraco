@@ -81,7 +81,7 @@ export type FieldError = RoundScoreError | 'missing'
 
 export interface EntryValidation {
   readonly errors: { readonly A: FieldError | null; readonly B: FieldError | null }
-  /** Both values when both are present and valid. */
+  /** Both values (an empty side as 0) when at least one is filled in and both are valid. */
   readonly values: Totals | null
 }
 
@@ -92,11 +92,15 @@ function checkField(field: FieldState, config: ScoringConfig): FieldError | null
   return result.ok ? null : result.error
 }
 
+/**
+ * A round can be saved with only one team's score: the empty side counts as 0. Only a completely
+ * empty round is refused (both sides 'missing').
+ */
 export function validateEntry(state: EntryState, config: ScoringConfig): EntryValidation {
-  const errors = { A: checkField(state.A, config), B: checkField(state.B, config) }
-  const a = fieldValue(state.A)
-  const b = fieldValue(state.B)
-  const values = errors.A === null && errors.B === null && a !== null && b !== null ? { A: a, B: b } : null
+  const bothEmpty = fieldValue(state.A) === null && fieldValue(state.B) === null
+  const check = (field: FieldState): FieldError | null => (bothEmpty || fieldValue(field) !== null ? checkField(field, config) : null)
+  const errors = { A: check(state.A), B: check(state.B) }
+  const values = !bothEmpty && errors.A === null && errors.B === null ? { A: fieldValue(state.A) ?? 0, B: fieldValue(state.B) ?? 0 } : null
   return { errors, values }
 }
 

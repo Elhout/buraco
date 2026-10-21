@@ -59,9 +59,15 @@ describe('fieldValue', () => {
 })
 
 describe('validateEntry', () => {
-  it('requires both scores', () => {
+  it('accepts one team only: the empty side counts as 0', () => {
     const v = validateEntry(run(digits('300')), DEFAULT_CONFIG)
-    expect(v.errors).toEqual({ A: null, B: 'missing' })
+    expect(v.errors).toEqual({ A: null, B: null })
+    expect(v.values).toEqual({ A: 300, B: 0 })
+  })
+
+  it('refuses a completely empty round', () => {
+    const v = validateEntry(run([]), DEFAULT_CONFIG)
+    expect(v.errors).toEqual({ A: 'missing', B: 'missing' })
     expect(v.values).toBeNull()
   })
 
