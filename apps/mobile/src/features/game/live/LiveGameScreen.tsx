@@ -17,6 +17,10 @@ import { LiveHeader } from './LiveHeader'
 import { LiveSheets } from './LiveSheets'
 import { RoundList } from './RoundList'
 import { TotalsHeader } from './TotalsHeader'
+import { planCutToggle } from './cutToggle'
+import { useAction } from './useAction'
+import { addCut, removeCut } from '../actions'
+import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { actionBlock, opponentOf } from './actionState'
 import { buildRoundRows } from './roundRows'
 import { useLiveFocus, useOutboxRefusal, usePostedRoundHaptics, useWatchers } from './useLiveEffects'
@@ -48,12 +52,10 @@ function Bar({ view, sheets, sendingCount, onEnter }: { view: GameView; sheets: 
       team={view.isGhost ? null : view.myTeam}
       waitingFor={waitingFor}
       isGhost={view.isGhost}
-      cutBonus={view.config.cutBonus}
       onEnter={() => {
         onEnter()
         sheets.open('enter')
       }}
-      onCut={() => sheets.open('cut')}
       onMenu={() => sheets.open('menu')}
     />
   )
@@ -71,6 +73,8 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
   const refusal = useOutboxRefusal(gameId)
   const sheets = useLiveSheets(view)
   const [entryFocus, setEntryFocus] = useState<Team>('A')
+  const cutAction = useAction(gameId)
+  const { role } = useCurrentClub()
   useLiveFocus(gameId, live)
   usePostedRoundHaptics(view ? view.rounds.filter((r) => r.status === 'confirmed').length : null)
 
@@ -81,6 +85,18 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
       </Screen>
     )
   }
+
+  // +100 under each team's score (one team per deal; a second tap removes it).
+  const dealLines = view.openRound?.lines ?? []
+  const toggleCut = (team: Team): void => {
+    const plan = planCutToggle(team, dealLines, view.seats)
+    void cutAction.run(async () => {
+      for (const id of plan.remove) await removeCut(id)
+      if (plan.add !== null) await addCut(view.game.id, plan.add)
+    })
+  }
+  // Who's watching: for admins and the players at this table.
+  const canSeeWatchers = view.mySeat !== null || role === 'owner' || role === 'admin'
 
   const rows = buildRoundRows({ rounds: view.rounds, seats: view.seats, outbox, cutBonus: view.config.cutBonus })
   const showBar = view.canScore && live
@@ -101,11 +117,21 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
       <LiveHeader
         title={t('live.title')}
         isGhost={view.isGhost}
-        watchers={{ count: watchers.length, onPress: () => sheets.open('watchers') }}
+        watchers={canSeeWatchers ? { count: watchers.length, onPress: () => sheets.open('watchers') } : undefined}
       />
       {down && live ? <DownBar /> : null}
       <TotalsHeader
         view={view}
+        cut={
+          canEnter
+            ? {
+                bonus: view.config.cutBonus,
+                cutBy: [...new Set(dealLines.map((l) => l.team))],
+                busy: cutAction.busy,
+                onToggle: toggleCut,
+              }
+            : undefined
+        }
         onTeamPress={
           canEnter
             ? (team) => {

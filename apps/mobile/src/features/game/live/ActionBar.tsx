@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Button, Text } from '@/components/ui'
-import { formatSigned } from '@/lib/format'
 import { color, radius, space } from '@/theme/tokens'
 import type { BlockReason } from './actionState'
 
@@ -15,9 +14,7 @@ interface ActionBarProps {
   /** Team whose confirmation we wait for (normal games). */
   readonly waitingFor: Team | null
   readonly isGhost: boolean
-  readonly cutBonus: number
   readonly onEnter: () => void
-  readonly onCut: () => void
   readonly onMenu: () => void
 }
 
@@ -31,7 +28,8 @@ function useBlockText(block: BlockReason | null, waitingFor: Team | null, isGhos
 }
 
 /** Scorekeeper controls, pinned at the bottom within thumb reach. Spectators never see it. */
-export function ActionBar({ block, team, waitingFor, isGhost, cutBonus, onEnter, onCut, onMenu }: ActionBarProps) {
+/** The exact cut is the +100 button under each team's score (TotalsHeader). */
+export function ActionBar({ block, team, waitingFor, isGhost, onEnter, onMenu }: ActionBarProps) {
   const { t } = useTranslation(['game', 'common'])
   const insets = useSafeAreaInsets()
   const reason = useBlockText(block, waitingFor, isGhost)
@@ -52,17 +50,6 @@ export function ActionBar({ block, team, waitingFor, isGhost, cutBonus, onEnter,
             block
             disabled={disabled}
             onPress={onEnter}
-            accessibilityHint={reason ?? undefined}
-          />
-        </View>
-        <View style={styles.cut}>
-          <Button
-            label={t('bar.cut', { points: formatSigned(cutBonus) })}
-            variant="secondary"
-            size="lg"
-            block
-            disabled={disabled}
-            onPress={onCut}
             accessibilityHint={reason ?? undefined}
           />
         </View>

@@ -37,7 +37,11 @@ export function Sheet({ visible, onClose, title, subtitle, children, locked }: S
   const pan = useMemo(
     () =>
       PanResponder.create({
+        // Claim the touch as soon as it starts on the top area: on Android the modal otherwise
+        // keeps it and the swipe never reaches us.
+        onStartShouldSetPanResponder: () => true,
         onMoveShouldSetPanResponder: (_e, g) => g.dy > 6 && Math.abs(g.dy) > Math.abs(g.dx),
+        onPanResponderTerminationRequest: () => false,
         onPanResponderMove: (_e, g) => dragY.setValue(Math.max(0, g.dy)),
         onPanResponderRelease: (_e, g) => {
           if (g.dy > CLOSE_DISTANCE || g.vy > CLOSE_VELOCITY) {
@@ -54,7 +58,7 @@ export function Sheet({ visible, onClose, title, subtitle, children, locked }: S
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={close} statusBarTranslucent>
-      <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <Pressable style={styles.scrim} accessibilityLabel={t('actions.close')} onPress={close} />
         <Animated.View style={[styles.sheet, { paddingBottom: insets.bottom + space.lg, transform: [{ translateY: dragY }] }]}>
           <View {...(locked ? {} : pan.panHandlers)} style={styles.top}>

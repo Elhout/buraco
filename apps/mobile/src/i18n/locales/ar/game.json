@@ -37,7 +37,10 @@
     "confirmWaiting": "الجولة {{n}} بانتظار تأكيدك.",
     "confirmOpen": "مراجعة",
     "dismiss": "إخفاء",
-    "tapToEnter": "اضغط لإدخال جولة"
+    "tapToEnter": "اضغط لإدخال جولة",
+    "cutOff": "قطع مضبوط {{points}}",
+    "cutOn": "{{points}} ✓ في هذا التوزيع",
+    "cutA11y": "الفريق {{team}} حقق القطع المضبوط ({{points}})"
   },
   "rounds": {
     "title": "الجولات",

@@ -33,7 +33,10 @@
     "confirmWaiting": "Round {{n}} is waiting for your confirmation.",
     "confirmOpen": "Review",
     "dismiss": "Dismiss",
-    "tapToEnter": "Tap to enter a round"
+    "tapToEnter": "Tap to enter a round",
+    "cutOff": "{{points}} exact cut",
+    "cutOn": "{{points}} ✓ this deal",
+    "cutA11y": "Team {{team}} made the exact cut ({{points}})"
   },
   "rounds": {
     "title": "Rounds",

@@ -3,6 +3,7 @@ import { router } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { I18nManager, Pressable, StyleSheet, View } from 'react-native'
 import { Text } from '@/components/ui'
+import { WatchersChip } from './WatchersSheet'
 import { HIT, color, radius, space } from '@/theme/tokens'
 
 interface LiveHeaderProps {
@@ -17,8 +18,8 @@ export function goBackOrLobby(): void {
   else router.replace('/club')
 }
 
-/** Back and title. (Every game is start-now and everyone sits at the same table: no mode badge or watcher count.) */
-export function LiveHeader({ title }: LiveHeaderProps) {
+/** Back, title and (for admins and the players at the table) who's watching. */
+export function LiveHeader({ title, watchers }: LiveHeaderProps) {
   const { t } = useTranslation(['game', 'common'])
   return (
     <View style={styles.header}>
@@ -32,6 +33,7 @@ export function LiveHeader({ title }: LiveHeaderProps) {
       <Text variant="title" accessibilityRole="header" style={styles.title} numberOfLines={1}>
         {title}
       </Text>
+      {watchers ? <WatchersChip count={watchers.count} onPress={watchers.onPress} /> : null}
     </View>
   )
 }
