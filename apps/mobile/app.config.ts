@@ -5,13 +5,18 @@ import type { ConfigContext, ExpoConfig } from 'expo/config'
 const env = process.env
 
 // Background behind the splash and app launch, per phone theme (matches theme/tokens.ts bg).
+/** The club's Expo project (EAS builds and over-the-air updates); not a secret. */
+const EAS_PROJECT_ID = process.env.EAS_PROJECT_ID ?? 'cc58fec2-67ee-4353-9b30-4998d3379c95'
+
 const BG_LIGHT = '#F2F3F7'
 const BG_DARK = '#0F1115'
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: 'Buraco',
-  slug: 'buraco',
+  // Must match the Expo project (EAS). Not shown to players; the app name is "Buraco".
+  slug: 'elhout',
+  owner: 'elhouts-team',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
@@ -50,8 +55,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-font',
     'expo-updates',
   ],
-  updates: env.EAS_PROJECT_ID ? { url: `https://u.expo.dev/${env.EAS_PROJECT_ID}` } : undefined,
+  updates: { url: `https://u.expo.dev/${EAS_PROJECT_ID}` },
   runtimeVersion: { policy: 'appVersion' },
-  extra: { eas: { projectId: env.EAS_PROJECT_ID } },
+  extra: { eas: { projectId: EAS_PROJECT_ID } },
   experiments: { typedRoutes: true, reactCompiler: true },
 })
