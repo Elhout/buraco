@@ -204,7 +204,7 @@
     "draw": "Draw",
     "pointsA": "Team A points",
     "pointsB": "Team B points",
-    "reason": "Reason (required)",
+    "reason": "Reason (optional)",
     "reasonPlaceholder": "Phone died, scored on paper",
     "consequence": "Standings update for everyone and the change is logged with your reason.",
     "save": "Save result",

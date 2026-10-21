@@ -100,11 +100,13 @@ describe('buildGameView', () => {
     expect(mine.awaitingMyConfirmation).toBeNull()
   })
 
-  it('lets only scorekeepers score a normal game, and only the host a ghost game', () => {
+  it('lets only scorekeepers score a normal game, and anyone at the table (or the host) a start-now game', () => {
     expect(buildGameView(game(), seats, [], ME, 'Guest').canScore).toBe(true)
     expect(buildGameView(game(), seats, [], 'u3', 'Guest').canScore).toBe(false)
     const ghost = game({ mode: 'ghost', host_id: 'u9' })
-    expect(buildGameView(ghost, seats, [], ME, 'Guest').canScore).toBe(false)
+    expect(buildGameView(ghost, seats, [], ME, 'Guest').canScore).toBe(true)
+    expect(buildGameView(ghost, seats, [], 'u3', 'Guest').canScore).toBe(true)
+    expect(buildGameView(ghost, seats, [], 'outsider', 'Guest').canScore).toBe(false)
     expect(buildGameView(ghost, seats, [], 'u9', 'Guest').canScore).toBe(true)
     expect(buildGameView(game({ status: 'finished' }), seats, [], ME, 'Guest').canScore).toBe(false)
   })

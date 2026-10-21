@@ -31,7 +31,7 @@ function initialResult(m: MatchView, allowDraw: boolean): MatchResultValue {
   return m.liveB > m.liveA ? 'b' : 'a'
 }
 
-/** Organizer correction or entry of a result; a reason is required and logged. Mount with key={matchId}. */
+/** Organizer correction or entry of a result; an optional reason is logged. Mount with key={matchId}. */
 export function EditResultSheet({ match, index, allowDraw, busy, error, onClose, onSave }: EditResultSheetProps) {
   const { t } = useTranslation('tournament')
   const decided = match.result !== null
@@ -39,8 +39,10 @@ export function EditResultSheet({ match, index, allowDraw, busy, error, onClose,
   const [pointsA, setPointsA] = useState(String(decided ? (match.pointsA ?? 0) : match.liveA))
   const [pointsB, setPointsB] = useState(String(decided ? (match.pointsB ?? 0) : match.liveB))
   const [reason, setReason] = useState('')
-  const pointsOk = INT.test(pointsA.trim()) && INT.test(pointsB.trim())
-  const canSave = pointsOk && reason.trim() !== ''
+  // An empty points field counts as 0, like round entry.
+  const points = (v: string): number | null => (v.trim() === '' ? 0 : INT.test(v.trim()) ? Number.parseInt(v.trim(), 10) : null)
+  const pointsOk = points(pointsA) !== null && points(pointsB) !== null
+  const canSave = pointsOk
   const options = [
     { value: 'a' as const, label: 'A' },
     ...(allowDraw ? [{ value: 'draw' as const, label: t('edit.draw') }] : []),
@@ -94,8 +96,8 @@ export function EditResultSheet({ match, index, allowDraw, busy, error, onClose,
           onSave({
             matchId: match.matchId,
             result,
-            pointsA: Number.parseInt(pointsA, 10),
-            pointsB: Number.parseInt(pointsB, 10),
+            pointsA: points(pointsA) ?? 0,
+            pointsB: points(pointsB) ?? 0,
             reason: reason.trim(),
           })
         }

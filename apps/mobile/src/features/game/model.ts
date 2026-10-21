@@ -160,7 +160,8 @@ export function buildGameView(
   const trustsScorekeeper = snapshot?.trust_ghost === true
   const needsVerification = isGhost && !trustsScorekeeper
   const live = game.status === 'live'
-  const canScore = live && (isGhost ? isHost : Boolean(mySeat?.isScorekeeper))
+  // Start-now games: anyone at the table can keep score (the server also lets the owner).
+  const canScore = live && (isGhost ? isHost || mySeat !== null : Boolean(mySeat?.isScorekeeper))
   const openRound = rounds.find((r) => r.status === 'open') ?? null
   const pendingRound = rounds.find((r) => r.status === 'pending') ?? null
   const myTeam = mySeat?.team ?? null
