@@ -41,3 +41,7 @@ example
 # generated native folders
 /ios
 /android
+
+# Android signing key and its passwords (local credentials for EAS builds). Never commit; keep a backup.
+credentials.json
+keys/
