@@ -32,7 +32,7 @@ describe('parseAccountRequest', () => {
     [{ action: 'delete', club_id: CLUB, password: 'secret123' }, 'invalid_request'],
     [{ action: 'create', club_id: 'not-a-uuid', username: 'omar', password: 'secret123', display_name: 'Omar' }, 'invalid_request'],
     [{ action: 'create', club_id: CLUB, username: 'omar', password: 'secret123' }, 'invalid_request'],
-    [{ action: 'create', club_id: CLUB, username: 'om', password: 'secret123', display_name: 'Omar' }, 'invalid_username'],
+    [{ action: 'create', club_id: CLUB, username: 'o', password: 'secret123', display_name: 'Omar' }, 'invalid_username'],
     [{ action: 'create', club_id: CLUB, username: 'omar', password: 'short', display_name: 'Omar' }, 'weak_password'],
     [{ action: 'create', club_id: CLUB, username: 'omar', password: 'secret123', display_name: '   ' }, 'invalid_name'],
     [{ action: 'create', club_id: CLUB, username: 'omar', password: 'secret123', display_name: 'x'.repeat(41) }, 'invalid_name'],
@@ -50,14 +50,18 @@ describe('usernameCandidates', () => {
     expect(usernameCandidates('Abu Ali', fixed)).toEqual(['abuali', 'abuali-5500', 'abuali-5500', 'abuali-5500'])
   })
 
-  it('starts from "player" for short or non-Latin names', () => {
-    expect(usernameCandidates('AK', fixed)).toEqual(['player-5500', 'player-5500', 'player-5500'])
+  it('keeps two-letter names', () => {
+    expect(usernameCandidates('AK', fixed)).toEqual(['ak', 'ak-5500', 'ak-5500', 'ak-5500'])
+  })
+
+  it('starts from "player" for one-letter or non-Latin names', () => {
+    expect(usernameCandidates('A', fixed)).toEqual(['player-5500', 'player-5500', 'player-5500'])
     expect(usernameCandidates('سامي', fixed)[0]).toBe('player-5500')
   })
 
   it('only produces valid usernames', () => {
     for (const name of ['Samy', 'Zoë', 'x'.repeat(60), 'AK', '']) {
-      for (const u of usernameCandidates(name)) expect(u).toMatch(/^[a-z0-9][a-z0-9._-]{2,23}$/)
+      for (const u of usernameCandidates(name)) expect(u).toMatch(/^[a-z0-9][a-z0-9._-]{1,23}$/)
     }
   })
 })

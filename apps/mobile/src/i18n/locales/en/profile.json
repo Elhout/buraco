@@ -128,7 +128,7 @@
     "addSubtitle": "Just their name. They don't need a password.",
     "nameLabel": "Name",
     "usernameLabel": "Username (for signing in)",
-    "usernameHint": "Filled in from the name. Letters a–z and numbers, at least 3.",
+    "usernameHint": "Filled in from the name. Letters a–z and numbers, at least 2.",
     "passwordLabel": "Password",
     "passwordHint": "At least 8 characters. They can change it later in Settings.",
     "create": "Add player",
@@ -143,7 +143,7 @@
     "save": "Save password",
     "saved": "Password changed.",
     "username_empty": "Enter a username.",
-    "username_length": "Use 3 to 24 characters.",
+    "username_length": "Use 2 to 24 characters.",
     "username_chars": "Use only a–z, 0–9, dot, dash or underscore, starting with a letter or number.",
     "password_short": "Use at least 8 characters.",
     "password_long": "That password is too long."

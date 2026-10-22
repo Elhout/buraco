@@ -15,7 +15,7 @@ describe('validateUsername', () => {
   it.each([
     ['', 'empty'],
     ['   ', 'empty'],
-    ['ab', 'length'],
+    ['a', 'length'],
     ['a'.repeat(25), 'length'],
     ['.omar', 'chars'],
     ['om ar', 'chars'],

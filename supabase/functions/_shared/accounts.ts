@@ -3,7 +3,7 @@
 // packages/db-tests/src/accounts-parity.test.ts keeps them identical.
 
 export const LOGIN_DOMAIN = 'users.buraco.app'
-export const USERNAME_MIN = 3
+export const USERNAME_MIN = 2
 export const USERNAME_MAX = 24
 export const PASSWORD_MIN = 8
 /** bcrypt, which Supabase Auth uses, ignores bytes after 72. */
@@ -91,7 +91,7 @@ export function parseAccountRequest(body: unknown): { ok: true; request: Account
 /**
  * Usernames to try for a name-only player, in order: the name in Latin letters ("Abu Ali" →
  * "abuali"), then with a random suffix in case it's taken. Names without enough Latin letters
- * ("AK", Arabic) start from "player". `random` is injectable for tests.
+ * ("A", Arabic) start from "player". `random` is injectable for tests.
  */
 export function usernameCandidates(name: string, random: () => number = Math.random): string[] {
   const latin = name
