@@ -6,7 +6,8 @@ const env = process.env
 
 // Background behind the splash and app launch, per phone theme (matches theme/tokens.ts bg).
 /** The club's Expo project (EAS builds and over-the-air updates); not a secret. */
-const EAS_PROJECT_ID = process.env.EAS_PROJECT_ID ?? 'cc58fec2-67ee-4353-9b30-4998d3379c95'
+// `||` not `??`: an empty EAS_PROJECT_ID= line in .env.local must not blank it out.
+const EAS_PROJECT_ID = process.env.EAS_PROJECT_ID || 'cc58fec2-67ee-4353-9b30-4998d3379c95'
 
 const BG_LIGHT = '#F2F3F7'
 const BG_DARK = '#0F1115'
