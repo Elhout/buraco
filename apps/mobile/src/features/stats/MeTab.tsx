@@ -23,14 +23,14 @@ function Hero({ s }: { s: MyStats }) {
       ? t('me.recordDraws', { wins: formatNumber(s.wins), losses: formatNumber(s.losses), draws: formatNumber(s.draws) })
       : t('me.record', { wins: formatNumber(s.wins), losses: formatNumber(s.losses) })
   return (
-    <Card accent={color.teamA}>
+    <Card accent={color.accent}>
       <View
         accessible
         accessibilityLabel={`${t('a11y.winRate', { value: pct(s.winRate) })}. ${record}. ${t('games', { count: s.games, n: formatNumber(s.games) })}`}>
         <Text variant="caption" tone={color.inkMuted}>
           {t('me.winRate')}
         </Text>
-        <BigNumber text={formatPercent(s.winRate)} size="scoreXl" tone={color.teamA} />
+        <BigNumber text={formatPercent(s.winRate)} size="scoreXl" tone={color.ink} />
         <Row gap={space.sm}>
           <Text variant="bodyStrong" style={styles.flex}>
             {record}
@@ -72,7 +72,7 @@ function Tiles({ s }: { s: MyStats }) {
         label={t('me.currentStreak')}
         value={formatNumber(s.currentStreak)}
         sub={t('me.wins', { count: s.currentStreak, n: formatNumber(s.currentStreak) })}
-        tone={color.teamA}
+        tone={color.accent}
       />
       <StatTile
         label={t('me.bestStreak')}

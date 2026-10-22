@@ -78,6 +78,6 @@ const styles = StyleSheet.create({
   pad: { gap: space.sm, direction: 'ltr' },
   row: { flexDirection: 'row', gap: space.sm, justifyContent: 'center' },
   key: { flex: 1, maxWidth: 110, height: 60, alignItems: 'center', justifyContent: 'center', borderRadius: radius.md },
-  keyFilled: { backgroundColor: color.raised },
-  keyPressed: { backgroundColor: color.lineStrong },
+  keyFilled: { borderWidth: StyleSheet.hairlineWidth, borderColor: color.lineStrong },
+  keyPressed: { backgroundColor: color.raised },
 })

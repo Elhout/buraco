@@ -17,9 +17,9 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: color.teamA,
+        tabBarActiveTintColor: color.ink,
         tabBarInactiveTintColor: color.inkFaint,
-        tabBarStyle: { backgroundColor: color.surface, borderTopColor: color.line, height: 64, paddingTop: 6 },
+        tabBarStyle: { backgroundColor: color.bg, borderTopColor: color.line, height: 64, paddingTop: 6 },
         tabBarLabelStyle: { fontFamily: font.medium, fontSize: 12 },
         sceneStyle: { backgroundColor: color.bg },
       }}>

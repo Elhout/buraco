@@ -8,7 +8,7 @@ import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { GameCard } from '@/features/lobby/GameCard'
 import { type UseLobbyResult, useLobby } from '@/features/lobby/api'
 import { WebPushCard } from '@/features/profile/WebPushCard'
-import { HIT, color, elevation, radius, space } from '@/theme/tokens'
+import { HIT, color, radius, space } from '@/theme/tokens'
 
 /** Games in progress in the club; nothing at all when there are none (the big button says it all). */
 function PlayingNow({ lobby, watch }: { lobby: UseLobbyResult; watch: boolean }) {
@@ -34,7 +34,7 @@ function PlayingNow({ lobby, watch }: { lobby: UseLobbyResult; watch: boolean })
   )
 }
 
-/** A big tappable tile: icon, title and one line of explanation. */
+/** A big tappable tile: title, one line of explanation and a plain icon at the end. */
 function Tile({ icon, title, body, primary, onPress }: TileProps) {
   const fg = primary ? color.onPrimary : color.ink
   return (
@@ -43,17 +43,15 @@ function Tile({ icon, title, body, primary, onPress }: TileProps) {
       accessibilityLabel={title}
       onPress={onPress}
       style={({ pressed }) => [styles.tile, primary ? styles.tilePrimary : styles.tileSecondary, pressed && styles.pressed]}>
-      <View style={[styles.tileIcon, { backgroundColor: primary ? 'rgba(255,255,255,0.14)' : color.raised }]}>
-        <Ionicons name={icon} size={26} color={primary ? color.onPrimary : color.teamA} />
-      </View>
       <View style={styles.tileText}>
         <Text variant="title" tone={fg}>
           {title}
         </Text>
-        <Text variant="label" tone={primary ? fg : color.inkMuted}>
+        <Text variant="label" tone={primary ? fg : color.inkMuted} style={primary && styles.tileBodyPrimary}>
           {body}
         </Text>
       </View>
+      <Ionicons name={icon} size={24} color={primary ? color.onPrimary : color.inkMuted} />
     </Pressable>
   )
 }
@@ -106,13 +104,20 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: color.surface,
   },
   section: { gap: space.md },
-  tile: { flexDirection: 'row', alignItems: 'center', gap: space.lg, padding: space.lg, borderRadius: radius.lg, minHeight: 92 },
-  tilePrimary: { backgroundColor: color.primary, ...elevation.card },
-  tileSecondary: { backgroundColor: color.surface, ...elevation.card },
-  tileIcon: { width: 52, height: 52, borderRadius: radius.md, alignItems: 'center', justifyContent: 'center' },
+  tile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.lg,
+    paddingHorizontal: space.xl,
+    paddingVertical: space.lg,
+    borderRadius: radius.lg,
+    minHeight: 96,
+  },
+  tilePrimary: { backgroundColor: color.primary },
+  tileSecondary: { backgroundColor: color.surface, borderWidth: StyleSheet.hairlineWidth, borderColor: color.lineStrong },
   tileText: { flex: 1, gap: space.xxs },
-  pressed: { opacity: 0.85, transform: [{ scale: 0.99 }] },
+  tileBodyPrimary: { opacity: 0.7 },
+  pressed: { opacity: 0.8 },
 })

@@ -65,7 +65,7 @@ export function Screen({
           {children}
         </View>
       )}
-      {footer}
+      {footer ? <View style={styles.footer}>{footer}</View> : null}
     </SafeAreaView>
   )
 }
@@ -76,4 +76,12 @@ const styles = StyleSheet.create({
   content: { padding: space.lg, gap: space.lg, paddingBottom: space.xxxl },
   header: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: space.md, marginBottom: space.xs },
   headerText: { flex: 1, gap: space.xxs },
+  footer: {
+    paddingHorizontal: space.lg,
+    paddingTop: space.md,
+    paddingBottom: space.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: color.line,
+    backgroundColor: color.bg,
+  },
 })

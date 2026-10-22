@@ -28,7 +28,7 @@ export async function registerForPush(): Promise<string | null> {
       // Exported via a nested `export *` the import plugin cannot follow; TypeScript resolves it.
       // eslint-disable-next-line import/namespace
       importance: Notifications.AndroidImportance.HIGH,
-      lightColor: '#F2B33D',
+      lightColor: '#C9A45C',
     })
   }
   const current = await Notifications.getPermissionsAsync()

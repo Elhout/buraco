@@ -7,8 +7,8 @@ import { color, radius, space } from '@/theme/tokens'
 type Role = Enums<'club_role'>
 
 const TONE: Record<Role, { bg: string; fg: string }> = {
-  owner: { bg: color.teamASoft, fg: color.teamA },
-  admin: { bg: color.teamBSoft, fg: color.teamB },
+  owner: { bg: color.warningSoft, fg: color.accent },
+  admin: { bg: color.raised, fg: color.ink },
   member: { bg: color.raised, fg: color.inkMuted },
 }
 

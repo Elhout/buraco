@@ -19,7 +19,7 @@ const palette: Record<ButtonVariant, { bg: string; fg: string; border: string }>
   primary: { bg: color.primary, fg: color.onPrimary, border: color.primary },
   secondary: { bg: 'transparent', fg: color.ink, border: color.lineStrong },
   quiet: { bg: 'transparent', fg: color.inkMuted, border: 'transparent' },
-  danger: { bg: color.dangerSoft, fg: color.danger, border: color.danger },
+  danger: { bg: 'transparent', fg: color.danger, border: color.danger },
   teamA: { bg: color.teamA, fg: color.onPrimary, border: color.teamA },
   teamB: { bg: color.teamB, fg: color.onPrimary, border: color.teamB },
 }
@@ -59,14 +59,14 @@ const styles = StyleSheet.create({
   base: {
     minHeight: HIT,
     paddingHorizontal: space.lg,
-    borderRadius: radius.pill,
-    borderWidth: 1.5,
+    borderRadius: radius.md,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  lg: { minHeight: 60, paddingHorizontal: space.xl },
+  lg: { minHeight: 56, paddingHorizontal: space.xl },
   block: { alignSelf: 'stretch' },
   row: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
-  pressed: { transform: [{ scale: 0.97 }], opacity: 0.88 },
-  inactive: { opacity: 0.45 },
+  pressed: { opacity: 0.72 },
+  inactive: { opacity: 0.4 },
 })

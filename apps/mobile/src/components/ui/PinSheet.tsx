@@ -125,7 +125,7 @@ export function PinSheet({ visible, userId, title, subtitle, summary, onSubmit, 
 
 const styles = StyleSheet.create({
   dots: { flexDirection: 'row', justifyContent: 'center', gap: space.lg, direction: 'ltr' },
-  dot: { width: 18, height: 18, borderRadius: radius.pill, borderWidth: 2, borderColor: color.inkMuted },
+  dot: { width: 14, height: 14, borderRadius: radius.pill, borderWidth: 1.5, borderColor: color.inkFaint },
   dotFilled: { backgroundColor: color.primary, borderColor: color.primary },
   dotError: { borderColor: color.danger },
   message: { minHeight: 20 },

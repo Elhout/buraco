@@ -44,7 +44,7 @@ function StandingLine({ row }: { row: StandingRow }) {
       style={[styles.row, row.isMe && styles.me]}
       accessible
       accessibilityLabel={t('standings.a11yRow', { rank: row.rank, name: row.name, points: row.matchPoints, diff: row.differential })}>
-      <Text variant="bodyStrong" tone={row.rank === 1 ? color.teamA : color.ink} style={styles.rank}>
+      <Text variant="bodyStrong" tone={row.rank === 1 ? color.accent : color.ink} style={styles.rank}>
         {formatNumber(row.rank)}
       </Text>
       <Text variant={row.isMe ? 'bodyStrong' : 'body'} style={styles.name} numberOfLines={2}>

@@ -125,8 +125,8 @@ const styles = StyleSheet.create({
     minHeight: 36,
     justifyContent: 'center',
     paddingHorizontal: space.lg,
-    borderRadius: radius.pill,
-    borderWidth: 1.5,
+    borderRadius: radius.sm,
+    borderWidth: 1,
   },
   cutPressed: { opacity: 0.6 },
 })

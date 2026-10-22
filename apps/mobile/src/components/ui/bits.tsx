@@ -26,8 +26,8 @@ const initials = (name: string): string =>
     .join('')
     .toUpperCase()
 
-/** Mid-tone hues: white initials stay readable on them in both light and dark themes. */
-const HUES = ['#B7791F', '#2F855A', '#6B46C1', '#C53030', '#2B6CB0', '#4A5568'] as const
+/** Muted earth tones (ochre, sage, plum, rust, slate, stone): paper-white initials stay readable on each. */
+const HUES = ['#8A6A3C', '#4D7559', '#6B5A88', '#975141', '#3E6385', '#5D615B'] as const
 const hueFor = (seed: string): string => HUES[[...seed].reduce((n, c) => n + c.charCodeAt(0), 0) % HUES.length]!
 
 export interface AvatarProps {
@@ -50,7 +50,7 @@ export function Avatar({ name, url, size = 40, ring, online }: AvatarProps) {
         {url ? (
           <Image source={{ uri: url }} style={{ width: size, height: size }} contentFit="cover" accessibilityIgnoresInvertColors />
         ) : (
-          <Text variant="label" tone="#FFFFFF" style={{ fontSize: size * 0.38, lineHeight: size * 0.5 }}>
+          <Text variant="label" tone="#F6F2EA" style={{ fontSize: size * 0.38, lineHeight: size * 0.5 }}>
             {initials(name)}
           </Text>
         )}
@@ -75,7 +75,7 @@ export function TargetBar({ team, value, target }: { team: Team; value: number; 
 
 export type BannerTone = 'info' | 'danger' | 'success' | 'ghost' | 'warning'
 const bannerTone: Record<BannerTone, { bg: string; fg: string; icon: keyof typeof Ionicons.glyphMap }> = {
-  info: { bg: color.raised, fg: color.ink, icon: 'information-circle-outline' },
+  info: { bg: color.surface, fg: color.ink, icon: 'information-circle-outline' },
   danger: { bg: color.dangerSoft, fg: color.danger, icon: 'cloud-offline-outline' },
   success: { bg: color.successSoft, fg: color.success, icon: 'checkmark-circle-outline' },
   ghost: { bg: color.ghostSoft, fg: color.ghost, icon: 'eye-off-outline' },
@@ -85,7 +85,7 @@ const bannerTone: Record<BannerTone, { bg: string; fg: string; icon: keyof typeo
 export function Banner({ tone = 'info', children, action }: { tone?: BannerTone; children: ReactNode; action?: ReactNode }) {
   const p = bannerTone[tone]
   return (
-    <View style={[styles.banner, { backgroundColor: p.bg }]} accessibilityRole="alert">
+    <View style={[styles.banner, { backgroundColor: p.bg, borderColor: tone === 'info' ? color.line : p.bg }]} accessibilityRole="alert">
       <Ionicons name={p.icon} size={20} color={p.fg} />
       <Text variant="label" tone={p.fg} style={styles.flex}>
         {children}
@@ -136,7 +136,7 @@ export function Field({ label, error, hint, style, ...rest }: FieldProps) {
       </Text>
       <TextInput
         placeholderTextColor={color.inkFaint}
-        selectionColor={color.teamA}
+        selectionColor={color.accent}
         {...rest}
         style={[styles.input, error ? { borderColor: color.danger } : null, style]}
         accessibilityLabel={label}
@@ -172,7 +172,7 @@ export function Segmented<T extends string>({ value, options, onChange }: Segmen
             accessibilityState={{ selected: active }}
             onPress={() => onChange(o.value)}
             style={[styles.segment, active && styles.segmentActive]}>
-            <Text variant="label" tone={active ? color.onPrimary : color.inkMuted} center>
+            <Text variant="label" tone={active ? color.ink : color.inkMuted} center>
               {o.label}
             </Text>
           </Pressable>
@@ -236,17 +236,24 @@ const styles = StyleSheet.create({
   badge: { borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center' },
   avatar: { alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   presence: { position: 'absolute', bottom: 0, end: 0, width: 12, height: 12, borderRadius: 6, borderWidth: 2, borderColor: color.bg },
-  track: { height: 8, borderRadius: radius.pill, overflow: 'hidden' },
+  track: { height: 3, borderRadius: radius.pill, overflow: 'hidden' },
   fill: { height: '100%', borderRadius: radius.pill },
-  banner: { flexDirection: 'row', alignItems: 'center', gap: space.sm, padding: space.md, borderRadius: radius.md },
+  banner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.sm,
+    padding: space.md,
+    borderRadius: radius.md,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
   empty: { alignItems: 'center', gap: space.sm, paddingVertical: space.xxl, paddingHorizontal: space.lg },
   field: { gap: space.xs },
   input: {
     minHeight: HIT,
     borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: color.line,
-    // White fields on the grey page in light mode; recessed ones in dark mode.
+    borderColor: color.lineStrong,
+    // Paper fields on the paper page in light mode; recessed ones on the felt in dark mode.
     backgroundColor: scheme === 'light' ? color.surface : color.sunken,
     color: color.ink,
     paddingHorizontal: space.md,
@@ -254,16 +261,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: I18nManager.isRTL ? 'right' : 'left',
   },
-  segmented: { flexDirection: 'row', backgroundColor: color.sunken, borderRadius: radius.pill, padding: 4, gap: 4 },
+  segmented: { flexDirection: 'row', backgroundColor: color.sunken, borderRadius: radius.md, padding: 3, gap: 3 },
   segment: {
     flex: 1,
     minHeight: 40,
-    borderRadius: radius.pill,
+    borderRadius: radius.md - 3,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: space.sm,
   },
-  segmentActive: { backgroundColor: color.primary },
+  segmentActive: { backgroundColor: color.surface, borderWidth: StyleSheet.hairlineWidth, borderColor: color.lineStrong },
   listRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -274,5 +281,5 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
   },
   section: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: space.sm },
-  sectionText: { textTransform: 'uppercase', letterSpacing: 1.2 },
+  sectionText: { textTransform: 'uppercase', letterSpacing: 1 },
 })

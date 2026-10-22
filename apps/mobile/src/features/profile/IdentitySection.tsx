@@ -27,7 +27,7 @@ export function IdentitySection({ profile }: { profile: Profile }) {
   return (
     <Card>
       <View style={styles.hero}>
-        <Avatar name={check.ok ? check.name : profile.display_name} url={profile.avatar_url} size={72} ring={color.teamA} />
+        <Avatar name={check.ok ? check.name : profile.display_name} url={profile.avatar_url} size={72} ring={color.lineStrong} />
         <Text variant="title" numberOfLines={1} style={styles.heroText}>
           {profile.display_name}
         </Text>

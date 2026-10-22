@@ -109,7 +109,7 @@ export function OptionSheet<T extends string>({ visible, title, options, selecte
               <Text variant="bodyStrong" style={styles.flex}>
                 {o.label}
               </Text>
-              {active ? <Ionicons name="checkmark-circle" size={22} color={color.teamA} /> : null}
+              {active ? <Ionicons name="checkmark" size={22} color={color.ink} /> : null}
             </Pressable>
           )
         })}

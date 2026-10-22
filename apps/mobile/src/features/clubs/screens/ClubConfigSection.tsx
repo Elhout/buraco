@@ -131,8 +131,8 @@ function RuleFields({ draft, errors, onEdit }: RuleFieldsProps) {
         <Switch
           value={draft.allowNegative}
           onValueChange={(allowNegative) => edit({ allowNegative })}
-          trackColor={{ false: color.line, true: color.teamA }}
-          thumbColor="#FFFFFF"
+          trackColor={{ false: color.lineStrong, true: color.ink }}
+          thumbColor={color.surface}
           accessibilityLabel={t('clubSettings.allowNegative')}
         />
       </Row>

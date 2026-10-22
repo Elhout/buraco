@@ -31,7 +31,7 @@ export interface RateBarProps {
   height?: number
 }
 
-export function RateBar({ rate, tone = color.teamA, height = 6 }: RateBarProps) {
+export function RateBar({ rate, tone = color.accent, height = 4 }: RateBarProps) {
   const pct = Math.max(0, Math.min(1, rate)) * 100
   return (
     <View style={[styles.track, { height }]} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>

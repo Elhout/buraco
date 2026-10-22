@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native'
-import { color, elevation, radius, scheme, space } from '@/theme/tokens'
+import { color, radius, space } from '@/theme/tokens'
 
 export interface CardProps {
   children: ReactNode
@@ -21,7 +21,7 @@ export function Card({ children, onPress, accent, tone = 'surface', style, acces
       {children}
     </>
   )
-  const base = [styles.card, { backgroundColor: bg[tone] }, tone !== 'sunken' && elevation.card, style]
+  const base = [styles.card, { backgroundColor: bg[tone] }, tone === 'sunken' && styles.flat, style]
   if (!onPress) return <View style={base}>{body}</View>
   return (
     <Pressable
@@ -51,13 +51,14 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: space.lg,
     gap: space.md,
-    // Light cards float on a soft shadow; dark ones need a hairline to separate from the background.
-    borderWidth: scheme === 'light' ? 0 : StyleSheet.hairlineWidth,
-    borderColor: color.line,
+    // Flat: a hairline separates the card from the page, in both themes.
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: color.lineStrong,
     overflow: 'hidden',
   },
-  accent: { position: 'absolute', top: 0, bottom: 0, start: 0, width: 4 },
-  pressed: { backgroundColor: color.raised, transform: [{ scale: 0.99 }] },
+  flat: { borderColor: 'transparent' },
+  accent: { position: 'absolute', top: space.md, bottom: space.md, start: 0, width: 3, borderTopEndRadius: 2, borderBottomEndRadius: 2 },
+  pressed: { backgroundColor: color.raised },
   row: { flexDirection: 'row', alignItems: 'center' },
   divider: { height: StyleSheet.hairlineWidth, backgroundColor: color.line },
 })

@@ -98,8 +98,8 @@ const styles = StyleSheet.create({
   scrim: { ...StyleSheet.absoluteFill, backgroundColor: color.scrim },
   sheet: {
     backgroundColor: color.surface,
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
+    borderTopLeftRadius: radius.sheet,
+    borderTopRightRadius: radius.sheet,
     paddingHorizontal: space.xl,
     paddingTop: space.sm,
     gap: space.lg,
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     ...elevation.sheet,
   },
   top: { gap: space.sm, paddingHorizontal: HIT - space.xl },
-  handle: { alignSelf: 'center', width: 44, height: 5, borderRadius: 3, backgroundColor: color.lineStrong },
+  handle: { alignSelf: 'center', width: 36, height: 4, borderRadius: 2, backgroundColor: color.lineStrong },
   header: { gap: space.xs },
   close: {
     position: 'absolute',
@@ -119,7 +119,6 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: color.raised,
   },
-  closePressed: { opacity: 0.7 },
+  closePressed: { backgroundColor: color.raised },
 })

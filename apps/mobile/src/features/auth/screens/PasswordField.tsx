@@ -20,7 +20,7 @@ export function PasswordField(props: Omit<FieldProps, 'secureTextEntry'>) {
         secureTextEntry={!visible}
         style={[styles.ltr, props.style]}
       />
-      <Text variant="label" tone={color.teamB} accessibilityRole="button" onPress={() => setVisible((v) => !v)} style={styles.toggle}>
+      <Text variant="label" tone={color.inkMuted} accessibilityRole="button" onPress={() => setVisible((v) => !v)} style={styles.toggle}>
         {visible ? t('password.hide') : t('password.show')}
       </Text>
     </View>

@@ -57,7 +57,7 @@ export function PairsEditor({ draft, pending, nameOf, onChange }: PairsEditorPro
         return (
           <Row key={pair.join('|')} gap={8} style={styles.pair}>
             {knockout ? (
-              <Text variant="label" tone={color.teamA} style={styles.seed}>
+              <Text variant="label" tone={color.accent} style={styles.seed}>
                 {t('create.seed', { n: i + 1 })}
               </Text>
             ) : null}
@@ -132,5 +132,5 @@ const styles = StyleSheet.create({
     borderColor: color.warning,
     borderStyle: 'dashed',
   },
-  held: { backgroundColor: color.teamA, borderColor: color.teamA, borderStyle: 'solid' },
+  held: { backgroundColor: color.primary, borderColor: color.primary, borderStyle: 'solid' },
 })

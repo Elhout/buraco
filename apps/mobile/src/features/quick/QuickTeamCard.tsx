@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { Score, TargetBar, TeamBadge, Text } from '@/components/ui'
 import { formatNumber, formatSigned } from '@/lib/format'
-import { color, elevation, radius, space, teamColor } from '@/theme/tokens'
+import { color, radius, space, teamColor, teamSoft } from '@/theme/tokens'
 import { QUICK_CUT_BONUS } from './model'
 
 export interface QuickTeamCardProps {
@@ -25,7 +25,7 @@ export function QuickTeamCard({ team, name, total, target, leading, onRename, on
   const { t } = useTranslation('quick')
   const toGo = Math.max(0, target - total)
   return (
-    <View style={[styles.card, { borderColor: leading ? teamColor(team) : color.line }]}>
+    <View style={[styles.card, leading && { borderColor: teamColor(team), backgroundColor: teamSoft(team) }]}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t('renameA11y', { team })}
@@ -91,17 +91,17 @@ const styles = StyleSheet.create({
     minHeight: 36,
     justifyContent: 'center',
     paddingHorizontal: space.lg,
-    borderRadius: radius.pill,
-    borderWidth: 1.5,
+    borderRadius: radius.sm,
+    borderWidth: 1,
   },
   card: {
     flex: 1,
     gap: space.sm,
     padding: space.md,
     borderRadius: radius.lg,
-    borderWidth: 2,
+    borderWidth: 1,
+    borderColor: color.line,
     backgroundColor: color.surface,
-    ...elevation.card,
   },
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: space.xs, minHeight: 32 },
   name: { flex: 1 },
