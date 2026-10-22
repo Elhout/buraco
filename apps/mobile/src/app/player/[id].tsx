@@ -61,6 +61,7 @@ export default function PlayerScreen() {
         member={managing ? member : null}
         actions={actions}
         canSetPassword={account?.canManage ?? false}
+        username={account?.username}
         onClose={() => setManaging(false)}
       />
     </Screen>

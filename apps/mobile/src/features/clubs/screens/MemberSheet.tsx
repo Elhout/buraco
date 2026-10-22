@@ -19,11 +19,13 @@ export interface MemberSheetProps {
   actions: MemberActions
   /** Owner/admin may set this member's password (club_accounts.can_manage). */
   canSetPassword: boolean
+  /** Their sign-in username, shown with the new password (name-only players get a generated one). */
+  username?: string | null
   onClose: () => void
 }
 
 /** Role changes, removal and new passwords. Transfer and remove ask once more before running. */
-export function MemberSheet({ clubId, member, actions, canSetPassword, onClose }: MemberSheetProps) {
+export function MemberSheet({ clubId, member, actions, canSetPassword, username, onClose }: MemberSheetProps) {
   const { t } = useTranslation('profile')
   const { t: tc } = useTranslation()
   const client = useQueryClient()
@@ -56,7 +58,9 @@ export function MemberSheet({ clubId, member, actions, canSetPassword, onClose }
   const name = member?.name ?? ''
   const title = settingPassword ? t('accounts.resetTitle', { name }) : confirming ? t(`members.${confirming}Title`, { name }) : name
   const subtitle = settingPassword
-    ? t('accounts.resetSubtitle')
+    ? username
+      ? t('accounts.resetSubtitleUsername', { username })
+      : t('accounts.resetSubtitle')
     : confirming
       ? t(`members.${confirming}Body`, { name })
       : t(`roles.${member?.role ?? 'member'}`)

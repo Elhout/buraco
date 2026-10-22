@@ -139,6 +139,7 @@
     "resetPassword": "Set a new password",
     "resetTitle": "New password for {{name}}",
     "resetSubtitle": "Their phones stay signed in. Give them the new password for their next sign-in.",
+    "resetSubtitleUsername": "They sign in with the username {{username}} and this password. Their phones stay signed in.",
     "save": "Save password",
     "saved": "Password changed.",
     "username_empty": "Enter a username.",
