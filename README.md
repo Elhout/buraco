@@ -4,6 +4,7 @@ A live Buraco scoreboard: four phones, PIN-confirmed rounds, shared club history
 
 - Spec: [docs/SPEC.md](docs/SPEC.md)
 - Going live (Supabase, player accounts, push, Sentry, EAS, sending the app): [docs/SETUP.md](docs/SETUP.md)
+- Working from your phone with Claude Code: [docs/MOBILE.md](docs/MOBILE.md)
 - Store texts and privacy policy: [docs/release/](docs/release/)
 - Notes for AI agents: [CLAUDE.md](CLAUDE.md)
 

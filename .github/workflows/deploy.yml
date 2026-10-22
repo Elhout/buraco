@@ -1,0 +1,124 @@
+name: Deploy
+
+# Every push to the app's branch, after all checks pass, publishes:
+#   1. new database migrations and the Edge Functions (Supabase)
+#   2. the web app (Cloudflare Pages, https://buraco-club.pages.dev)
+#   3. an over-the-air update for the installed Android app (EAS Update)
+# so changes made from anywhere (e.g. Claude Code on a phone) go live without a laptop.
+# Each step runs only when its secret is set (GitHub → Settings → Secrets and variables → Actions):
+#   SUPABASE_ACCESS_TOKEN, SUPABASE_DB_PASSWORD, CLOUDFLARE_API_TOKEN, EXPO_TOKEN.
+# A change to native code or app.config.ts still needs a new APK (eas build), not just an update.
+
+on:
+  push:
+    branches: [feat/buraco-app, main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  SUPABASE_PROJECT_REF: hgesjwlpyrqytxzdnqno
+  CLOUDFLARE_ACCOUNT_ID: bd7e11200d37ebc4d3f53da0b71f6ed4
+  # Public app settings (they ship inside the app anyway; same as eas.json).
+  EXPO_PUBLIC_SUPABASE_URL: https://hgesjwlpyrqytxzdnqno.supabase.co
+  EXPO_PUBLIC_SUPABASE_KEY: sb_publishable_Ho-xNHQD8ATF8q1C4CBCJQ_YnIr1bxc
+  EXPO_PUBLIC_VAPID_PUBLIC_KEY: BMIcGDU7MiaJng9g8dkq24zmlnOQffzKeexhLvp8cOmZwNN3e1BeFSOO45fM0yTQ7ev_2nI-GjqsuKLof-K4Eyg
+  SENTRY_DISABLE_AUTO_UPLOAD: 'true'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm typecheck
+      - run: pnpm --filter mobile exec expo lint
+      - run: pnpm test
+
+  database:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Skip without Supabase secrets
+        if: env.SUPABASE_ACCESS_TOKEN == '' || env.SUPABASE_DB_PASSWORD == ''
+        run: echo "::notice::SUPABASE_ACCESS_TOKEN / SUPABASE_DB_PASSWORD not set; database and functions not deployed."
+      - uses: supabase/setup-cli@v1
+        if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_DB_PASSWORD != ''
+        with:
+          version: latest
+      - name: Apply new migrations
+        if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_DB_PASSWORD != ''
+        run: |
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+          supabase db push --include-all --yes
+      - name: Deploy Edge Functions
+        if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_DB_PASSWORD != ''
+        run: supabase functions deploy --project-ref "$SUPABASE_PROJECT_REF" --use-api
+
+  web:
+    needs: database
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - name: Skip without Cloudflare secret
+        if: env.CLOUDFLARE_API_TOKEN == ''
+        run: echo "::notice::CLOUDFLARE_API_TOKEN not set; web app not deployed."
+      - uses: actions/checkout@v4
+        if: env.CLOUDFLARE_API_TOKEN != ''
+      - uses: pnpm/action-setup@v4
+        if: env.CLOUDFLARE_API_TOKEN != ''
+      - uses: actions/setup-node@v4
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        with:
+          node-version: 24
+          cache: pnpm
+      - if: env.CLOUDFLARE_API_TOKEN != ''
+        run: pnpm install --frozen-lockfile
+      - name: Build and publish the web app
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: pnpm --filter mobile web:deploy
+
+  android-update:
+    needs: database
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+    steps:
+      - name: Skip without Expo secret
+        if: env.EXPO_TOKEN == ''
+        run: echo "::notice::EXPO_TOKEN not set; Android update not published."
+      - uses: actions/checkout@v4
+        if: env.EXPO_TOKEN != ''
+      - uses: pnpm/action-setup@v4
+        if: env.EXPO_TOKEN != ''
+      - uses: actions/setup-node@v4
+        if: env.EXPO_TOKEN != ''
+        with:
+          node-version: 24
+          cache: pnpm
+      - if: env.EXPO_TOKEN != ''
+        run: pnpm install --frozen-lockfile
+      - name: Publish an over-the-air update
+        if: env.EXPO_TOKEN != ''
+        working-directory: apps/mobile
+        # Via env, never inlined: a quote in a commit message must not become shell code.
+        env:
+          MESSAGE: ${{ github.event.head_commit.message || 'manual deploy' }}
+        run: npx eas-cli@latest update --channel production --platform android --environment production --non-interactive --message "$MESSAGE"

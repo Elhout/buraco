@@ -5,6 +5,13 @@ import { Score, TargetBar, TeamBadge, Text } from '@/components/ui'
 import { formatNumber, formatSigned } from '@/lib/format'
 import { color, radius, space, teamColor, teamSoft } from '@/theme/tokens'
 import { type GameView, teamNames } from '../model'
+import { bonusByTeam } from './roundRows'
+
+/** Saved rounds plus the exact cuts already tapped in the current deal. */
+const shownTotals = (view: GameView): Readonly<Record<Team, number>> => {
+  const deal = bonusByTeam(view.openRound?.lines ?? [])
+  return { A: view.totals.A + deal.A, B: view.totals.B + deal.B }
+}
 
 interface TeamTotalProps {
   readonly view: GameView
@@ -25,9 +32,12 @@ export interface CutControl {
 
 function TeamTotal({ view, team, onPress, cut }: TeamTotalProps) {
   const { t } = useTranslation(['game', 'common'])
-  const total = view.totals[team]
+  // The +100 cut counts in the total as soon as it is tapped (it is part of the current deal and
+  // is saved with that deal's round).
+  const shown = shownTotals(view)
+  const total = shown[team]
   const toGo = pointsToGo(total, view.config)
-  const leading = total > view.totals[team === 'A' ? 'B' : 'A']
+  const leading = total > shown[team === 'A' ? 'B' : 'A']
   return (
     <Pressable
       disabled={!onPress}
