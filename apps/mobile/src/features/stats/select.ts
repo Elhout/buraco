@@ -137,6 +137,27 @@ export function toughestOpponents(rows: readonly H2HRow[], me: string): Opponent
     .slice(0, TOUGH_OPPONENT_COUNT)
 }
 
+/** The opponent this player has beaten most often (most wins, then best rate, then most games); null without a win. */
+export function mostBeaten(rows: readonly H2HRow[], userId: string): Opponent | null {
+  const beaten = rows
+    .flatMap((r) =>
+      r.user_id === userId && r.opponent_id && num(r.wins) > 0
+        ? [
+            {
+              opponentId: r.opponent_id,
+              games: num(r.games),
+              wins: num(r.wins),
+              losses: num(r.losses),
+              winRate: num(r.win_rate),
+              pointDiff: num(r.point_diff),
+            },
+          ]
+        : [],
+    )
+    .sort((a, b) => b.wins - a.wins || b.winRate - a.winRate || b.games - a.games)
+  return beaten[0] ?? null
+}
+
 export interface Standing {
   readonly userId: string
   readonly games: number

@@ -50,6 +50,18 @@ export function useMyH2H(clubId: string, me: string) {
   })
 }
 
+/** Every player's record against every opponent in the club (Players tab: most-beaten opponent). */
+export function useClubH2H(clubId: string) {
+  return useQuery({
+    queryKey: key(clubId, 'h2h-club'),
+    queryFn: async (): Promise<H2HRow[]> => {
+      const { data, error } = await supabase.from('v_h2h').select('*').eq('club_id', clubId)
+      if (error) throw error
+      return data
+    },
+  })
+}
+
 export function useLeaderboard(clubId: string) {
   return useQuery({
     queryKey: key(clubId, 'leaderboard'),

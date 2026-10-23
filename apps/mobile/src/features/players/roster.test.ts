@@ -23,6 +23,16 @@ describe('buildRoster', () => {
     ])
   })
 
+  it('carries losses, 0 when unknown', () => {
+    const rows = buildRoster(members, [{ user_id: 'a', games: 10, wins: 6, losses: 4 }], 'en')
+    expect(rows.map((r) => [r.name, r.losses])).toEqual([
+      ['Samy', 4],
+      ['AK', 0],
+      ['Hadida', 0],
+      ['Noby', 0],
+    ])
+  })
+
   it('keeps members without any games, sorted by name', () => {
     expect(buildRoster(members, [], 'en').map((r) => r.name)).toEqual(['AK', 'Hadida', 'Noby', 'Samy'])
   })

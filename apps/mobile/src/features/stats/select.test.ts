@@ -4,6 +4,7 @@ import {
   type LeaderboardRow,
   type PairStatsRow,
   bestPartner,
+  mostBeaten,
   num,
   numOrNull,
   rankLeaderboard,
@@ -139,6 +140,22 @@ describe('toughestOpponents', () => {
   it('coerces string numerics', () => {
     const [o] = toughestOpponents([{ ...h2h('a', 3, 0), games: '3' as unknown as number, win_rate: '0.0000' as unknown as number }], ME)
     expect(o).toMatchObject({ opponentId: 'a', games: 3, winRate: 0, pointDiff: -100 })
+  })
+})
+
+describe('mostBeaten', () => {
+  it('most wins first, then the better rate, only this player', () => {
+    const rows = [h2h('a', 10, 0.5), h2h('b', 6, 5 / 6), h2h('c', 2, 1), h2h('x', 20, 1, 'other')]
+    expect(mostBeaten(rows, ME)).toMatchObject({ opponentId: 'b', wins: 5, games: 6 })
+  })
+
+  it('equal wins: the better win rate', () => {
+    expect(mostBeaten([h2h('a', 8, 0.5), h2h('b', 4, 1)], ME)?.opponentId).toBe('b')
+  })
+
+  it('null without any win', () => {
+    expect(mostBeaten([h2h('a', 5, 0)], ME)).toBeNull()
+    expect(mostBeaten([], ME)).toBeNull()
   })
 })
 
