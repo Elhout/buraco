@@ -150,6 +150,32 @@ const resultToConfirm: LangFormatters = {
   },
 }
 
+/** Lock-screen score after every counted round: the totals in the title, who plays in the body. */
+const liveScore: LangFormatters = {
+  en: (p) => {
+    const a = num(p, 'a')
+    const b = num(p, 'b')
+    const n = num(p, 'round_no')
+    if (a === null || b === null) return { title: 'Live score', body: 'A new round was added' }
+    const teamA = names(p, 'team_a')
+    const teamB = names(p, 'team_b')
+    const lineup = teamA.length > 0 && teamB.length > 0 ? `${joinNames(teamA, 'en')} vs ${joinNames(teamB, 'en')}` : null
+    const round = n === null ? null : `Round ${n}`
+    return { title: `A ${a} – ${b} B`, body: [round, lineup].filter(Boolean).join(': ') || 'Live score' }
+  },
+  ar: (p) => {
+    const a = num(p, 'a')
+    const b = num(p, 'b')
+    const n = num(p, 'round_no')
+    if (a === null || b === null) return { title: 'النتيجة المباشرة', body: 'أُضيفت جولة جديدة' }
+    const teamA = names(p, 'team_a')
+    const teamB = names(p, 'team_b')
+    const lineup = teamA.length > 0 && teamB.length > 0 ? `${joinNames(teamA, 'ar')} ضد ${joinNames(teamB, 'ar')}` : null
+    const round = n === null ? null : `الجولة ${n}`
+    return { title: `A ${a} – ${b} B`, body: [round, lineup].filter(Boolean).join(': ') || 'النتيجة المباشرة' }
+  },
+}
+
 const ghostVerify: LangFormatters = {
   en: () => ({ title: 'Verify result', body: "Confirm last night's result?" }),
   ar: () => ({ title: 'تأكيد النتيجة', body: 'هل تؤكد نتيجة مباراة الليلة الماضية؟' }),
@@ -215,6 +241,7 @@ const FORMATTERS: Readonly<Record<string, LangFormatters>> = {
   invite_expiring: inviteExpiring,
   game_started: gameStarted,
   round_to_confirm: roundToConfirm,
+  live_score: liveScore,
   result_to_confirm: resultToConfirm,
   ghost_verify: ghostVerify,
   undo_requested: undoRequested,

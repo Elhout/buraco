@@ -1,5 +1,4 @@
 import * as Haptics from 'expo-haptics'
-import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake'
 import { useFocusEffect } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSession } from '@/features/auth/SessionProvider'
@@ -9,22 +8,16 @@ import { setActiveGame } from '@/lib/push'
 import { type PresenceMember, usePresence } from '@/lib/realtime'
 import type { GameView } from '../model'
 
-const KEEP_AWAKE_TAG = 'buraco-live-game'
-
 /**
- * While the live screen is focused: pushes about this game are suppressed (the in-app sheets are
- * enough) and, while the game is live, the screen stays awake at the table.
+ * While the live screen is focused, pushes about this game are suppressed (the in-app sheets are
+ * enough). The screen is allowed to sleep as usual; the lock screen shows the live score push.
  */
-export function useLiveFocus(gameId: string, live: boolean): void {
+export function useLiveFocus(gameId: string): void {
   useFocusEffect(
     useCallback(() => {
       setActiveGame(gameId)
-      if (live) void activateKeepAwakeAsync(KEEP_AWAKE_TAG).catch(() => undefined)
-      return () => {
-        setActiveGame(null)
-        void deactivateKeepAwake(KEEP_AWAKE_TAG).catch(() => undefined)
-      }
-    }, [gameId, live]),
+      return () => setActiveGame(null)
+    }, [gameId]),
   )
 }
 

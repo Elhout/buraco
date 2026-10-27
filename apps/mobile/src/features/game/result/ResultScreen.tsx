@@ -51,7 +51,7 @@ export function ResultScreen({ gameId }: { gameId: string }) {
   const { t } = useTranslation(['game', 'common'])
   const { view, isPending, error, refetch } = useGame(gameId)
   // Suppresses pushes about this game (e.g. "final result awaiting confirmation") while open.
-  useLiveFocus(gameId, false)
+  useLiveFocus(gameId)
   const final = view?.game.status === 'finished'
   const title = final ? t('result.title') : t('result.proposedTitle')
   return (

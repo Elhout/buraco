@@ -106,6 +106,27 @@ describe('round_to_confirm', () => {
   })
 })
 
+describe('live_score', () => {
+  const payload = { round_no: 3, a: 1240, b: 980, team_a: ['Omar', 'Sara'], team_b: ['Ahmed', 'Nour'] }
+
+  it('puts the running score in the title for the lock screen', () => {
+    expect(formatPush('live_score', payload, 'en')).toEqual({ title: 'A 1240 – 980 B', body: 'Round 3: Omar and Sara vs Ahmed and Nour' })
+  })
+
+  it('is written in Arabic, team labels stay Latin', () => {
+    expect(formatPush('live_score', { ...payload, team_a: ['عمر', 'سارة'], team_b: ['أحمد', 'نور'] }, 'ar')).toEqual({
+      title: 'A 1240 – 980 B',
+      body: 'الجولة 3: عمر وسارة ضد أحمد ونور',
+    })
+  })
+
+  it('falls back when totals, names or the round number are missing', () => {
+    expect(formatPush('live_score', { round_no: 2, a: 10, b: -5 }, 'en')).toEqual({ title: 'A 10 – -5 B', body: 'Round 2' })
+    expect(formatPush('live_score', {}, 'en')).toEqual({ title: 'Live score', body: 'A new round was added' })
+    expect(formatPush('live_score', {}, 'ar')).toEqual({ title: 'النتيجة المباشرة', body: 'أُضيفت جولة جديدة' })
+  })
+})
+
 describe('result_to_confirm', () => {
   it('matches the spec text in English, winner first', () => {
     expect(formatPush('result_to_confirm', { winner: 'A', a: 2010, b: 1840 }, 'en')).toEqual({

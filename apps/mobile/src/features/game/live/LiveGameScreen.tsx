@@ -75,7 +75,7 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
   const [entryFocus, setEntryFocus] = useState<Team>('A')
   const cutAction = useAction(gameId)
   const { role } = useCurrentClub()
-  useLiveFocus(gameId, live)
+  useLiveFocus(gameId)
   usePostedRoundHaptics(view ? view.rounds.filter((r) => r.status === 'confirmed').length : null)
 
   if (!view) {
