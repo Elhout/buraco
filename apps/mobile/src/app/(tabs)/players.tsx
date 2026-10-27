@@ -115,7 +115,7 @@ function LeaderRow({ player: p, rank, h2h, nameOf, online }: LeaderRowProps) {
           </Text>
         ) : null}
       </View>
-      {p.role === 'member' ? null : <RoleChip role={p.role} />}
+      {p.role === 'admin' ? <RoleChip role="admin" /> : null}
       <Chevron />
     </Pressable>
   )

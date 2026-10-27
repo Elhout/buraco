@@ -45,7 +45,7 @@ export default function PlayerScreen() {
             {member?.name ?? ''}
           </Text>
           <View style={styles.meta}>
-            {member && member.role !== 'member' ? <RoleChip role={member.role} /> : null}
+            {member?.role === 'admin' ? <RoleChip role="admin" /> : null}
             {account?.username ? (
               <Text variant="label" tone={color.inkMuted}>
                 {t('username', { username: account.username })}
