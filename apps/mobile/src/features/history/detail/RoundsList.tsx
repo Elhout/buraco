@@ -2,10 +2,12 @@ import { Ionicons } from '@expo/vector-icons'
 import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { Card, Divider, Row, Score, Text } from '@/components/ui'
+import type { Team } from '@buraco/shared'
 import type { RoundView } from '@/features/game/model'
 import { formatNumber, formatSigned } from '@/lib/format'
 import { color, space, teamColor } from '@/theme/tokens'
 import { Pill } from '../ui'
+import { runningTotals } from './runningTotals'
 
 function RoundStatus({ round }: { round: RoundView }) {
   const { t } = useTranslation(['history', 'common'])
@@ -15,7 +17,14 @@ function RoundStatus({ round }: { round: RoundView }) {
   return null
 }
 
-function RoundRow({ round, onEdit }: { round: RoundView; onEdit?: (round: RoundView) => void }) {
+interface RoundRowProps {
+  round: RoundView
+  /** The game score after this round; absent for rounds that don't count. */
+  total?: Readonly<Record<Team, number>>
+  onEdit?: (round: RoundView) => void
+}
+
+function RoundRow({ round, total, onEdit }: RoundRowProps) {
   const { t } = useTranslation(['history', 'common'])
   const voided = round.status === 'voided'
   const strike = voided ? styles.strike : null
@@ -44,6 +53,23 @@ function RoundRow({ round, onEdit }: { round: RoundView; onEdit?: (round: RoundV
           </Pressable>
         ) : null}
       </Row>
+      {total ? (
+        <View
+          style={styles.totalRow}
+          accessible
+          accessibilityLabel={t('detail.totalA11y', { a: formatNumber(total.A), b: formatNumber(total.B) })}>
+          <Text variant="caption" tone={color.inkFaint} style={styles.flex}>
+            {t('detail.total')}
+          </Text>
+          <Text variant="label" tone={color.inkMuted} style={styles.num}>
+            {formatNumber(total.A)}
+          </Text>
+          <Text variant="label" tone={color.inkMuted} style={styles.num}>
+            {formatNumber(total.B)}
+          </Text>
+          {onEdit && round.status === 'confirmed' ? <View style={styles.edit} /> : null}
+        </View>
+      ) : null}
       {round.lines.map((l) => (
         <Text key={l.id} variant="caption" tone={voided ? color.inkFaint : teamColor(l.team)}>
           {t('detail.cut', { points: formatSigned(l.points), name: l.playerName })}
@@ -67,6 +93,7 @@ function RoundRow({ round, onEdit }: { round: RoundView; onEdit?: (round: RoundV
 /** `onEdit` (owner only) adds a pencil to every confirmed round. */
 export function RoundsList({ rounds, onEdit }: { rounds: readonly RoundView[]; onEdit?: (round: RoundView) => void }) {
   const { t } = useTranslation(['history', 'common'])
+  const totals = runningTotals(rounds)
   return (
     <Card>
       <Text variant="label" tone={color.inkMuted}>
@@ -80,7 +107,7 @@ export function RoundsList({ rounds, onEdit }: { rounds: readonly RoundView[]; o
         rounds.map((r, i) => (
           <View key={r.id} style={styles.item}>
             {i > 0 ? <Divider /> : null}
-            <RoundRow round={r} onEdit={onEdit} />
+            <RoundRow round={r} total={totals.get(r.id)} onEdit={onEdit} />
           </View>
         ))
       )}
@@ -92,6 +119,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   edit: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
   item: { gap: space.sm },
+  totalRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   round: { gap: space.xxs },
   voided: { opacity: 0.7 },
   strike: { textDecorationLine: 'line-through' },

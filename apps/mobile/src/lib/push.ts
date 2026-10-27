@@ -56,6 +56,9 @@ export async function unregisterPush(): Promise<void> {
 /** The chat screen is in front: the server skips chat pushes to this phone meanwhile. */
 let chatOpen = false
 
+/** How often the phone confirms it still has a game or the chat on screen (server window: 90 s). */
+const HEARTBEAT_MS = 30_000
+
 const syncDeviceState = (): void => {
   if (!currentToken) return
   void rpc('set_device_state', {
@@ -86,8 +89,14 @@ export function startPushRouting(): () => void {
   void Notifications.getLastNotificationResponseAsync().then((r) => r && open(r.notification))
   const tapped = Notifications.addNotificationResponseReceivedListener((r) => open(r.notification))
   const appState = AppState.addEventListener('change', syncDeviceState)
+  // While a game or the chat is on screen, keep telling the server: a locked phone goes silent,
+  // and after 90 seconds the server sends it game and chat pushes again (device_watching).
+  const heartbeat = setInterval(() => {
+    if ((activeGameId || chatOpen) && AppState.currentState === 'active') syncDeviceState()
+  }, HEARTBEAT_MS)
   return () => {
     tapped.remove()
+    clearInterval(heartbeat)
     appState.remove()
   }
 }

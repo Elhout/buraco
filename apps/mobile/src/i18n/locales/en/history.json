@@ -92,7 +92,9 @@
     "deleteTitle": "Delete this game?",
     "deleteBody": "It disappears from the history and everyone's stats. This can't be undone.",
     "deleteConfirm": "Delete game",
-    "edited": "Edited"
+    "edited": "Edited",
+    "total": "Total",
+    "totalA11y": "Total after this round: A {{a}}, B {{b}}"
   },
   "events": {
     "someone": "Someone",
