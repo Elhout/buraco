@@ -63,6 +63,7 @@ const round = (
   confirmed_by_seat: status === 'confirmed' ? 2 : null,
   confirmed_at: status === 'confirmed' ? ts : null,
   client_id: null,
+  edited_at: null,
   created_at: ts,
   round_lines: lines.map(([s, p], i) => ({ id: `l${no}${i}`, round_id: `r${no}`, type: 'cut_bonus', seat: s, points: p, created_at: ts })),
 })

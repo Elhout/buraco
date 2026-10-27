@@ -1,6 +1,7 @@
 import type { Team } from '@buraco/shared'
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ActivityIndicator, StyleSheet, View } from 'react-native'
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native'
 import { Score, Text } from '@/components/ui'
 import { formatNumber, formatSigned } from '@/lib/format'
 import { color, radius, space, teamColor, teamSoft } from '@/theme/tokens'
@@ -62,10 +63,26 @@ function Cell({ team, value, chips, struck }: CellProps) {
   )
 }
 
-/** One deal: number, A score (start), B score (end), cut bonuses, and its confirmation status. */
-export function RoundRow({ row, isGhost }: { row: RoundRowModel; isGhost: boolean }) {
+/** Two taps within this many ms open the round for editing. */
+const DOUBLE_TAP_MS = 350
+
+/**
+ * One deal: number, A score (start), B score (end), cut bonuses, and its confirmation status.
+ * `onEdit` (game creator or club owner, live game, counted rounds) opens it on a double tap.
+ */
+export function RoundRow({ row, isGhost, onEdit }: { row: RoundRowModel; isGhost: boolean; onEdit?: () => void }) {
   const { t } = useTranslation(['game', 'common'])
   const status = useStatusText(row, isGhost)
+  const lastTap = useRef(0)
+  const onPress = (): void => {
+    const now = Date.now()
+    if (now - lastTap.current < DOUBLE_TAP_MS) {
+      lastTap.current = 0
+      onEdit?.()
+    } else {
+      lastTap.current = now
+    }
+  }
   const struck = row.status === 'voided'
   const muted = row.status !== 'confirmed'
   const a11y = t('rounds.rowA11y', {
@@ -75,7 +92,16 @@ export function RoundRow({ row, isGhost }: { row: RoundRowModel; isGhost: boolea
     status,
   })
   return (
-    <View style={[styles.row, muted && styles.rowMuted]} accessible accessibilityLabel={a11y}>
+    <Pressable
+      disabled={!onEdit}
+      onPress={onPress}
+      onLongPress={onEdit}
+      style={[styles.row, muted && styles.rowMuted]}
+      accessible
+      accessibilityLabel={a11y}
+      accessibilityHint={onEdit ? t('rounds.editHint') : undefined}
+      accessibilityActions={onEdit ? [{ name: 'activate', label: t('rounds.edit') }] : undefined}
+      onAccessibilityAction={onEdit ? () => onEdit() : undefined}>
       <View style={styles.no}>
         <Text variant="label" tone={color.inkFaint}>
           {formatNumber(row.no)}
@@ -92,10 +118,19 @@ export function RoundRow({ row, isGhost }: { row: RoundRowModel; isGhost: boolea
             <Text variant="caption" tone={row.status === 'pending' ? color.warning : color.inkMuted} style={struck && styles.struck}>
               {status}
             </Text>
+            {row.edited ? (
+              <Text variant="caption" tone={color.warning}>
+                · {t('rounds.edited')}
+              </Text>
+            ) : null}
           </View>
+        ) : row.edited ? (
+          <Text variant="caption" tone={color.warning}>
+            {t('rounds.edited')}
+          </Text>
         ) : null}
       </View>
-    </View>
+    </Pressable>
   )
 }
 

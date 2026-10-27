@@ -6,7 +6,7 @@ import type { GameView } from '@/features/game/model'
 import { formatDateTime, formatNumber } from '@/lib/format'
 import { color, radius, space } from '@/theme/tokens'
 import { useGameEvents } from '../api'
-import { type EventContext, type EventTone, describeEvent } from '../events'
+import { type EventContext, type EventTone, describeEvent, isShownEvent } from '../events'
 import { ErrorBlock, LoadingBlock } from '../ui'
 
 const toneColor: Record<EventTone, string> = {
@@ -36,23 +36,24 @@ export function AuditLog({ view, nameOf }: AuditLogProps) {
     someone: t('events.someone'),
   }
 
+  const shown = events.data?.filter(isShownEvent) ?? []
   let body
   if (events.isPending) body = <LoadingBlock />
   else if (events.isError) body = <ErrorBlock error={events.error} onRetry={() => void events.refetch()} />
-  else if (events.data.length === 0) {
+  else if (shown.length === 0) {
     body = (
       <Text variant="body" tone={color.inkMuted}>
         {t('detail.auditEmpty')}
       </Text>
     )
   } else {
-    body = events.data.map((e, i) => {
+    body = shown.map((e, i) => {
       const d = describeEvent(e, ctx)
       return (
         <Row key={e.id} gap={space.md} style={styles.item}>
           <View style={styles.rail}>
             <View style={[styles.dot, { backgroundColor: toneColor[d.tone] }]} />
-            {i < events.data.length - 1 ? <View style={styles.line} /> : null}
+            {i < shown.length - 1 ? <View style={styles.line} /> : null}
           </View>
           <View style={styles.flex}>
             <Text variant="body">{t(`events.${d.key}`, { ...d.values })}</Text>

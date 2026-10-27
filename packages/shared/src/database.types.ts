@@ -542,6 +542,7 @@ export type Database = {
           confirmed_at: string | null
           created_at: string
           client_id: string | null
+          edited_at: string | null
         }
         Insert: {
           id?: string
@@ -555,6 +556,7 @@ export type Database = {
           confirmed_at?: string | null
           created_at?: string
           client_id?: string | null
+          edited_at?: string | null
         }
         Update: {
           id?: string
@@ -568,6 +570,7 @@ export type Database = {
           confirmed_at?: string | null
           created_at?: string
           client_id?: string | null
+          edited_at?: string | null
         }
         Relationships: [
           {

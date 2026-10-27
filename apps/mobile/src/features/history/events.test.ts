@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { type EventContext, type EventRow, actorName, describeEvent } from './events'
+import { type EventContext, type EventRow, actorName, describeEvent, isShownEvent } from './events'
 
 const ctx: EventContext = {
   seatName: (seat) => ({ 1: 'Amal', 2: 'Badr', 3: 'Chadi', 4: 'Dana' })[seat] ?? null,
@@ -106,5 +106,14 @@ describe('describeEvent', () => {
       ctx,
     )
     expect(d).toMatchObject({ key: 'roundEdited', values: { round: '3', a: '120', b: '-35' }, tone: 'warning' })
+  })
+})
+
+describe('isShownEvent', () => {
+  it("hides the owner's silent round edits, keeps everything else", () => {
+    expect(isShownEvent(ev('round_edited', { payload: { round_no: 1, silent: true } }))).toBe(false)
+    expect(isShownEvent(ev('round_edited', { payload: { round_no: 1, silent: false } }))).toBe(true)
+    expect(isShownEvent(ev('round_edited', { payload: { round_no: 1 } }))).toBe(true)
+    expect(isShownEvent(ev('finished', {}))).toBe(true)
   })
 })

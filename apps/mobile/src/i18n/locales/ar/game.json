@@ -55,7 +55,10 @@
     "confirmed": "أدخلها {{entered}}",
     "cut": "{{points}} {{name}}",
     "rowA11y": "الجولة {{n}}. الفريق A {{a}}، الفريق B {{b}}. {{status}}",
-    "noScore": "–"
+    "noScore": "–",
+    "edited": "معدّلة",
+    "edit": "تعديل الجولة",
+    "editHint": "انقر مرتين لتعديل هذه الجولة"
   },
   "bar": {
     "enter": "أدخل الجولة",

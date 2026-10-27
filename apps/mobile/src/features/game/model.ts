@@ -56,6 +56,8 @@ export interface RoundView {
   readonly enteredBy: SeatView | null
   readonly confirmedBy: SeatView | null
   readonly confirmedAt: string | null
+  /** Set when the game's creator corrected this round (the owner's edits leave no mark). */
+  readonly editedAt: string | null
 }
 
 export interface GameView {
@@ -125,6 +127,7 @@ function toRoundView(row: RoundRow, seats: readonly SeatView[], displayNo: numbe
     enteredBy: teamOfSeat(seats, row.entered_by_seat),
     confirmedBy: teamOfSeat(seats, row.confirmed_by_seat),
     confirmedAt: row.confirmed_at,
+    editedAt: row.edited_at,
   }
 }
 

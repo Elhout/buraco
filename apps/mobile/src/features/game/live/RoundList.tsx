@@ -4,6 +4,7 @@ import { EmptyState, SectionTitle, Text } from '@/components/ui'
 import { formatTime } from '@/lib/format'
 import { color, space } from '@/theme/tokens'
 import { RoundRow } from './RoundRow'
+import type { RoundView } from '../model'
 import type { RoundRowModel } from './roundRows'
 
 interface RoundListProps {
@@ -11,10 +12,12 @@ interface RoundListProps {
   readonly isGhost: boolean
   /** Query timestamp (ms) of the last refetch; 0 when never fetched. */
   readonly updatedAt: number
+  /** Double-tap a counted round to edit it (game creator or club owner, live game). */
+  readonly onEditRound?: (round: RoundView) => void
 }
 
 /** Rounds, newest first, with the last-updated time so a stale phone is obvious. */
-export function RoundList({ rows, isGhost, updatedAt }: RoundListProps) {
+export function RoundList({ rows, isGhost, updatedAt, onEditRound }: RoundListProps) {
   const { t, i18n } = useTranslation(['game', 'common'])
   const updated =
     updatedAt > 0 ? (
@@ -28,7 +31,11 @@ export function RoundList({ rows, isGhost, updatedAt }: RoundListProps) {
       {rows.length === 0 ? (
         <EmptyState icon="layers-outline" title={t('rounds.empty')} body={t('rounds.emptyBody')} />
       ) : (
-        rows.map((row) => <RoundRow key={row.key} row={row} isGhost={isGhost} />)
+        rows.map((row) => {
+          const round = row.round
+          const editable = onEditRound && round !== null && round.status === 'confirmed'
+          return <RoundRow key={row.key} row={row} isGhost={isGhost} onEdit={editable ? () => onEditRound(round) : undefined} />
+        })
       )}
     </View>
   )

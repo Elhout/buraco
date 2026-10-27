@@ -51,7 +51,10 @@
     "confirmed": "Entered by {{entered}}",
     "cut": "{{points}} {{name}}",
     "rowA11y": "Round {{n}}. Team A {{a}}, Team B {{b}}. {{status}}",
-    "noScore": "–"
+    "noScore": "–",
+    "edited": "Edited",
+    "edit": "Edit round",
+    "editHint": "Double-tap to edit this round"
   },
   "bar": {
     "enter": "Enter round",

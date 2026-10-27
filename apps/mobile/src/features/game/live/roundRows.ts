@@ -29,6 +29,10 @@ export interface RoundRowModel {
   readonly waitingFor: Team | null
   readonly enteredBy: string | null
   readonly confirmedBy: string | null
+  /** Corrected by the game's creator after it counted. */
+  readonly edited: boolean
+  /** The saved round behind this row; null for rounds still in the outbox. */
+  readonly round: RoundView | null
 }
 
 const otherTeam = (team: Team): Team => (team === 'A' ? 'B' : 'A')
@@ -52,6 +56,8 @@ function rowFromRound(round: RoundView): RoundRowModel {
     waitingFor: round.status === 'pending' && round.enteredBy ? otherTeam(round.enteredBy.team) : null,
     enteredBy: round.enteredBy?.name ?? null,
     confirmedBy: round.confirmedBy?.name ?? null,
+    edited: round.editedAt !== null,
+    round,
   }
 }
 
@@ -70,6 +76,8 @@ function rowFromOutbox(item: OutboxItem, no: number, seats: readonly SeatView[],
     waitingFor: null,
     enteredBy: null,
     confirmedBy: null,
+    edited: false,
+    round: null,
   }
 }
 

@@ -170,6 +170,12 @@ function describePayloadEvent(row: EventRow, ctx: EventContext, actor: string): 
   }
 }
 
+/** False for the club owner's silent round edits: nobody sees them in the activity log. */
+export const isShownEvent = (row: EventRow): boolean => {
+  const payload = row.payload as Record<string, unknown> | null
+  return !(row.type === 'round_edited' && payload !== null && typeof payload === 'object' && payload.silent === true)
+}
+
 export function describeEvent(row: EventRow, ctx: EventContext): EventDescription {
   const actor = actorName(row, ctx)
   const simple = SIMPLE[row.type]

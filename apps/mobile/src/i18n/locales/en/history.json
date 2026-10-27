@@ -91,7 +91,8 @@
     "delete": "Delete game",
     "deleteTitle": "Delete this game?",
     "deleteBody": "It disappears from the history and everyone's stats. This can't be undone.",
-    "deleteConfirm": "Delete game"
+    "deleteConfirm": "Delete game",
+    "edited": "Edited"
   },
   "events": {
     "someone": "Someone",

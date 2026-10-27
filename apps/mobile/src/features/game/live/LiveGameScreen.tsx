@@ -8,7 +8,7 @@ import { usePendingRounds } from '@/lib/outbox'
 import { useConnectionAlert } from '@/lib/realtime'
 import { color, radius, space } from '@/theme/tokens'
 import { useGame } from '../api'
-import type { GameView } from '../model'
+import type { GameView, RoundView } from '../model'
 import { ActionBar } from './ActionBar'
 import { GameLoadState } from './GameLoadState'
 import { GameStateCard } from './GameStateCard'
@@ -21,6 +21,7 @@ import { planCutToggle } from './cutToggle'
 import { useAction } from './useAction'
 import { addCut, removeCut } from '../actions'
 import { useCurrentClub } from '@/features/clubs/ClubProvider'
+import { EditRoundSheet } from '@/features/history/detail/OwnerSheets'
 import { actionBlock, opponentOf } from './actionState'
 import { buildRoundRows } from './roundRows'
 import { useLiveFocus, useOutboxRefusal, usePostedRoundHaptics, useWatchers } from './useLiveEffects'
@@ -74,7 +75,8 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
   const sheets = useLiveSheets(view)
   const [entryFocus, setEntryFocus] = useState<Team>('A')
   const cutAction = useAction(gameId)
-  const { role } = useCurrentClub()
+  const { role, club } = useCurrentClub()
+  const [editing, setEditing] = useState<RoundView | null>(null)
   useLiveFocus(gameId)
   usePostedRoundHaptics(view ? view.rounds.filter((r) => r.status === 'confirmed').length : null)
 
@@ -98,6 +100,8 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
   // Who's watching: for admins and the players at this table.
   const canSeeWatchers = view.mySeat !== null || role === 'owner' || role === 'admin'
 
+  // Double-tap a counted round to fix it: the game's creator, or the club owner (silently).
+  const canEditRounds = live && view.game.tournament_match_id === null && (view.isHost || role === 'owner')
   const rows = buildRoundRows({ rounds: view.rounds, seats: view.seats, outbox, cutBonus: view.config.cutBonus })
   const showBar = view.canScore && live
   // Tapping a team's score opens round entry for that team, when the Enter round button would work.
@@ -149,7 +153,8 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
         onOpen={sheets.open}
       />
       <GameStateCard view={view} />
-      <RoundList rows={rows} isGhost={view.isGhost} updatedAt={dataUpdatedAt} />
+      <RoundList rows={rows} isGhost={view.isGhost} updatedAt={dataUpdatedAt} onEditRound={canEditRounds ? setEditing : undefined} />
+      {editing ? <EditRoundSheet gameId={view.game.id} clubId={club.id} round={editing} onClose={() => setEditing(null)} /> : null}
       <LiveSheets view={view} sheets={sheets} watchers={watchers} entryFocus={entryFocus} />
     </Screen>
   )
