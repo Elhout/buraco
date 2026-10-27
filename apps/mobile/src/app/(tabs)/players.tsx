@@ -8,6 +8,7 @@ import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { type Member, useClubMembers } from '@/features/clubs/members'
 import { AddPlayerSheet } from '@/features/clubs/screens/AddPlayerSheet'
 import { RoleChip } from '@/features/clubs/screens/RoleChip'
+import { useOnlineMembers } from '@/features/lobby/presence'
 import { type RosterRow, buildRoster } from '@/features/players/roster'
 import { useClubH2H, useClubPlayerStats, useStatsLive } from '@/features/stats/api'
 import { type H2HRow, mostBeaten } from '@/features/stats/select'
@@ -22,6 +23,7 @@ export default function PlayersScreen() {
   const members = useClubMembers(current.club.id)
   const stats = useClubPlayerStats(current.club.id)
   const h2h = useClubH2H(current.club.id)
+  const online = useOnlineMembers(current.club.id)
   const [adding, setAdding] = useState(false)
   useStatsLive(current.club.id)
   const isAdmin = current.role === 'owner' || current.role === 'admin'
@@ -47,7 +49,13 @@ export default function PlayersScreen() {
           {roster.map((p, i) => (
             <View key={p.userId}>
               {i > 0 ? <View style={styles.rule} /> : null}
-              <LeaderRow player={p} rank={p.games > 0 ? i + 1 : null} h2h={h2h.data ?? []} nameOf={members.nameOf} />
+              <LeaderRow
+                player={p}
+                rank={p.games > 0 ? i + 1 : null}
+                h2h={h2h.data ?? []}
+                nameOf={members.nameOf}
+                online={online.has(p.userId)}
+              />
             </View>
           ))}
         </Card>
@@ -63,9 +71,11 @@ interface LeaderRowProps {
   rank: number | null
   h2h: readonly H2HRow[]
   nameOf: (userId: string | null) => string
+  /** Has the app open right now. */
+  online: boolean
 }
 
-function LeaderRow({ player: p, rank, h2h, nameOf }: LeaderRowProps) {
+function LeaderRow({ player: p, rank, h2h, nameOf, online }: LeaderRowProps) {
   const { t } = useTranslation('players')
   const me = useUserId()
   const victim = mostBeaten(h2h, p.userId)
@@ -77,7 +87,7 @@ function LeaderRow({ player: p, rank, h2h, nameOf }: LeaderRowProps) {
       <Text variant="scoreSm" tone={rank === 1 ? color.accent : color.inkFaint} style={styles.rank}>
         {rank === null ? '–' : formatNumber(rank)}
       </Text>
-      <Avatar name={p.name} url={p.avatarUrl} size={40} />
+      <Avatar name={p.name} url={p.avatarUrl} size={40} online={online} />
       <View style={styles.body}>
         <Text variant="bodyStrong" numberOfLines={1}>
           {p.userId === me ? t('you', { name: p.name }) : p.name}

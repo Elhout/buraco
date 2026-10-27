@@ -1,0 +1,12 @@
+{
+  "title": "Chat",
+  "onlineNone": "Nobody else is online",
+  "online_one": "{{n}} online",
+  "online_other": "{{n}} online",
+  "empty": "No messages yet",
+  "emptyBody": "Say hello to the club.",
+  "placeholder": "Message",
+  "send": "Send",
+  "you": "You",
+  "loadError": "Couldn't load the chat."
+}

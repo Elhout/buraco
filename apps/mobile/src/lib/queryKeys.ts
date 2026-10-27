@@ -19,6 +19,7 @@ export const qk = {
   history: (clubId: string, filters: unknown) => ['club', clubId, 'history', filters] as const,
   historyAll: (clubId: string) => ['club', clubId, 'history'] as const,
   stats: (clubId: string) => ['club', clubId, 'stats'] as const,
+  chat: (clubId: string) => ['club', clubId, 'chat'] as const,
 
   tournaments: (clubId: string) => ['club', clubId, 'tournaments'] as const,
   tournament: (tournamentId: string) => ['tournament', tournamentId] as const,

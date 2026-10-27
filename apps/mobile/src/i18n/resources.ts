@@ -1,4 +1,5 @@
 import arAuth from './locales/ar/auth.json'
+import arChat from './locales/ar/chat.json'
 import arCommon from './locales/ar/common.json'
 import arGame from './locales/ar/game.json'
 import arHistory from './locales/ar/history.json'
@@ -10,6 +11,7 @@ import arSettings from './locales/ar/settings.json'
 import arStats from './locales/ar/stats.json'
 import arTournament from './locales/ar/tournament.json'
 import enAuth from './locales/en/auth.json'
+import enChat from './locales/en/chat.json'
 import enCommon from './locales/en/common.json'
 import enGame from './locales/en/game.json'
 import enHistory from './locales/en/history.json'
@@ -35,6 +37,7 @@ export const resources = {
     quick: enQuick,
     players: enPlayers,
     settings: enSettings,
+    chat: enChat,
   },
   ar: {
     common: arCommon,
@@ -48,6 +51,7 @@ export const resources = {
     quick: arQuick,
     players: arPlayers,
     settings: arSettings,
+    chat: arChat,
   },
 } as const
 
@@ -63,6 +67,7 @@ export const NAMESPACES = [
   'quick',
   'players',
   'settings',
+  'chat',
 ] as const
 export type Namespace = (typeof NAMESPACES)[number]
 export type Lang = keyof typeof resources

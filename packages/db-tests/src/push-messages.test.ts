@@ -106,6 +106,24 @@ describe('round_to_confirm', () => {
   })
 })
 
+describe('chat_message', () => {
+  it('shows who wrote and what, like a messaging app', () => {
+    expect(formatPush('chat_message', { sender: 'Sara', text: 'Who is in tonight?' }, 'en')).toEqual({
+      title: 'Sara',
+      body: 'Who is in tonight?',
+    })
+    expect(formatPush('chat_message', { sender: 'سارة', text: 'مين جاي الليلة؟' }, 'ar')).toEqual({
+      title: 'سارة',
+      body: 'مين جاي الليلة؟',
+    })
+  })
+
+  it('falls back when the sender or text is missing', () => {
+    expect(formatPush('chat_message', {}, 'en')).toEqual({ title: 'Club chat', body: 'New message' })
+    expect(formatPush('chat_message', {}, 'ar')).toEqual({ title: 'دردشة النادي', body: 'رسالة جديدة' })
+  })
+})
+
 describe('live_score', () => {
   const payload = { round_no: 3, a: 1240, b: 980, team_a: ['Omar', 'Sara'], team_b: ['Ahmed', 'Nour'] }
 

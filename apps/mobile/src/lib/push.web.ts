@@ -77,13 +77,22 @@ export async function unregisterPush(): Promise<void> {
   await rpc('unregister_device', { p_token: endpoint }).catch(() => undefined)
 }
 
+/** The chat screen is in front: the server skips chat pushes to this phone meanwhile. */
+let chatOpen = false
+
 const syncDeviceState = (): void => {
   if (!currentEndpoint) return
   void rpc('set_device_state', {
     p_token: currentEndpoint,
     p_app_state: AppState.currentState === 'active' ? 'active' : 'background',
     p_active_game_id: activeGameId ?? undefined,
+    p_chat_open: chatOpen,
   }).catch(() => undefined)
+}
+
+export function setChatOpen(open: boolean): void {
+  chatOpen = open
+  syncDeviceState()
 }
 
 export function setActiveGame(gameId: string | null): void {

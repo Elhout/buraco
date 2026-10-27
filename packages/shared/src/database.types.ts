@@ -7,6 +7,45 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      chat_messages: {
+        Row: {
+          id: string
+          club_id: string
+          user_id: string
+          body: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          club_id: string
+          user_id: string
+          body: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          club_id?: string
+          user_id?: string
+          body?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       club_join_failures: {
         Row: {
           user_id: string
@@ -128,6 +167,7 @@ export type Database = {
           created_at: string
           web_p256dh: string | null
           web_auth: string | null
+          chat_open: boolean
         }
         Insert: {
           id?: string
@@ -140,6 +180,7 @@ export type Database = {
           created_at?: string
           web_p256dh?: string | null
           web_auth?: string | null
+          chat_open?: boolean
         }
         Update: {
           id?: string
@@ -152,6 +193,7 @@ export type Database = {
           created_at?: string
           web_p256dh?: string | null
           web_auth?: string | null
+          chat_open?: boolean
         }
         Relationships: [
           {
@@ -1040,7 +1082,8 @@ export type Database = {
       respond_invite: { Args: { p_game_id: string; p_accept: boolean; p_pin?: string }; Returns: Json }
       respond_undo: { Args: { p_game_id: string; p_approve: boolean; p_pin?: string }; Returns: Json }
       rotate_invite_code: { Args: { p_club_id: string }; Returns: string }
-      set_device_state: { Args: { p_token: string; p_app_state: string; p_active_game_id?: string }; Returns: undefined }
+      send_chat_message: { Args: { p_club_id: string; p_body: string }; Returns: string }
+      set_device_state: { Args: { p_token: string; p_app_state: string; p_active_game_id?: string; p_chat_open?: boolean }; Returns: undefined }
       set_entries: { Args: { p_tournament_id: string; p_entries: Json }; Returns: undefined }
       set_member_role: { Args: { p_club_id: string; p_user_id: string; p_role: Database['public']['Enums']['club_role'] }; Returns: undefined }
       set_pin: { Args: { p_pin: string }; Returns: undefined }

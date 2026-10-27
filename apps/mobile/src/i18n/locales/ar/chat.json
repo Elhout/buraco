@@ -1,0 +1,16 @@
+{
+  "title": "الدردشة",
+  "onlineNone": "لا أحد غيرك متصل",
+  "online_zero": "{{n}} متصل",
+  "online_one": "متصل واحد",
+  "online_two": "متصلان",
+  "online_few": "{{n}} متصلين",
+  "online_many": "{{n}} متصلًا",
+  "online_other": "{{n}} متصل",
+  "empty": "لا رسائل بعد",
+  "emptyBody": "قل مرحبًا للنادي.",
+  "placeholder": "رسالة",
+  "send": "إرسال",
+  "you": "أنت",
+  "loadError": "تعذّر تحميل الدردشة."
+}

@@ -114,7 +114,8 @@
     "stats": "Stats",
     "tournaments": "Tournaments",
     "play": "Play",
-    "players": "Players"
+    "players": "Players",
+    "chat": "Chat"
   },
   "theme": {
     "section": "Appearance",

@@ -150,6 +150,12 @@ const resultToConfirm: LangFormatters = {
   },
 }
 
+/** Club chat: the sender as the title, the message (first 140 characters) as the body. */
+const chatMessage: LangFormatters = {
+  en: (p) => ({ title: str(p, 'sender') ?? 'Club chat', body: str(p, 'text') ?? 'New message' }),
+  ar: (p) => ({ title: str(p, 'sender') ?? 'دردشة النادي', body: str(p, 'text') ?? 'رسالة جديدة' }),
+}
+
 /** Lock-screen score after every counted round: the totals in the title, who plays in the body. */
 const liveScore: LangFormatters = {
   en: (p) => {
@@ -242,6 +248,7 @@ const FORMATTERS: Readonly<Record<string, LangFormatters>> = {
   game_started: gameStarted,
   round_to_confirm: roundToConfirm,
   live_score: liveScore,
+  chat_message: chatMessage,
   result_to_confirm: resultToConfirm,
   ghost_verify: ghostVerify,
   undo_requested: undoRequested,
