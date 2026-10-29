@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons'
+import type { ReactNode } from 'react'
 import { router } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { I18nManager, Pressable, StyleSheet, View } from 'react-native'
@@ -11,6 +12,8 @@ interface LiveHeaderProps {
   readonly isGhost: boolean
   /** Spectator count chip; omitted on screens that don't track presence. */
   readonly watchers?: { readonly count: number; readonly onPress: () => void }
+  /** Extra trailing control, e.g. the admin's Manage game button. */
+  readonly action?: ReactNode
 }
 
 export function goBackOrLobby(): void {
@@ -19,7 +22,7 @@ export function goBackOrLobby(): void {
 }
 
 /** Back, title and (for admins and the players at the table) who's watching. */
-export function LiveHeader({ title, watchers }: LiveHeaderProps) {
+export function LiveHeader({ title, watchers, action }: LiveHeaderProps) {
   const { t } = useTranslation(['game', 'common'])
   return (
     <View style={styles.header}>
@@ -34,6 +37,7 @@ export function LiveHeader({ title, watchers }: LiveHeaderProps) {
         {title}
       </Text>
       {watchers ? <WatchersChip count={watchers.count} onPress={watchers.onPress} /> : null}
+      {action}
     </View>
   )
 }

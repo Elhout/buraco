@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native'
 import { Banner, Button, EmptyState, ErrorText, Screen } from '@/components/ui'
 import { useUserId } from '@/features/auth/SessionProvider'
+import { AdminGameButton } from '@/features/game/AdminGameControls'
 import { useGame } from '@/features/game/api'
 import { HostActions, PlayerActions } from '@/features/game/invite/Actions'
 import { Countdown } from '@/features/game/invite/Countdown'
@@ -128,7 +129,12 @@ export default function InviteScreen() {
     <Screen
       title={t('invite.title')}
       subtitle={t('invite.subtitle')}
-      actions={<CloseButton />}
+      actions={
+        <View style={styles.actions}>
+          {view ? <AdminGameButton gameId={view.game.id} status={view.game.status} /> : null}
+          <CloseButton />
+        </View>
+      }
       onRefresh={() => void refetch()}
       refreshing={false}>
       {body}
@@ -146,6 +152,7 @@ const styles = StyleSheet.create({
     backgroundColor: color.raised,
   },
   pressed: { opacity: 0.7 },
+  actions: { flexDirection: 'row', alignItems: 'center', gap: space.xs },
   loading: { paddingVertical: space.xxxl },
   endActions: { gap: space.sm, alignItems: 'center', marginTop: space.md },
 })

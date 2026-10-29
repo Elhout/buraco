@@ -22,6 +22,7 @@ import { useAction } from './useAction'
 import { addCut, removeCut } from '../actions'
 import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { EditRoundSheet } from '@/features/history/detail/OwnerSheets'
+import { AdminGameButton } from '../AdminGameControls'
 import { actionBlock, opponentOf } from './actionState'
 import { buildRoundRows } from './roundRows'
 import { useLiveFocus, useOutboxRefusal, usePostedRoundHaptics, useWatchers } from './useLiveEffects'
@@ -122,6 +123,7 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
         title={t('live.title')}
         isGhost={view.isGhost}
         watchers={canSeeWatchers ? { count: watchers.length, onPress: () => sheets.open('watchers') } : undefined}
+        action={<AdminGameButton gameId={view.game.id} status={view.game.status} />}
       />
       {down && live ? <DownBar /> : null}
       <TotalsHeader

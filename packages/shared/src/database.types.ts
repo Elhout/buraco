@@ -1064,6 +1064,7 @@ export type Database = {
       dispute_round: { Args: { p_round_id: string }; Returns: undefined }
       edit_match_result: { Args: { p_match_id: string; p_result: Database['public']['Enums']['match_result']; p_points_a: number; p_points_b: number; p_reason: string }; Returns: undefined }
       edit_round_scores: { Args: { p_round_id: string; p_team_a: number; p_team_b: number }; Returns: undefined }
+      end_game: { Args: { p_game_id: string }; Returns: undefined }
       ensure_membership: { Args: Record<PropertyKey, never>; Returns: string }
       entry_name: { Args: { p_entry_id: string }; Returns: string }
       finish_tournament: { Args: { p_tournament_id: string; p_cancel?: boolean }; Returns: undefined }

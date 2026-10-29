@@ -179,5 +179,20 @@
     "shareDraw_one": "Buraco: {{winners}} and {{losers}} drew at {{high}} after {{count}} round.",
     "shareDraw_other": "Buraco: {{winners}} and {{losers}} drew at {{high}} after {{count}} rounds.",
     "shareGhost": "(not confirmed yet)"
+  },
+  "admin": {
+    "button": "Manage game",
+    "title": "Manage game",
+    "subtitle": "Club admins can stop any game in progress.",
+    "end": "End game",
+    "endHint": "Stops it now for everyone. It stays in the history as abandoned.",
+    "delete": "Delete game",
+    "deleteHint": "Removes it completely, rounds and all.",
+    "endTitle": "End this game?",
+    "endBody": "It stops for all four players now and won’t count in the stats.",
+    "endConfirm": "End game",
+    "deleteTitle": "Delete this game?",
+    "deleteBody": "It disappears for everyone, with all its rounds. This can’t be undone.",
+    "deleteConfirm": "Delete game"
   }
 }
