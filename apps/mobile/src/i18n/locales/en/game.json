@@ -193,6 +193,7 @@
     "endConfirm": "End game",
     "deleteTitle": "Delete this game?",
     "deleteBody": "It disappears for everyone, with all its rounds. This can’t be undone.",
-    "deleteConfirm": "Delete game"
+    "deleteConfirm": "Delete game",
+    "chip": "Admin"
   }
 }

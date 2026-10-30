@@ -1,3 +1,5 @@
+import { useCurrentClub } from '@/features/clubs/ClubProvider'
+import { AdminGameSheet, isGameAdmin } from '../AdminGameControls'
 import type { Team } from '@buraco/shared'
 import { Ionicons } from '@expo/vector-icons'
 import { useTranslation } from 'react-i18next'
@@ -58,6 +60,9 @@ export function AbandonSheet(props: AbandonSheetProps) {
   const userId = useUserId()
   const refresh = useRefreshGame(props.view.game.id)
   const { visible, view, onClose } = props
+  const { role } = useCurrentClub()
+  // The owner and admins end the game at once: no PINs, no waiting for the other team.
+  if (isGameAdmin(role)) return visible ? <AdminGameSheet gameId={view.game.id} initialAction="end" onClose={onClose} /> : null
   if (view.isGhost) return <GhostAbandon {...props} />
   const approvals = view.game.abandon_approvals ?? []
   if (view.myAbandonApproved) {
