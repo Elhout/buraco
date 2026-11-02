@@ -64,10 +64,15 @@ jobs:
         if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_DB_PASSWORD != ''
         run: |
           supabase link --project-ref "$SUPABASE_PROJECT_REF"
-          supabase db push --include-all --yes
+          # Newer CLIs target the local stack unless told otherwise: --remote there, --linked before.
+          if supabase db push --help 2>&1 | grep -q -- '--remote'; then target=--remote; else target=--linked; fi
+          supabase db push "$target" --password "$SUPABASE_DB_PASSWORD" --include-all --yes
       - name: Deploy Edge Functions
         if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_DB_PASSWORD != ''
-        run: supabase functions deploy --project-ref "$SUPABASE_PROJECT_REF" --use-api
+        # v3 replaced --project-ref with --remote=<ref>.
+        run: |
+          if supabase functions deploy --help 2>&1 | grep -q -- '--remote'; then target="--remote=$SUPABASE_PROJECT_REF"; else target="--project-ref=$SUPABASE_PROJECT_REF"; fi
+          supabase functions deploy "$target" --use-api --yes
 
   web:
     needs: database
