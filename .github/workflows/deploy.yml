@@ -59,7 +59,9 @@ jobs:
       - uses: supabase/setup-cli@v1
         if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_DB_PASSWORD != ''
         with:
-          version: latest
+          # Pinned: 'latest' needs a GitHub API lookup (rate-limited) and can change behaviour
+          # under us, as v3 did. Bump on purpose after checking its release notes.
+          version: 3.0.0
       - name: Apply new migrations
         if: env.SUPABASE_ACCESS_TOKEN != '' && env.SUPABASE_DB_PASSWORD != ''
         run: |
