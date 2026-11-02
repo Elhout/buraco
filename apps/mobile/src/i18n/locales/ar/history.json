@@ -124,6 +124,7 @@
     "abandoned": "تُركت المباراة",
     "seatVerified": "أكّد {{actor}} النتيجة",
     "unknown": "{{type}}",
-    "roundEdited": "صحّح {{actor}} الجولة {{round}} إلى {{a}} – {{b}}"
+    "roundEdited": "صحّح {{actor}} الجولة {{round}} إلى {{a}} – {{b}}",
+    "guestReplaced": "جلس {{name}} مكان {{guest}}"
   }
 }

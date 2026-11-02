@@ -120,6 +120,7 @@
     "abandoned": "The game was abandoned",
     "seatVerified": "{{actor}} confirmed the result",
     "unknown": "{{type}}",
-    "roundEdited": "{{actor}} corrected round {{round}} to {{a}} – {{b}}"
+    "roundEdited": "{{actor}} corrected round {{round}} to {{a}} – {{b}}",
+    "guestReplaced": "{{name}} took {{guest}}'s seat"
   }
 }

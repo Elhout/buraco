@@ -117,7 +117,9 @@
     "abandon": "Abandon game",
     "abandonHint": "Ends the game without a result.",
     "watching": "Who's watching",
-    "nothingToUndo": "No round to undo yet."
+    "nothingToUndo": "No round to undo yet.",
+    "replaceGuest": "Swap a guest for a player",
+    "replaceGuestHint": "A club member takes the guest’s seat. Rounds played stay."
   },
   "undo": {
     "requestTitle": "Undo the last round?",
@@ -195,5 +197,13 @@
     "deleteBody": "It disappears for everyone, with all its rounds. This can’t be undone.",
     "deleteConfirm": "Delete game",
     "chip": "Admin"
+  },
+  "replaceGuest": {
+    "title": "Swap a guest",
+    "pickGuest": "Which guest is leaving?",
+    "titleFor": "Who takes {{name}}’s seat?",
+    "body": "They join Team {{team}} with the score as it is.",
+    "nobody": "Every club member is already at this table.",
+    "otherGuest": "Pick another guest"
   }
 }

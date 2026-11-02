@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 import { ListRow, Sheet } from '@/components/ui'
 import { color } from '@/theme/tokens'
+import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import type { GameView, SeatView } from '../model'
+import { canReplaceGuest } from './ReplaceGuestSheet'
 
 /** Sheets reachable from the game menu; the screen opens one after the menu has closed. */
-export type MenuTarget = 'undo' | 'undoApprove' | 'reassign' | 'abandon' | 'watchers'
+export type MenuTarget = 'undo' | 'undoApprove' | 'reassign' | 'abandon' | 'watchers' | 'replaceGuest'
 
 interface GameMenuSheetProps {
   readonly visible: boolean
@@ -50,6 +52,7 @@ function UndoRow({ view, onSelect }: { view: GameView; onSelect: (target: MenuTa
 export function GameMenuSheet({ visible, view, onClose, onSelect }: GameMenuSheetProps) {
   const { t } = useTranslation(['game', 'common'])
   const partner = scorekeeperCandidate(view)
+  const { role } = useCurrentClub()
   return (
     <Sheet visible={visible} onClose={onClose} title={t('menu.title')}>
       <View style={styles.list}>
@@ -60,6 +63,14 @@ export function GameMenuSheet({ visible, view, onClose, onSelect }: GameMenuShee
             subtitle={t('menu.reassignHint')}
             leading={icon('swap-horizontal')}
             onPress={() => onSelect('reassign')}
+          />
+        ) : null}
+        {canReplaceGuest(view, role) ? (
+          <ListRow
+            title={t('menu.replaceGuest')}
+            subtitle={t('menu.replaceGuestHint')}
+            leading={icon('person-add-outline')}
+            onPress={() => onSelect('replaceGuest')}
           />
         ) : null}
         <ListRow

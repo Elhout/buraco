@@ -6,6 +6,7 @@ import { CutSheet } from './CutSheet'
 import { EnterRoundSheet } from './EnterRoundSheet'
 import { GameMenuSheet } from './GameMenuSheet'
 import { ReassignSheet } from './ReassignSheet'
+import { ReplaceGuestSheet } from './ReplaceGuestSheet'
 import { UndoApproveSheet, UndoRequestSheet } from './UndoSheets'
 import { WatchersSheet } from './WatchersSheet'
 import type { Watcher } from './useLiveEffects'
@@ -39,6 +40,7 @@ export function LiveSheets({ view, sheets, watchers, entryFocus }: LiveSheetsPro
       {confirmRound ? <ConfirmRoundSheet visible={sheet === 'confirm'} view={view} round={confirmRound} onClose={close} /> : null}
       {view.awaitingMyUndo ? <UndoApproveSheet visible={sheet === 'undoApprove'} view={view} onClose={close} /> : null}
       <WatchersSheet visible={sheet === 'watchers'} watchers={watchers} onClose={close} />
+      <ReplaceGuestSheet visible={sheet === 'replaceGuest'} view={view} onClose={close} />
     </>
   )
 }

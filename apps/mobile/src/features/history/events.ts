@@ -34,6 +34,7 @@ export type EventKey =
   | 'undo'
   | 'undoRejected'
   | 'scorekeeperReassigned'
+  | 'guestReplaced'
   | 'abandonApproved'
   | 'abandoned'
   | 'seatVerified'
@@ -51,6 +52,8 @@ export interface EventValues {
   readonly b?: string
   readonly team?: string
   readonly name?: string
+  /** The guest whose seat a member took. */
+  readonly guest?: string
   readonly type?: string
 }
 
@@ -161,6 +164,14 @@ function describePayloadEvent(row: EventRow, ctx: EventContext, actor: string): 
       return { key: 'resultProposed', values: { team: winner ? ctx.teamLabel(winner) : '—', ...scoreValues(row, ctx) }, tone: 'neutral' }
     case 'finished':
       return { key: 'finished', values: { team: winner ? ctx.teamLabel(winner) : '—' }, tone: 'success' }
+    case 'guest_replaced': {
+      const user = strField(row.payload, 'user_id')
+      return {
+        key: 'guestReplaced',
+        values: { name: (user && ctx.userName(user)) || ctx.someone, guest: strField(row.payload, 'guest_name') ?? ctx.someone },
+        tone: 'neutral',
+      }
+    }
     case 'scorekeeper_reassigned': {
       const seat = numField(row.payload, 'seat')
       return { key: 'scorekeeperReassigned', values: { name: (seat !== null && ctx.seatName(seat)) || ctx.someone }, tone: 'neutral' }

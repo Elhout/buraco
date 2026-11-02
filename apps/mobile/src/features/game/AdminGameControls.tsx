@@ -24,7 +24,7 @@ export const isGameAdmin = (role: string): boolean => role === 'owner' || role =
  * Club owner and admins: a shield button on a current game that ends it at once (no PINs or
  * approvals; it shows as abandoned) or deletes it outright. Renders nothing for everyone else.
  */
-export function AdminGameButton({ gameId, status }: { gameId: string; status: string }) {
+export function AdminGameButton({ gameId, status, onReplaceGuest }: { gameId: string; status: string; onReplaceGuest?: () => void }) {
   const { t } = useTranslation(['game', 'common'])
   const { role } = useCurrentClub()
   const [open, setOpen] = useState(false)
@@ -40,13 +40,37 @@ export function AdminGameButton({ gameId, status }: { gameId: string; status: st
         <Ionicons name="shield-outline" size={18} color={color.ink} />
         <Text variant="label">{t('admin.chip')}</Text>
       </Pressable>
-      {open ? <AdminGameSheet gameId={gameId} onClose={() => setOpen(false)} /> : null}
+      {open ? (
+        <AdminGameSheet
+          gameId={gameId}
+          onClose={() => setOpen(false)}
+          onReplaceGuest={
+            onReplaceGuest
+              ? () => {
+                  setOpen(false)
+                  onReplaceGuest()
+                }
+              : undefined
+          }
+        />
+      ) : null}
     </>
   )
 }
 
 /** End or delete a current game. `initialAction` skips the choice and asks to confirm that one. */
-export function AdminGameSheet({ gameId, onClose, initialAction }: { gameId: string; onClose: () => void; initialAction?: Action }) {
+export function AdminGameSheet({
+  gameId,
+  onClose,
+  initialAction,
+  onReplaceGuest,
+}: {
+  gameId: string
+  onClose: () => void
+  initialAction?: Action
+  /** Offered when the game has a guest seat to hand to a member. */
+  onReplaceGuest?: () => void
+}) {
   const { t } = useTranslation(['game', 'common'])
   const { club } = useCurrentClub()
   const client = useQueryClient()
@@ -96,6 +120,14 @@ export function AdminGameSheet({ gameId, onClose, initialAction }: { gameId: str
   return (
     <Sheet visible onClose={onClose} title={t('admin.title')} subtitle={t('admin.subtitle')}>
       <View>
+        {onReplaceGuest ? (
+          <ListRow
+            title={t('menu.replaceGuest')}
+            subtitle={t('menu.replaceGuestHint')}
+            leading={<Ionicons name="person-add-outline" size={22} color={color.ink} />}
+            onPress={onReplaceGuest}
+          />
+        ) : null}
         <ListRow
           title={t('admin.end')}
           subtitle={t('admin.endHint')}

@@ -117,3 +117,11 @@ describe('isShownEvent', () => {
     expect(isShownEvent(ev('finished', {}))).toBe(true)
   })
 })
+
+describe('guest_replaced', () => {
+  it("says who took the guest's seat", () => {
+    const d = describeEvent(ev('guest_replaced', { payload: { seat: 4, guest_name: 'Uncle', user_id: 'p2' } }), ctx)
+    expect(d).toMatchObject({ key: 'guestReplaced', tone: 'neutral' })
+    expect(d.values.guest).toBe('Uncle')
+  })
+})
