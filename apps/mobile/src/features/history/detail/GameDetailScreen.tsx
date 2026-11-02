@@ -10,6 +10,7 @@ import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { useClubMembers } from '@/features/clubs/members'
 import { useGame } from '@/features/game/api'
 import type { GameView, RoundView } from '@/features/game/model'
+import { ShareGameButton } from '@/features/game/share/ShareGameButton'
 import { qk } from '@/lib/queryKeys'
 import { HIT, color, space } from '@/theme/tokens'
 import { ErrorBlock, LoadingBlock } from '../ui'
@@ -94,6 +95,7 @@ export function GameDetailScreen({ gameId }: { gameId: string }) {
     <Screen refreshing={false} onRefresh={refresh}>
       <TitleRow />
       <ScoreHeader view={view} />
+      <ShareGameButton view={view} />
       {note ? <Banner tone={note.tone}>{t(`detail.notes.${note.key}`)}</Banner> : null}
       <SeatsPanel view={view} userId={userId} onVerified={refresh} />
       <RoundsList rounds={view.rounds} onEdit={editable ? setEditing : undefined} />

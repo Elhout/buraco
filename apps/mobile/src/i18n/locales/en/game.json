@@ -205,5 +205,18 @@
     "body": "They join Team {{team}} with the score as it is.",
     "nobody": "Every club member is already at this table.",
     "otherGuest": "Pick another guest"
+  },
+  "share": {
+    "button": "Share on WhatsApp",
+    "live": "🃏 Buraco · live game",
+    "final": "🃏 Buraco · final result",
+    "abandoned": "🃏 Buraco · game abandoned",
+    "team": "Team {{team}} ({{names}}): {{score}}",
+    "winner": "Team {{team}} wins!",
+    "draw": "It’s a draw.",
+    "target_one": "Playing to {{points}} · {{rounds}} round so far",
+    "target_other": "Playing to {{points}} · {{rounds}} rounds so far",
+    "rounds": "Rounds (A – B, then total):",
+    "round": "{{n}}. {{a}} – {{b}}   → {{totalA}} – {{totalB}}"
   }
 }

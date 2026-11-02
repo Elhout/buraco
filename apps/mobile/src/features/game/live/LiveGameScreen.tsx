@@ -24,6 +24,7 @@ import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { EditRoundSheet } from '@/features/history/detail/OwnerSheets'
 import { AdminGameButton } from '../AdminGameControls'
 import { canReplaceGuest } from './ReplaceGuestSheet'
+import { ShareGameIcon } from '../share/ShareGameButton'
 import { actionBlock, opponentOf } from './actionState'
 import { buildRoundRows } from './roundRows'
 import { useLiveFocus, useOutboxRefusal, usePostedRoundHaptics, useWatchers } from './useLiveEffects'
@@ -125,11 +126,14 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
         isGhost={view.isGhost}
         watchers={canSeeWatchers ? { count: watchers.length, onPress: () => sheets.open('watchers') } : undefined}
         action={
-          <AdminGameButton
-            gameId={view.game.id}
-            status={view.game.status}
-            onReplaceGuest={canReplaceGuest(view, role) ? () => sheets.open('replaceGuest') : undefined}
-          />
+          <>
+            <ShareGameIcon view={view} />
+            <AdminGameButton
+              gameId={view.game.id}
+              status={view.game.status}
+              onReplaceGuest={canReplaceGuest(view, role) ? () => sheets.open('replaceGuest') : undefined}
+            />
+          </>
         }
       />
       {down && live ? <DownBar /> : null}
