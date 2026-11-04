@@ -1,20 +1,21 @@
+import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native'
-import { Avatar, Button, Card, Chevron, ErrorText, Screen, Text } from '@/components/ui'
+import { ActivityIndicator, I18nManager, Pressable, StyleSheet, TextInput, View } from 'react-native'
+import { Avatar, Button, Card, Chevron, EmptyState, ErrorText, Screen, Text } from '@/components/ui'
 import { useUserId } from '@/features/auth/SessionProvider'
 import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { type Member, useClubMembers } from '@/features/clubs/members'
 import { AddPlayerSheet } from '@/features/clubs/screens/AddPlayerSheet'
 import { RoleChip } from '@/features/clubs/screens/RoleChip'
 import { useOnlineMembers } from '@/features/lobby/presence'
-import { type RosterRow, buildRoster } from '@/features/players/roster'
+import { type RosterRow, buildRoster, matchesName } from '@/features/players/roster'
 import { useClubH2H, useClubPlayerStats, useStatsLive } from '@/features/stats/api'
 import { type H2HRow, mostBeaten } from '@/features/stats/select'
 import i18n from '@/i18n'
 import { formatNumber } from '@/lib/format'
-import { color, space } from '@/theme/tokens'
+import { HIT, color, font, radius, space } from '@/theme/tokens'
 
 /** Players tab: the club leaderboard. Wins and losses per player and the opponent each beats most. */
 export default function PlayersScreen() {
@@ -25,9 +26,13 @@ export default function PlayersScreen() {
   const h2h = useClubH2H(current.club.id)
   const online = useOnlineMembers(current.club.id)
   const [adding, setAdding] = useState(false)
+  const [query, setQuery] = useState('')
   useStatsLive(current.club.id)
   const isAdmin = current.role === 'owner' || current.role === 'admin'
   const roster = buildRoster(members.members, stats.data ?? [], i18n.language)
+  // Places come from the full board, so a search keeps everyone's real rank.
+  const ranked = roster.map((p, i) => ({ p, rank: p.games > 0 ? i + 1 : null }))
+  const shown = ranked.filter(({ p }) => matchesName(p.name, query))
 
   const refresh = (): void => {
     void members.refetch()
@@ -44,24 +49,47 @@ export default function PlayersScreen() {
       actions={isAdmin ? <Button label={t('add')} onPress={() => setAdding(true)} /> : undefined}>
       {members.isPending ? <ActivityIndicator color={color.inkMuted} /> : null}
       <ErrorText error={members.error ?? stats.error ?? h2h.error} />
-      {roster.length > 0 ? (
+      {roster.length > 0 ? <SearchBox value={query} onChange={setQuery} /> : null}
+      {roster.length > 0 && shown.length === 0 ? <EmptyState icon="search-outline" title={t('noMatch', { query: query.trim() })} /> : null}
+      {shown.length > 0 ? (
         <Card style={styles.card}>
-          {roster.map((p, i) => (
+          {shown.map(({ p, rank }, i) => (
             <View key={p.userId}>
               {i > 0 ? <View style={styles.rule} /> : null}
-              <LeaderRow
-                player={p}
-                rank={p.games > 0 ? i + 1 : null}
-                h2h={h2h.data ?? []}
-                nameOf={members.nameOf}
-                online={online.has(p.userId)}
-              />
+              <LeaderRow player={p} rank={rank} h2h={h2h.data ?? []} nameOf={members.nameOf} online={online.has(p.userId)} />
             </View>
           ))}
         </Card>
       ) : null}
       {isAdmin ? <AddPlayerSheet clubId={current.club.id} visible={adding} onClose={() => setAdding(false)} /> : null}
     </Screen>
+  )
+}
+
+/** Filters the board as you type; the ✕ clears it. */
+function SearchBox({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const { t } = useTranslation('players')
+  return (
+    <View style={styles.search}>
+      <Ionicons name="search" size={18} color={color.inkFaint} />
+      <TextInput
+        value={value}
+        onChangeText={onChange}
+        placeholder={t('search')}
+        placeholderTextColor={color.inkFaint}
+        selectionColor={color.accent}
+        autoCorrect={false}
+        autoCapitalize="none"
+        returnKeyType="search"
+        style={styles.searchInput}
+        accessibilityLabel={t('search')}
+      />
+      {value ? (
+        <Pressable accessibilityRole="button" accessibilityLabel={t('clearSearch')} onPress={() => onChange('')} hitSlop={8}>
+          <Ionicons name="close-circle" size={18} color={color.inkFaint} />
+        </Pressable>
+      ) : null}
+    </View>
   )
 }
 
@@ -122,6 +150,25 @@ function LeaderRow({ player: p, rank, h2h, nameOf, online }: LeaderRowProps) {
 }
 
 const styles = StyleSheet.create({
+  search: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.sm,
+    minHeight: HIT,
+    paddingHorizontal: space.md,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: color.lineStrong,
+    backgroundColor: color.surface,
+  },
+  searchInput: {
+    flex: 1,
+    color: color.ink,
+    fontFamily: font.regular,
+    fontSize: 16,
+    paddingVertical: space.sm,
+    textAlign: I18nManager.isRTL ? 'right' : 'left',
+  },
   card: { gap: 0, paddingVertical: space.xs, paddingHorizontal: space.md },
   rule: { height: StyleSheet.hairlineWidth, backgroundColor: color.line, marginStart: 28 + space.md },
   row: { flexDirection: 'row', alignItems: 'center', gap: space.md, paddingVertical: space.md, minHeight: 64 },

@@ -54,6 +54,9 @@ export const disputeRound = (roundId: string): Promise<unknown> => rpc('dispute_
 export const confirmResult = (gameId: string, pin?: string): Promise<PinResult> =>
   rpcWithPin('confirm_result', pin ? { p_game_id: gameId, p_pin: pin } : { p_game_id: gameId })
 
+/** Past the target: keep playing with extra rounds instead of ending the game. */
+export const continueGame = (gameId: string): Promise<unknown> => rpc('continue_game', { p_game_id: gameId })
+
 export const requestUndo = (gameId: string): Promise<unknown> => rpc('request_undo', { p_game_id: gameId })
 
 export const approveUndo = (gameId: string, pin: string): Promise<PinResult> =>

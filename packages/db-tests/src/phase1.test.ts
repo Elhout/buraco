@@ -346,14 +346,15 @@ describe('rounds and scoring', () => {
 })
 
 describe('game end rules', () => {
-  it('finishes the game by itself when a team reaches the target (a later confirm is a no-op)', async () => {
+  it('proposes the result when a team reaches the target; confirming it finishes the game', async () => {
     await asUser(db, owner, async (tx) => {
       const gameId = await createGhost(tx)
       expect(await playRound(tx, gameId, 1900, 500)).toMatchObject({ status: 'live', proposed_winner: null })
-      const won = await playRound(tx, gameId, 100, 100)
+      // The table chooses: confirm, or keep playing (keep-playing.test.ts).
+      expect(await playRound(tx, gameId, 100, 100)).toMatchObject({ status: 'live', proposed_winner: 'A' })
+      const won = await confirmResult(tx, gameId)
       expect(won).toMatchObject({ status: 'finished', winner_team: 'A' })
       expect(won.finished_at).not.toBeNull()
-      expect(await confirmResult(tx, gameId)).toMatchObject({ status: 'finished', winner_team: 'A' })
     })
   })
 
@@ -391,6 +392,7 @@ describe('game end rules', () => {
     await asUser(db, owner, async (tx) => {
       const gameId = await createGhost(tx)
       await playRound(tx, gameId, 2000, 0)
+      await confirmResult(tx, gameId)
       await expect(submit(tx, gameId, 10, 10)).rejects.toThrow(/not live/)
     })
   })

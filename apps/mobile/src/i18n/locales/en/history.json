@@ -121,6 +121,7 @@
     "seatVerified": "{{actor}} confirmed the result",
     "unknown": "{{type}}",
     "roundEdited": "{{actor}} corrected round {{round}} to {{a}} – {{b}}",
-    "guestReplaced": "{{name}} took {{guest}}'s seat"
+    "guestReplaced": "{{name}} took {{guest}}'s seat",
+    "resultContinued": "The table kept playing past the target"
   }
 }

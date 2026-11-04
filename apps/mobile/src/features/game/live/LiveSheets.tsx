@@ -7,6 +7,8 @@ import { EnterRoundSheet } from './EnterRoundSheet'
 import { GameMenuSheet } from './GameMenuSheet'
 import { ReassignSheet } from './ReassignSheet'
 import { ReplaceGuestSheet } from './ReplaceGuestSheet'
+import { TargetReachedSheet, canDecideTarget } from './TargetReachedSheet'
+import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { UndoApproveSheet, UndoRequestSheet } from './UndoSheets'
 import { WatchersSheet } from './WatchersSheet'
 import type { Watcher } from './useLiveEffects'
@@ -23,6 +25,7 @@ interface LiveSheetsProps {
 /** Every sheet of the live screen; `sheets.sheet` says which one is up. */
 export function LiveSheets({ view, sheets, watchers, entryFocus }: LiveSheetsProps) {
   const { sheet, close, swap } = sheets
+  const { role } = useCurrentClub()
   const scoring = view.canScore
   const confirmRound = view.awaitingMyConfirmation
   return (
@@ -41,6 +44,7 @@ export function LiveSheets({ view, sheets, watchers, entryFocus }: LiveSheetsPro
       {view.awaitingMyUndo ? <UndoApproveSheet visible={sheet === 'undoApprove'} view={view} onClose={close} /> : null}
       <WatchersSheet visible={sheet === 'watchers'} watchers={watchers} onClose={close} />
       <ReplaceGuestSheet visible={sheet === 'replaceGuest'} view={view} onClose={close} />
+      {canDecideTarget(view, role) ? <TargetReachedSheet visible={sheet === 'target'} view={view} onClose={close} /> : null}
     </>
   )
 }

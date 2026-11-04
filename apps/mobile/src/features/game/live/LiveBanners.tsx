@@ -1,3 +1,5 @@
+import { useCurrentClub } from '@/features/clubs/ClubProvider'
+import { canDecideTarget } from './TargetReachedSheet'
 import { router } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
@@ -45,11 +47,18 @@ function RefusalBanner({ view, code, onDismiss }: { view: GameView; code: ErrorC
 /** Things this phone has to act on: the result, a round to confirm, an undo to answer. */
 function ActionBanners({ view, onOpen }: { view: GameView; onOpen: (kind: SheetKind) => void }) {
   const { t } = useTranslation(['game', 'common'])
+  const { role } = useCurrentClub()
   const { game } = view
   const result = view.resultProposed ? (
     <Banner
       tone="success"
-      action={<BannerAction label={t('live.resultOpen')} onPress={() => router.push(`/game/${game.id}/result`)} tone={color.success} />}>
+      action={
+        <BannerAction
+          label={t('live.resultOpen')}
+          onPress={() => (canDecideTarget(view, role) ? onOpen('target') : router.push(`/game/${game.id}/result`))}
+          tone={color.success}
+        />
+      }>
       {t('live.resultReady')}
     </Banner>
   ) : null

@@ -52,14 +52,16 @@ describe('start-now games: one step per round', () => {
     })
   })
 
-  it('finishes the game by itself when a team wins, and it counts in the stats', async () => {
+  it('finishes the game when the table confirms the win, and it counts in the stats', async () => {
     await inTx(db, async (tx) => {
       await actAs(tx, club.players[0])
       const id = await start(tx)
       await rpc(tx, 'public.submit_round($1, 2050, 300)', [id])
+      expect((await game(tx, id)).status).toBe('live')
+      await rpc(tx, 'public.confirm_result($1)', [id])
       expect(await game(tx, id)).toEqual({ status: 'finished', winner_team: 'A', verified: true })
       expect((await tx.query(`select 1 from public.v_player_games where game_id = $1`, [id])).rows).toHaveLength(4)
-      // Older apps still tap "Confirm result": answered, not an error.
+      // A second confirm (another phone) is answered, not an error.
       const res = await rpc<{ ok: boolean }>(tx, 'public.confirm_result($1)', [id])
       expect(res.ok).toBe(true)
     })
@@ -72,6 +74,7 @@ describe('start-now games: one step per round', () => {
       await rpc(tx, 'public.submit_round($1, 2000, 2000)', [id])
       expect((await game(tx, id)).status).toBe('live')
       await rpc(tx, 'public.submit_round($1, 100, 0)', [id])
+      await rpc(tx, 'public.confirm_result($1)', [id])
       expect(await game(tx, id)).toMatchObject({ status: 'finished', winner_team: 'A' })
     })
   })

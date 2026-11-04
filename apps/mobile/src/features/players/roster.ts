@@ -20,6 +20,18 @@ export type RosterRow<M extends RosterMember = RosterMember> = M & {
   readonly losses: number
 }
 
+/** Case- and accent-insensitive: "sam" finds "Samy", "zoe" finds "Zoë"; an empty query matches all. */
+export function matchesName(name: string, query: string): boolean {
+  const fold = (s: string): string =>
+    s
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim()
+  const q = fold(query)
+  return q === '' || fold(name).includes(q)
+}
+
 /** Most wins first, then fewer games (better rate), then name; players with no games last. */
 export function buildRoster<M extends RosterMember>(members: readonly M[], stats: readonly RosterStats[], locale: string): RosterRow<M>[] {
   const byId = new Map(stats.flatMap((s) => (s.user_id ? [[s.user_id, s] as const] : [])))

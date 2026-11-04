@@ -10,5 +10,8 @@
   "beatsMost": "Beats {{name}} most ({{n}}×)",
   "back": "Players",
   "manage": "Manage player",
-  "username": "Username: {{username}}"
+  "username": "Username: {{username}}",
+  "search": "Search players",
+  "clearSearch": "Clear search",
+  "noMatch": "No player matches “{{query}}”"
 }

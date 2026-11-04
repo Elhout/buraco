@@ -20,7 +20,7 @@ Scores are entered by hand per round; the app only adds, tracks the 2000 target,
 | Deck | 104 cards, 2s are wild | Informational only; no card math |
 | Round score | One number per team, can be negative | Entered by one team, confirmed by the other team with PIN before it posts |
 | Exact cut | +100 to the player who cuts exactly 11 cards | One-tap button → pick player → +100 line on their team in the current round |
-| Target | 2000 | Progress bar per team, points-to-go shown |
+| Target | 2000 | Progress bar per team, points-to-go shown. Reaching it does not end the game: the table is asked to end it or keep playing (extra rounds); the question returns after each later round. Tournament games end at the result. |
 | Game ends | First team at ≥ 2000 after a round | Checked only when a round is confirmed, never mid-round |
 | Both at ≥ 2000 | Higher total wins | Automatic |
 | Equal totals at ≥ 2000 | Play another round | Game stays live; banner says tie, next round decides |

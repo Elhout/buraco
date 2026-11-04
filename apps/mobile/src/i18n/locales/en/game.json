@@ -218,5 +218,12 @@
     "target_other": "Playing to {{points}} · {{rounds}} rounds so far",
     "rounds": "Rounds (A – B, then total):",
     "round": "{{n}}. {{a}} – {{b}}   → {{totalA}} – {{totalB}}"
+  },
+  "target": {
+    "title": "Team {{team}} reached {{points}}",
+    "titleClock": "Time is up",
+    "body": "End the game now, or keep playing with extra rounds?",
+    "end": "End game",
+    "keepPlaying": "Keep playing"
   }
 }

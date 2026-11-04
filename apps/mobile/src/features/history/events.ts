@@ -35,6 +35,7 @@ export type EventKey =
   | 'undoRejected'
   | 'scorekeeperReassigned'
   | 'guestReplaced'
+  | 'resultContinued'
   | 'abandonApproved'
   | 'abandoned'
   | 'seatVerified'
@@ -110,6 +111,7 @@ const SIMPLE: Readonly<Record<string, readonly [EventKey, EventTone]>> = {
   undo_rejected: ['undoRejected', 'neutral'],
   abandon_approved: ['abandonApproved', 'warning'],
   abandoned: ['abandoned', 'danger'],
+  result_continued: ['resultContinued', 'neutral'],
   seat_verified: ['seatVerified', 'ghost'],
 }
 

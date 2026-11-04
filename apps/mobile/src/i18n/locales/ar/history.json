@@ -125,6 +125,7 @@
     "seatVerified": "أكّد {{actor}} النتيجة",
     "unknown": "{{type}}",
     "roundEdited": "صحّح {{actor}} الجولة {{round}} إلى {{a}} – {{b}}",
-    "guestReplaced": "جلس {{name}} مكان {{guest}}"
+    "guestReplaced": "جلس {{name}} مكان {{guest}}",
+    "resultContinued": "واصلت الطاولة اللعب بعد الهدف"
   }
 }

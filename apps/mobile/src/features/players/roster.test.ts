@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildRoster } from './roster'
+import { buildRoster, matchesName } from './roster'
 
 describe('buildRoster', () => {
   const members = [
@@ -35,5 +35,20 @@ describe('buildRoster', () => {
 
   it('keeps members without any games, sorted by name', () => {
     expect(buildRoster(members, [], 'en').map((r) => r.name)).toEqual(['AK', 'Hadida', 'Noby', 'Samy'])
+  })
+})
+
+describe('matchesName', () => {
+  it('finds by any part of the name, ignoring case and accents', () => {
+    expect(matchesName('Samy', 'sam')).toBe(true)
+    expect(matchesName('Bo Rashid', 'RASH')).toBe(true)
+    expect(matchesName('Zoë', 'zoe')).toBe(true)
+    expect(matchesName('سامي', 'سا')).toBe(true)
+    expect(matchesName('AK', 'mk')).toBe(false)
+  })
+
+  it('matches everyone for an empty or blank query', () => {
+    expect(matchesName('AK', '')).toBe(true)
+    expect(matchesName('AK', '   ')).toBe(true)
   })
 })

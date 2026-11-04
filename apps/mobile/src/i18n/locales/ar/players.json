@@ -14,5 +14,8 @@
   "beatsMost": "أكثر من فاز عليه: {{name}} · {{n}}",
   "back": "اللاعبون",
   "manage": "إدارة اللاعب",
-  "username": "اسم المستخدم: {{username}}"
+  "username": "اسم المستخدم: {{username}}",
+  "search": "ابحث عن لاعب",
+  "clearSearch": "مسح البحث",
+  "noMatch": "لا يوجد لاعب باسم «{{query}}»"
 }

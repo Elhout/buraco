@@ -1056,6 +1056,7 @@ export type Database = {
       club_accounts: { Args: { p_club_id: string }; Returns: { user_id: string; display_name: string; role: Database['public']['Enums']['club_role']; username: string; can_manage: boolean }[] }
       confirm_result: { Args: { p_game_id: string; p_pin?: string }; Returns: Json }
       confirm_round: { Args: { p_round_id: string; p_pin?: string }; Returns: Json }
+      continue_game: { Args: { p_game_id: string }; Returns: Json }
       create_club: { Args: { p_name: string }; Returns: string }
       create_game: { Args: { p_club_id: string; p_seats: Json; p_mode?: Database['public']['Enums']['game_mode'] }; Returns: string }
       create_ghost_game: { Args: { p_club_id: string; p_seats: Json }; Returns: string }

@@ -24,6 +24,7 @@ import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { EditRoundSheet } from '@/features/history/detail/OwnerSheets'
 import { AdminGameButton } from '../AdminGameControls'
 import { canReplaceGuest } from './ReplaceGuestSheet'
+import { canDecideTarget } from './TargetReachedSheet'
 import { ShareGameIcon } from '../share/ShareGameButton'
 import { actionBlock, opponentOf } from './actionState'
 import { buildRoundRows } from './roundRows'
@@ -75,10 +76,11 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
   const down = useConnectionAlert(realtime)
   const watchers = useWatchers(gameId, view)
   const refusal = useOutboxRefusal(gameId)
-  const sheets = useLiveSheets(view)
   const [entryFocus, setEntryFocus] = useState<Team>('A')
   const cutAction = useAction(gameId)
   const { role, club } = useCurrentClub()
+  // Reaching the target asks the table (and admins): end the game, or keep playing.
+  const sheets = useLiveSheets(view, view && canDecideTarget(view, role) ? view.game.result_proposed_at : null)
   const [editing, setEditing] = useState<RoundView | null>(null)
   useLiveFocus(gameId)
   usePostedRoundHaptics(view ? view.rounds.filter((r) => r.status === 'confirmed').length : null)
