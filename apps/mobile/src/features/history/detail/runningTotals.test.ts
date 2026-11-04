@@ -15,6 +15,7 @@ const round = (id: string, roundNo: number, status: RoundView['status'], a: numb
   confirmedBy: null,
   confirmedAt: null,
   editedAt: null,
+  editedByName: null,
 })
 
 describe('runningTotals', () => {

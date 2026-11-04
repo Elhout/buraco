@@ -94,7 +94,8 @@
     "deleteConfirm": "Delete game",
     "edited": "Edited",
     "total": "Total",
-    "totalA11y": "Total after this round: A {{a}}, B {{b}}"
+    "totalA11y": "Total after this round: A {{a}}, B {{b}}",
+    "editedBy": "Edited by {{name}}"
   },
   "events": {
     "someone": "Someone",

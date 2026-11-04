@@ -31,6 +31,8 @@ export interface RoundRowModel {
   readonly confirmedBy: string | null
   /** Corrected by the game's creator after it counted. */
   readonly edited: boolean
+  /** Their name, for "Edited by …"; null shows just "Edited". */
+  readonly editedBy: string | null
   /** The saved round behind this row; null for rounds still in the outbox. */
   readonly round: RoundView | null
 }
@@ -57,6 +59,7 @@ function rowFromRound(round: RoundView): RoundRowModel {
     enteredBy: round.enteredBy?.name ?? null,
     confirmedBy: round.confirmedBy?.name ?? null,
     edited: round.editedAt !== null,
+    editedBy: round.editedAt !== null ? round.editedByName : null,
     round,
   }
 }
@@ -77,6 +80,7 @@ function rowFromOutbox(item: OutboxItem, no: number, seats: readonly SeatView[],
     enteredBy: null,
     confirmedBy: null,
     edited: false,
+    editedBy: null,
     round: null,
   }
 }

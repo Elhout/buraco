@@ -8,7 +8,9 @@ let club: Club
 
 beforeAll(async () => {
   db = await createDb()
-  club = await seedClub(db, 'Edit')
+  club = await seedClub(db, 'Edit', 1)
+  // others[0] is an admin who is not playing.
+  await db.query(`update public.club_members set role = 'admin' where club_id = $1 and user_id = $2`, [club.clubId, club.others[0]])
 }, 120_000)
 
 // players[0] owns the club; players[2] is a plain member who creates the games below.
@@ -27,7 +29,7 @@ const liveGame = async (tx: Transaction): Promise<{ gameId: string; roundId: str
 const round = async (tx: Transaction, id: string) =>
   (
     await tx.query<{ a: number; b: number; edited: boolean }>(
-      `select team_a_score as a, team_b_score as b, edited_at is not null as edited from public.rounds where id = $1`,
+      `select team_a_score as a, team_b_score as b, edited_at is not null and edited_by is not null as edited from public.rounds where id = $1`,
       [id],
     )
   ).rows[0]
@@ -69,6 +71,26 @@ describe('editing a round of a live game', () => {
       await actAs(tx, owner())
       await rpc(tx, 'public.edit_round_scores($1, 360, 140)', [roundId])
       expect(await round(tx, roundId)).toEqual({ a: 360, b: 140, edited: true })
+    })
+  })
+
+  it('records who edited, so the mark can name them', async () => {
+    await inTx(db, async (tx) => {
+      const { roundId } = await liveGame(tx)
+      await rpc(tx, 'public.edit_round_scores($1, 350, 150)', [roundId])
+      await tx.exec('reset role')
+      const { rows } = await tx.query<{ edited_by: string }>(`select edited_by from public.rounds where id = $1`, [roundId])
+      expect(rows).toEqual([{ edited_by: host() }])
+    })
+  })
+
+  it('lets an admin edit too, silently like the owner', async () => {
+    await inTx(db, async (tx) => {
+      const { gameId, roundId } = await liveGame(tx)
+      await actAs(tx, club.others[0]!)
+      await rpc(tx, 'public.edit_round_scores($1, 120, 480)', [roundId])
+      expect(await round(tx, roundId)).toEqual({ a: 120, b: 480, edited: false })
+      expect((await editEvents(tx, gameId))[0]?.payload).toMatchObject({ silent: true })
     })
   })
 

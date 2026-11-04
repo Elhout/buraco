@@ -14,11 +14,14 @@ describe('buildRoundRows', () => {
   })
 
   it("marks rounds the game's creator edited and keeps the saved round for editing", () => {
-    const v = view([{ ...roundRow(1, 'confirmed', 300, 200, 1), edited_at: '2026-10-27T20:00:00Z' }, roundRow(2, 'confirmed', 50, 400, 1)])
+    const v = view([
+      { ...roundRow(1, 'confirmed', 300, 200, 1), edited_at: '2026-10-27T20:00:00Z', edited_by: 'u3' },
+      roundRow(2, 'confirmed', 50, 400, 1),
+    ])
     const rows = rowsOf(v)
-    expect(rows.map((r) => [r.no, r.edited, r.round?.id])).toEqual([
-      [2, false, 'r2'],
-      [1, true, 'r1'],
+    expect(rows.map((r) => [r.no, r.edited, r.editedBy, r.round?.id])).toEqual([
+      [2, false, null, 'r2'],
+      [1, true, 'U3', 'r1'],
     ])
     expect(rowsOf(v, [outboxItem('o3', 1, 2, 1)])[0]).toMatchObject({ edited: false, round: null })
   })

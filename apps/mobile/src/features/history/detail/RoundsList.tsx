@@ -13,7 +13,14 @@ function RoundStatus({ round }: { round: RoundView }) {
   const { t } = useTranslation(['history', 'common'])
   if (round.status === 'voided') return <Pill label={t('detail.undone')} tone="warning" icon="arrow-undo-outline" />
   if (round.status === 'open' || round.status === 'pending') return <Pill label={t(`detail.roundStatus.${round.status}`)} tone="neutral" />
-  if (round.editedAt !== null) return <Pill label={t('detail.edited')} tone="warning" icon="create-outline" />
+  if (round.editedAt !== null)
+    return (
+      <Pill
+        label={round.editedByName ? t('detail.editedBy', { name: round.editedByName }) : t('detail.edited')}
+        tone="warning"
+        icon="create-outline"
+      />
+    )
   return null
 }
 

@@ -585,6 +585,7 @@ export type Database = {
           created_at: string
           client_id: string | null
           edited_at: string | null
+          edited_by: string | null
         }
         Insert: {
           id?: string
@@ -599,6 +600,7 @@ export type Database = {
           created_at?: string
           client_id?: string | null
           edited_at?: string | null
+          edited_by?: string | null
         }
         Update: {
           id?: string
@@ -613,8 +615,16 @@ export type Database = {
           created_at?: string
           client_id?: string | null
           edited_at?: string | null
+          edited_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "rounds_edited_by_fkey"
+            columns: ["edited_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "rounds_game_id_confirmed_by_seat_fkey"
             columns: ["game_id", "confirmed_by_seat"]

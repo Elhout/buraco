@@ -120,13 +120,13 @@ export function RoundRow({ row, isGhost, onEdit }: { row: RoundRowModel; isGhost
             </Text>
             {row.edited ? (
               <Text variant="caption" tone={color.warning}>
-                · {t('rounds.edited')}
+                · {row.editedBy ? t('rounds.editedBy', { name: row.editedBy }) : t('rounds.edited')}
               </Text>
             ) : null}
           </View>
         ) : row.edited ? (
           <Text variant="caption" tone={color.warning}>
-            {t('rounds.edited')}
+            {row.editedBy ? t('rounds.editedBy', { name: row.editedBy }) : t('rounds.edited')}
           </Text>
         ) : null}
       </View>

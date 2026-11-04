@@ -54,7 +54,8 @@
     "noScore": "–",
     "edited": "Edited",
     "edit": "Edit round",
-    "editHint": "Double-tap to edit this round"
+    "editHint": "Double-tap to edit this round",
+    "editedBy": "Edited by {{name}}"
   },
   "bar": {
     "enter": "Enter round",

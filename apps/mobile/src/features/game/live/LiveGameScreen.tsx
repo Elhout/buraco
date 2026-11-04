@@ -22,7 +22,7 @@ import { useAction } from './useAction'
 import { addCut, removeCut } from '../actions'
 import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { EditRoundSheet } from '@/features/history/detail/OwnerSheets'
-import { AdminGameButton } from '../AdminGameControls'
+import { AdminGameButton, isGameAdmin } from '../AdminGameControls'
 import { canReplaceGuest } from './ReplaceGuestSheet'
 import { canDecideTarget } from './TargetReachedSheet'
 import { ShareGameIcon } from '../share/ShareGameButton'
@@ -105,8 +105,8 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
   // Who's watching: for admins and the players at this table.
   const canSeeWatchers = view.mySeat !== null || role === 'owner' || role === 'admin'
 
-  // Double-tap a counted round to fix it: the game's creator, or the club owner (silently).
-  const canEditRounds = live && view.game.tournament_match_id === null && (view.isHost || role === 'owner')
+  // Double-tap a counted round to fix it: the game's creator (marked), or the owner and admins (silently).
+  const canEditRounds = live && view.game.tournament_match_id === null && (view.isHost || isGameAdmin(role))
   const rows = buildRoundRows({ rounds: view.rounds, seats: view.seats, outbox, cutBonus: view.config.cutBonus })
   const showBar = view.canScore && live
   // Tapping a team's score opens round entry for that team, when the Enter round button would work.
