@@ -4,9 +4,9 @@ import { router } from 'expo-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
-import { Button, ErrorText, Field, Sheet, Stack, TeamBadge } from '@/components/ui'
+import { Button, ErrorText, Field, Sheet, Stack, TeamBadge, Text } from '@/components/ui'
 import type { RoundView } from '@/features/game/model'
-import { formatNumber } from '@/lib/format'
+import { formatNumber, formatSigned } from '@/lib/format'
 import { qk } from '@/lib/queryKeys'
 import { rpc } from '@/lib/rpc'
 import { space } from '@/theme/tokens'
@@ -75,6 +75,7 @@ export function EditRoundSheet({ gameId, clubId, round, onClose }: EditRoundShee
             </View>
           ))}
         </View>
+        {round && round.lines.length > 0 ? <RoundCuts round={round} gameId={gameId} clubId={clubId} onRemoved={onClose} /> : null}
         <ErrorText error={save.error} />
         <Button
           label={t('detail.saveEdit')}
@@ -89,6 +90,42 @@ export function EditRoundSheet({ gameId, clubId, round, onClose }: EditRoundShee
         <Button label={t('common:actions.cancel')} variant="quiet" block disabled={save.isPending} onPress={onClose} />
       </Stack>
     </Sheet>
+  )
+}
+
+/** The round's +100 exact cuts, each with a Remove button (totals, winner and stats follow). */
+function RoundCuts({ round, gameId, clubId, onRemoved }: { round: RoundView; gameId: string; clubId: string; onRemoved: () => void }) {
+  const { t } = useTranslation(['history', 'common'])
+  const refresh = useRefresh(gameId, clubId)
+  const remove = useMutation({
+    mutationFn: async (lineId: string) => {
+      await rpc('remove_round_cut', { p_line_id: lineId })
+      await refresh()
+    },
+    onSuccess: () => {
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+      onRemoved()
+    },
+  })
+  return (
+    <View style={styles.cuts}>
+      {round.lines.map((l) => (
+        <View key={l.id} style={styles.cut}>
+          <TeamBadge team={l.team} size="sm" />
+          <Text variant="label" style={styles.cutName} numberOfLines={1}>
+            {t('detail.cut', { points: formatSigned(l.points), name: l.playerName })}
+          </Text>
+          <Button
+            label={t('detail.removeCut')}
+            variant="danger"
+            loading={remove.isPending && remove.variables === l.id}
+            disabled={remove.isPending}
+            onPress={() => remove.mutate(l.id)}
+          />
+        </View>
+      ))}
+      <ErrorText error={remove.error} />
+    </View>
   )
 }
 
@@ -138,5 +175,8 @@ export function DeleteGameSheet({ gameId, clubId, visible, onClose }: DeleteGame
 
 const styles = StyleSheet.create({
   fields: { flexDirection: 'row', gap: space.md },
+  cuts: { gap: space.sm },
+  cut: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
+  cutName: { flex: 1 },
   field: { flex: 1, gap: space.xs },
 })

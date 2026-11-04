@@ -125,3 +125,10 @@ describe('guest_replaced', () => {
     expect(d.values.guest).toBe('Uncle')
   })
 })
+
+describe('round_edited with a removed cut', () => {
+  it('says the cut was taken off', () => {
+    const d = describeEvent(ev('round_edited', { actor_id: 'host', payload: { round_id: 'r3', round_no: 3, cut_removed: true } }), ctx)
+    expect(d).toMatchObject({ key: 'cutRemoved', values: { round: '3' }, tone: 'warning' })
+  })
+})

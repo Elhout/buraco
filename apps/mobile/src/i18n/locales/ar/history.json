@@ -99,7 +99,8 @@
     "edited": "معدّلة",
     "total": "المجموع",
     "totalA11y": "المجموع بعد هذه الجولة: A {{a}}، B {{b}}",
-    "editedBy": "عدّلها {{name}}"
+    "editedBy": "عدّلها {{name}}",
+    "removeCut": "إزالة"
   },
   "events": {
     "someone": "أحد اللاعبين",
@@ -127,6 +128,7 @@
     "unknown": "{{type}}",
     "roundEdited": "صحّح {{actor}} الجولة {{round}} إلى {{a}} – {{b}}",
     "guestReplaced": "جلس {{name}} مكان {{guest}}",
-    "resultContinued": "واصلت الطاولة اللعب بعد الهدف"
+    "resultContinued": "واصلت الطاولة اللعب بعد الهدف",
+    "cutRemoved": "أزال {{actor}} إضافة القطع +100 من الجولة {{round}}"
   }
 }

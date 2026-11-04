@@ -95,7 +95,8 @@
     "edited": "Edited",
     "total": "Total",
     "totalA11y": "Total after this round: A {{a}}, B {{b}}",
-    "editedBy": "Edited by {{name}}"
+    "editedBy": "Edited by {{name}}",
+    "removeCut": "Remove"
   },
   "events": {
     "someone": "Someone",
@@ -123,6 +124,7 @@
     "unknown": "{{type}}",
     "roundEdited": "{{actor}} corrected round {{round}} to {{a}} – {{b}}",
     "guestReplaced": "{{name}} took {{guest}}'s seat",
-    "resultContinued": "The table kept playing past the target"
+    "resultContinued": "The table kept playing past the target",
+    "cutRemoved": "{{actor}} removed the +100 cut from round {{round}}"
   }
 }

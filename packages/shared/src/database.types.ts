@@ -1089,6 +1089,7 @@ export type Database = {
       register_web_push: { Args: { p_endpoint: string; p_p256dh: string; p_auth: string }; Returns: undefined }
       remove_cut: { Args: { p_line_id: string }; Returns: undefined }
       remove_member: { Args: { p_club_id: string; p_user_id: string }; Returns: undefined }
+      remove_round_cut: { Args: { p_line_id: string }; Returns: undefined }
       replace_guest: { Args: { p_game_id: string; p_seat: number; p_user_id: string }; Returns: undefined }
       request_undo: { Args: { p_game_id: string }; Returns: undefined }
       reset_pin: { Args: { p_pin: string }; Returns: undefined }

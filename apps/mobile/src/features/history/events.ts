@@ -36,6 +36,7 @@ export type EventKey =
   | 'scorekeeperReassigned'
   | 'guestReplaced'
   | 'resultContinued'
+  | 'cutRemoved'
   | 'abandonApproved'
   | 'abandoned'
   | 'seatVerified'
@@ -150,6 +151,9 @@ function describePayloadEvent(row: EventRow, ctx: EventContext, actor: string): 
     case 'round_disputed':
       return { key: 'roundDisputed', values: { actor, round: roundLabel(row, ctx), ...scoreValues(row, ctx) }, tone: 'danger' }
     case 'round_edited':
+      if (field(row.payload, 'cut_removed') === true) {
+        return { key: 'cutRemoved', values: { actor, round: roundLabel(row, ctx) }, tone: 'warning' }
+      }
       return {
         key: 'roundEdited',
         values: {
