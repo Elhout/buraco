@@ -1,7 +1,7 @@
 import type { PGlite } from '@electric-sql/pglite'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { seedClub } from './fixtures'
-import { actAs, asUser, createDb, createUser, inTx } from './harness'
+import { actAs, asUser, createDb, createUser, inTx, rejects } from './harness'
 
 let db: PGlite
 
@@ -110,14 +110,15 @@ describe('roles', () => {
 })
 
 describe('profiles and devices', () => {
-  it('lets users edit their own profile fields but not their id', async () => {
+  it('lets users edit their own profile fields but not their name (the owner renames) or id', async () => {
     const user = await createUser(db, 'Me')
     await inTx(db, async (tx) => {
       await actAs(tx, user)
-      await tx.query(`update public.profiles set display_name = 'Renamed', lang = 'ar' where id = $1`, [user])
+      await tx.query(`update public.profiles set lang = 'ar' where id = $1`, [user])
       const { rows } = await tx.query(`select display_name, lang from public.profiles where id = $1`, [user])
-      expect(rows[0]).toEqual({ display_name: 'Renamed', lang: 'ar' })
-      await expect(tx.query(`update public.profiles set id = gen_random_uuid() where id = $1`, [user])).rejects.toThrow(/permission denied/)
+      expect(rows[0]).toEqual({ display_name: 'Me', lang: 'ar' })
+      await rejects(tx, () => tx.query(`update public.profiles set display_name = 'Renamed' where id = $1`, [user]), /permission denied/)
+      await rejects(tx, () => tx.query(`update public.profiles set id = gen_random_uuid() where id = $1`, [user]), /permission denied/)
     })
   })
 

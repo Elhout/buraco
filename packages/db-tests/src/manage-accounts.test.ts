@@ -25,6 +25,22 @@ describe('parseAccountRequest', () => {
     })
   })
 
+  it('parses a set_username request (owner only, checked by the function)', () => {
+    expect(parseAccountRequest({ action: 'set_username', club_id: CLUB, user_id: USER, username: ' AK ' })).toEqual({
+      ok: true,
+      request: { action: 'set_username', clubId: CLUB, userId: USER.toLowerCase(), username: 'ak' },
+    })
+  })
+
+  it.each([
+    [{ action: 'set_username', club_id: CLUB, user_id: USER }, 'invalid_request'],
+    [{ action: 'set_username', club_id: CLUB, username: 'ak' }, 'invalid_request'],
+    [{ action: 'set_username', club_id: CLUB, user_id: USER, username: 'a' }, 'invalid_username'],
+    [{ action: 'set_username', club_id: CLUB, user_id: USER, username: 'a b' }, 'invalid_username'],
+  ])('rejects the set_username %j with %s', (body, error) => {
+    expect(parseAccountRequest(body)).toEqual({ ok: false, error })
+  })
+
   it.each([
     [null, 'invalid_request'],
     [[], 'invalid_request'],

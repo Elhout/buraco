@@ -8,6 +8,7 @@ import { qk } from '@/lib/queryKeys'
 import { rpc } from '@/lib/rpc'
 import { color, space } from '@/theme/tokens'
 import type { MemberActions } from './memberActions'
+import { NameForm, UsernameForm } from './RenameForms'
 import { SetPasswordForm } from './SetPasswordForm'
 import { useClubErrorText } from './useClubErrorText'
 
@@ -21,11 +22,13 @@ export interface MemberSheetProps {
   canSetPassword: boolean
   /** Their sign-in username, shown with the new password (name-only players get a generated one). */
   username?: string | null
+  /** The club owner may rename the player and change their username. */
+  isOwner?: boolean
   onClose: () => void
 }
 
 /** Role changes, removal and new passwords. Transfer and remove ask once more before running. */
-export function MemberSheet({ clubId, member, actions, canSetPassword, username, onClose }: MemberSheetProps) {
+export function MemberSheet({ clubId, member, actions, canSetPassword, username, isOwner, onClose }: MemberSheetProps) {
   const { t } = useTranslation('profile')
   const { t: tc } = useTranslation()
   const client = useQueryClient()
@@ -33,6 +36,7 @@ export function MemberSheet({ clubId, member, actions, canSetPassword, username,
   const errorText = useClubErrorText()
   const [confirming, setConfirming] = useState<'transfer' | 'remove' | null>(null)
   const [settingPassword, setSettingPassword] = useState(false)
+  const [renaming, setRenaming] = useState<'name' | 'username' | null>(null)
 
   const run = useMutation({
     mutationFn: async (action: Action) => {
@@ -51,6 +55,7 @@ export function MemberSheet({ clubId, member, actions, canSetPassword, username,
   const close = (): void => {
     setConfirming(null)
     setSettingPassword(false)
+    setRenaming(null)
     run.reset()
     onClose()
   }
@@ -64,6 +69,22 @@ export function MemberSheet({ clubId, member, actions, canSetPassword, username,
     : confirming
       ? t(`members.${confirming}Body`, { name })
       : t(`roles.${member?.role ?? 'member'}`)
+
+  if (renaming && member) {
+    return (
+      <Sheet
+        visible
+        onClose={close}
+        title={t(renaming === 'name' ? 'rename.nameTitle' : 'rename.usernameTitle', { name })}
+        subtitle={renaming === 'name' ? t('rename.nameBody') : t('rename.usernameBody')}>
+        {renaming === 'name' ? (
+          <NameForm clubId={clubId} userId={member.userId} current={member.name} onDone={close} onCancel={() => setRenaming(null)} />
+        ) : (
+          <UsernameForm clubId={clubId} userId={member.userId} current={username ?? ''} onDone={close} onCancel={() => setRenaming(null)} />
+        )}
+      </Sheet>
+    )
+  }
 
   if (settingPassword && member) {
     return (
@@ -92,6 +113,18 @@ export function MemberSheet({ clubId, member, actions, canSetPassword, username,
           />
         ) : (
           <>
+            {isOwner ? (
+              <>
+                <Button label={t('rename.name')} variant="secondary" block disabled={run.isPending} onPress={() => setRenaming('name')} />
+                <Button
+                  label={t('rename.username')}
+                  variant="secondary"
+                  block
+                  disabled={run.isPending}
+                  onPress={() => setRenaming('username')}
+                />
+              </>
+            ) : null}
             {canSetPassword ? (
               <Button
                 label={t('accounts.resetPassword')}

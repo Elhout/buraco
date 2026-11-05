@@ -1099,6 +1099,7 @@ export type Database = {
       send_chat_message: { Args: { p_club_id: string; p_body: string }; Returns: string }
       set_device_state: { Args: { p_token: string; p_app_state: string; p_active_game_id?: string; p_chat_open?: boolean }; Returns: undefined }
       set_entries: { Args: { p_tournament_id: string; p_entries: Json }; Returns: undefined }
+      set_member_name: { Args: { p_club_id: string; p_user_id: string; p_name: string }; Returns: undefined }
       set_member_role: { Args: { p_club_id: string; p_user_id: string; p_role: Database['public']['Enums']['club_role'] }; Returns: undefined }
       set_pin: { Args: { p_pin: string }; Returns: undefined }
       shares_club_with: { Args: { p_user_id: string }; Returns: boolean }

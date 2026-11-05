@@ -12,7 +12,8 @@
     "name_empty": "Enter a name.",
     "name_tooLong": "Keep it to {{max}} characters.",
     "saveName": "Save name",
-    "language": "Language"
+    "language": "Language",
+    "nameByOwner": "Only the club owner can change names."
   },
   "pin": {
     "section": "PIN",
@@ -177,5 +178,17 @@
     "typeLabel": "Type {{word}} to confirm",
     "word": "DELETE",
     "confirm": "Delete my account"
+  },
+  "rename": {
+    "name": "Change name",
+    "username": "Change username",
+    "nameTitle": "New name for {{name}}",
+    "nameBody": "Everyone in the club sees the new name.",
+    "saveName": "Save name",
+    "usernameTitle": "New username for {{name}}",
+    "usernameBody": "They sign in with the new username and the same password. Phones stay signed in.",
+    "usernameLabel": "Username",
+    "usernameHint": "Letters a–z, numbers, dot, dash or underscore. At least 2.",
+    "saveUsername": "Save username"
   }
 }

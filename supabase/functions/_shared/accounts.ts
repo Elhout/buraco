@@ -43,6 +43,8 @@ export type AccountRequest =
   // username/password null: a name-only player who can't sign in (until an admin sets a password).
   | { action: 'create'; clubId: string; username: string | null; password: string | null; displayName: string }
   | { action: 'set_password'; clubId: string; userId: string; password: string }
+  // Owner only (manage-accounts checks is_club_owner_for): the login name changes, the password stays.
+  | { action: 'set_username'; clubId: string; userId: string; username: string }
 
 export type RequestError = 'invalid_request' | 'invalid_username' | 'weak_password' | 'invalid_name'
 
@@ -71,6 +73,15 @@ export function parseAccountRequest(body: unknown): { ok: true; request: Account
     if (userId === null || password === null) return { ok: false, error: 'invalid_request' }
     if (!validatePassword(password).ok) return { ok: false, error: 'weak_password' }
     return { ok: true, request: { action: 'set_password', clubId, userId, password } }
+  }
+
+  if (b.action === 'set_username') {
+    const userId = uuid(b, 'user_id')
+    const rawUsername = str(b, 'username')
+    if (userId === null || rawUsername === null) return { ok: false, error: 'invalid_request' }
+    const username = validateUsername(rawUsername)
+    if (!username.ok) return { ok: false, error: 'invalid_username' }
+    return { ok: true, request: { action: 'set_username', clubId, userId, username: username.username } }
   }
 
   if (b.action === 'create') {

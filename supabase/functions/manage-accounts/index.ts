@@ -1,6 +1,7 @@
 // manage-accounts: club owners and admins create username+password accounts and reset passwords
-// (there is no self sign-up). The caller's JWT identifies them; the permission check is the SQL
-// function assert_account_admin, so the rules live (and are tested) in one place.
+// (there is no self sign-up); only the owner changes a username. The caller's JWT identifies them;
+// the permission checks are the SQL functions assert_account_admin and is_club_owner_for, so the
+// rules live (and are tested) in one place.
 
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2'
 import { type AccountRequest, loginEmail, parseAccountRequest, usernameCandidates } from '../_shared/accounts.ts'
@@ -71,6 +72,23 @@ const setPassword = async (
   return json({ ok: true })
 }
 
+/** The club owner changes a member's login name; the password stays as it is. */
+const setUsername = async (
+  admin: SupabaseClient,
+  caller: string,
+  req: Extract<AccountRequest, { action: 'set_username' }>,
+): Promise<Response> => {
+  const { data: allowed, error } = await admin.rpc('is_club_owner_for', { p_caller: caller, p_club_id: req.clubId, p_target: req.userId })
+  if (error) throw new Error(`is_club_owner_for failed: ${error.message}`)
+  if (allowed !== true) return json({ ok: false, error: 'forbidden' }, 403)
+  const updated = await admin.auth.admin.updateUserById(req.userId, { email: loginEmail(req.username), email_confirm: true })
+  if (updated.error) {
+    if (isTaken(updated.error)) return json({ ok: false, error: 'username_taken' }, 409)
+    throw new Error(`set username failed: ${updated.error.message}`)
+  }
+  return json({ ok: true })
+}
+
 const handle = async (req: Request, env: ServiceEnv): Promise<Response> => {
   if (req.method !== 'POST') return json({ ok: false, error: 'method not allowed' }, 405)
   const token = bearer(req)
@@ -86,7 +104,9 @@ const handle = async (req: Request, env: ServiceEnv): Promise<Response> => {
   const parsed = parseAccountRequest(body)
   if (!parsed.ok) return json({ ok: false, error: parsed.error }, 400)
   const request = parsed.request
-  return request.action === 'create' ? await create(admin, data.user.id, request) : await setPassword(admin, data.user.id, request)
+  if (request.action === 'create') return await create(admin, data.user.id, request)
+  if (request.action === 'set_username') return await setUsername(admin, data.user.id, request)
+  return await setPassword(admin, data.user.id, request)
 }
 
 // Called from the app, including the web build in a browser: answer preflights, add CORS headers.

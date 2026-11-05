@@ -31,7 +31,8 @@ export default function PlayerScreen() {
   if (!id) return <Redirect href="/players" />
   const account = accounts.accountOf(id)
   const actions = member ? memberActions(current.role, me, member) : memberActions('member', me, { userId: me, role: 'member' })
-  const canManage = hasAnyAction(actions) || (account?.canManage ?? false)
+  const isOwner = current.role === 'owner'
+  const canManage = isOwner || hasAnyAction(actions) || (account?.canManage ?? false)
 
   return (
     <Screen>
@@ -62,6 +63,7 @@ export default function PlayerScreen() {
         actions={actions}
         canSetPassword={account?.canManage ?? false}
         username={account?.username}
+        isOwner={isOwner}
         onClose={() => setManaging(false)}
       />
     </Screen>
