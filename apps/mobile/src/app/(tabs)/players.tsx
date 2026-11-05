@@ -3,7 +3,7 @@ import { router } from 'expo-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, I18nManager, Pressable, StyleSheet, TextInput, View } from 'react-native'
-import { Avatar, Button, Card, Chevron, EmptyState, ErrorText, Screen, Text } from '@/components/ui'
+import { Avatar, Button, Card, Chevron, EmptyState, ErrorText, Screen, Segmented, Text } from '@/components/ui'
 import { useUserId } from '@/features/auth/SessionProvider'
 import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { type Member, useClubMembers } from '@/features/clubs/members'
@@ -12,6 +12,7 @@ import { RoleChip } from '@/features/clubs/screens/RoleChip'
 import { useOnlineMembers } from '@/features/lobby/presence'
 import { type RosterRow, buildRoster, matchesName } from '@/features/players/roster'
 import { useClubH2H, useClubPlayerStats, useStatsLive } from '@/features/stats/api'
+import { DailyBoards } from '@/features/stats/DailyBoards'
 import { type H2HRow, mostBeaten } from '@/features/stats/select'
 import i18n from '@/i18n'
 import { formatNumber } from '@/lib/format'
@@ -27,6 +28,8 @@ export default function PlayersScreen() {
   const online = useOnlineMembers(current.club.id)
   const [adding, setAdding] = useState(false)
   const [query, setQuery] = useState('')
+  const [view, setView] = useState<'board' | 'daily'>('board')
+  const me = useUserId()
   useStatsLive(current.club.id)
   const isAdmin = current.role === 'owner' || current.role === 'admin'
   const roster = buildRoster(members.members, stats.data ?? [], i18n.language)
@@ -49,9 +52,20 @@ export default function PlayersScreen() {
       actions={isAdmin ? <Button label={t('add')} onPress={() => setAdding(true)} /> : undefined}>
       {members.isPending ? <ActivityIndicator color={color.inkMuted} /> : null}
       <ErrorText error={members.error ?? stats.error ?? h2h.error} />
-      {roster.length > 0 ? <SearchBox value={query} onChange={setQuery} /> : null}
-      {roster.length > 0 && shown.length === 0 ? <EmptyState icon="search-outline" title={t('noMatch', { query: query.trim() })} /> : null}
-      {shown.length > 0 ? (
+      <Segmented
+        value={view}
+        onChange={setView}
+        options={[
+          { value: 'board', label: t('view.board') },
+          { value: 'daily', label: t('view.daily') },
+        ]}
+      />
+      {view === 'daily' ? <DailyBoards clubId={current.club.id} members={members.members} me={me} /> : null}
+      {view === 'board' && roster.length > 0 ? <SearchBox value={query} onChange={setQuery} /> : null}
+      {view === 'board' && roster.length > 0 && shown.length === 0 ? (
+        <EmptyState icon="search-outline" title={t('noMatch', { query: query.trim() })} />
+      ) : null}
+      {view === 'board' && shown.length > 0 ? (
         <Card style={styles.card}>
           {shown.map(({ p, rank }, i) => (
             <View key={p.userId}>

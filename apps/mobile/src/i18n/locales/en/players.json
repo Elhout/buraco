@@ -13,5 +13,17 @@
   "username": "Username: {{username}}",
   "search": "Search players",
   "clearSearch": "Clear search",
-  "noMatch": "No player matches “{{query}}”"
+  "noMatch": "No player matches “{{query}}”",
+  "view": {
+    "board": "Leaderboard",
+    "daily": "Daily"
+  },
+  "daily": {
+    "empty": "No games yet",
+    "emptyBody": "Each day the club plays gets its own champion here.",
+    "games_one": "{{n}} game",
+    "games_other": "{{n}} games",
+    "champion": "Champion of the day: {{names}}",
+    "champions": "Champions of the day: {{names}}"
+  }
 }

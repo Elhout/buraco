@@ -22,3 +22,7 @@ export function gameSpan(startIso: string | null, endIso: string | null, lang: s
   const sameDay = day(startIso, lang, timeZone) === day(endIso, lang, timeZone)
   return sameDay ? `${start} – ${clock(endIso, lang, timeZone)}` : `${start} – ${gameDateTime(endIso, lang, timeZone)}`
 }
+
+/** A YYYY-MM-DD day as "Thursday, 5 November 2026" (noon, so no time zone can move it). */
+export const dayLabel = (day: string, lang: string): string =>
+  new Intl.DateTimeFormat(lang, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${day}T12:00:00`))

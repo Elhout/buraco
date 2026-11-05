@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { qk } from '@/lib/queryKeys'
 import { useRealtimeInvalidate } from '@/lib/realtime'
 import { supabase } from '@/lib/supabase'
+import type { DailyGameRow } from './daily'
 import { type PairIds, pairH2HFilter } from './h2h'
 import type { H2HRow, LeaderboardRow, PairH2HRow, PairStatsRow, PlayerStatsRow } from './select'
 
@@ -56,6 +57,23 @@ export function useClubH2H(clubId: string) {
     queryKey: key(clubId, 'h2h-club'),
     queryFn: async (): Promise<H2HRow[]> => {
       const { data, error } = await supabase.from('v_h2h').select('*').eq('club_id', clubId)
+      if (error) throw error
+      return data
+    },
+  })
+}
+
+/** Every counted game per player, for the daily champions (grouped by day on the phone). */
+export function useDailyResults(clubId: string) {
+  return useQuery({
+    queryKey: key(clubId, 'daily'),
+    queryFn: async (): Promise<DailyGameRow[]> => {
+      const { data, error } = await supabase
+        .from('v_player_games')
+        .select('game_id, user_id, outcome, finished_at')
+        .eq('club_id', clubId)
+        .order('finished_at', { ascending: false })
+        .limit(5000)
       if (error) throw error
       return data
     },

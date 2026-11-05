@@ -17,5 +17,21 @@
   "username": "اسم المستخدم: {{username}}",
   "search": "ابحث عن لاعب",
   "clearSearch": "مسح البحث",
-  "noMatch": "لا يوجد لاعب باسم «{{query}}»"
+  "noMatch": "لا يوجد لاعب باسم «{{query}}»",
+  "view": {
+    "board": "الترتيب",
+    "daily": "يومي"
+  },
+  "daily": {
+    "empty": "لا مباريات بعد",
+    "emptyBody": "كل يوم يلعب فيه النادي يظهر هنا مع بطله.",
+    "games_zero": "لا مباريات",
+    "games_one": "مباراة واحدة",
+    "games_two": "مباراتان",
+    "games_few": "{{n}} مباريات",
+    "games_many": "{{n}} مباراة",
+    "games_other": "{{n}} مباراة",
+    "champion": "بطل اليوم: {{names}}",
+    "champions": "أبطال اليوم: {{names}}"
+  }
 }
