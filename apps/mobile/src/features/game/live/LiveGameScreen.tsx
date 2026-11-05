@@ -69,7 +69,11 @@ function Bar({ view, sheets, sendingCount, onEnter }: { view: GameView; sheets: 
 /** /game/[id]: the scoreboard on all four phones and every spectator's. */
 export function LiveGameScreen({ gameId }: { gameId: string }) {
   const { t } = useTranslation(['game', 'common'])
-  const { view, isPending, error, realtime, dataUpdatedAt, refetch } = useGame(gameId)
+  const { view: gameView, isPending, error, realtime, dataUpdatedAt, refetch } = useGame(gameId)
+  const { role, club } = useCurrentClub()
+  // The owner and admins keep score in any running game, from outside the table too.
+  const view =
+    gameView && !gameView.canScore && gameView.game.status === 'live' && isGameAdmin(role) ? { ...gameView, canScore: true } : gameView
   const live = view?.game.status === 'live'
   const outbox = usePendingRounds(gameId)
   const net = useNetInfo()
@@ -78,7 +82,6 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
   const refusal = useOutboxRefusal(gameId)
   const [entryFocus, setEntryFocus] = useState<Team>('A')
   const cutAction = useAction(gameId)
-  const { role, club } = useCurrentClub()
   // Reaching the target asks the table (and admins): end the game, or keep playing.
   const sheets = useLiveSheets(view, view && canDecideTarget(view, role) ? view.game.result_proposed_at : null)
   const [editing, setEditing] = useState<RoundView | null>(null)

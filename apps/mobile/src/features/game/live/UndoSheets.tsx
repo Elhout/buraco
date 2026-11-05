@@ -30,6 +30,8 @@ export function UndoRequestSheet({ visible, view, onClose }: UndoSheetProps) {
   const action = useAction(view.game.id)
   const params = roundParams(lastConfirmed(view))
   const other = opponentOf(view.myTeam ?? 'A')
+  // Start-now games, and an admin scoring from outside the table, undo at once.
+  const instant = view.isGhost || view.mySeat === null
   const submit = async (): Promise<void> => {
     if (!(await action.run(() => requestUndo(view.game.id)))) return
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
@@ -38,10 +40,10 @@ export function UndoRequestSheet({ visible, view, onClose }: UndoSheetProps) {
   return (
     <Sheet visible={visible} onClose={onClose} locked={action.busy} title={t('undo.requestTitle')}>
       <Text variant="body" tone={color.inkMuted} center>
-        {view.isGhost ? t('undo.ghostBody', params) : t('undo.requestBody', { ...params, team: other })}
+        {instant ? t('undo.ghostBody', params) : t('undo.requestBody', { ...params, team: other })}
       </Text>
       <Button
-        label={view.isGhost ? t('undo.now') : t('undo.request')}
+        label={instant ? t('undo.now') : t('undo.request')}
         variant="danger"
         size="lg"
         block
