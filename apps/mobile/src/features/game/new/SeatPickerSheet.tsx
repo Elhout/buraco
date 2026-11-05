@@ -1,8 +1,10 @@
 import { Ionicons } from '@expo/vector-icons'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native'
-import { Avatar, Button, ErrorText, Sheet, TeamBadge, Text } from '@/components/ui'
+import { Avatar, Button, ErrorText, Field, Sheet, TeamBadge, Text } from '@/components/ui'
 import { useClubMembers } from '@/features/clubs/members'
+import { matchesName } from '@/features/players/roster'
 import i18n from '@/i18n'
 import { HIT, color, radius, space } from '@/theme/tokens'
 import { type Player, type SeatNo, type Slots, nextGuest, seatOf, teamOfSeat } from './draft'
@@ -29,18 +31,40 @@ export function SeatPickerSheet({ clubId, meId, seat, slots, onPick, onNewPlayer
   const { t } = useTranslation(['lobby', 'common'])
   const { members, isPending, error } = useClubMembers(clubId)
   const team = seat ? teamOfSeat(seat) : 'A'
-  const sorted = [...members].sort((a, b) => a.name.localeCompare(b.name, i18n.language))
+  const [query, setQuery] = useState('')
+  const sorted = [...members].sort((a, b) => a.name.localeCompare(b.name, i18n.language)).filter((m) => matchesName(m.name, query))
+  const close = (): void => {
+    setQuery('')
+    onClose()
+  }
+  const pick = (s: SeatNo, player: Player): void => {
+    setQuery('')
+    onPick(s, player)
+  }
 
   return (
-    <Sheet visible={seat !== null} onClose={onClose} title={t('new.pickTitle', { team })}>
+    <Sheet visible={seat !== null} onClose={close} title={t('new.pickTitle', { team })}>
       {isPending ? <ActivityIndicator color={color.inkMuted} /> : null}
       <ErrorText error={error} />
+      {/* Type to narrow the list; the guest row stays on top. */}
+      {members.length > 1 ? (
+        <Field
+          label={t('new.search')}
+          value={query}
+          onChangeText={setQuery}
+          placeholder={t('new.searchPlaceholder')}
+          autoCorrect={false}
+          autoCapitalize="none"
+          returnKeyType="search"
+          clearButtonMode="while-editing"
+        />
+      ) : null}
       <ScrollView style={styles.list} contentContainerStyle={styles.listContent}>
         {/* Guest can be picked again and again: Guest 1, Guest 2, … */}
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t('new.guest')}
-          onPress={() => seat && onPick(seat, nextGuest(slots, t('new.guestLabel')))}
+          onPress={() => seat && pick(seat, nextGuest(slots, t('new.guestLabel')))}
           style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
           <View style={styles.guestIcon}>
             <Ionicons name="person-outline" size={20} color={color.inkMuted} />
@@ -62,7 +86,7 @@ export function SeatPickerSheet({ clubId, meId, seat, slots, onPick, onNewPlayer
               accessibilityRole="button"
               accessibilityLabel={m.name}
               disabled={playing}
-              onPress={() => seat && onPick(seat, player)}
+              onPress={() => seat && pick(seat, player)}
               style={({ pressed }) => [styles.row, playing && styles.blocked, pressed && styles.pressed]}>
               <Avatar name={m.name} url={m.avatarUrl} size={40} />
               <Text variant="bodyStrong" numberOfLines={1} style={styles.flex}>
@@ -77,6 +101,11 @@ export function SeatPickerSheet({ clubId, meId, seat, slots, onPick, onNewPlayer
             </Pressable>
           )
         })}
+        {members.length > 1 && sorted.length === 0 ? (
+          <Text variant="label" tone={color.inkMuted} center style={styles.hint}>
+            {t('new.noMatch', { query: query.trim() })}
+          </Text>
+        ) : null}
         {!isPending && members.length <= 1 ? (
           <Text variant="label" tone={color.inkMuted} center style={styles.hint}>
             {onNewPlayer ? t('new.aloneBody') : t('new.aloneAsk')}
