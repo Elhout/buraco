@@ -5,6 +5,7 @@ import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native'
 import { Avatar, Button, ErrorText, Field, SectionTitle, TeamBadge, Text } from '@/components/ui'
 import { type Member, useClubMembers } from '@/features/clubs/members'
 import { sortByPresence } from '@/features/lobby/model'
+import { matchesName } from '@/features/players/roster'
 import { HIT, color, radius, space } from '@/theme/tokens'
 import { type Player, type Slots, nextFreeSeat, nextGuest, seatOf, teamOfSeat } from './draft'
 
@@ -19,9 +20,6 @@ export interface MemberPickerProps {
   /** Members at a table in progress (they can't be picked). */
   busy: ReadonlySet<string>
 }
-
-/** The search box only helps once the list is longer than a screen. */
-const SEARCH_FROM = 10
 
 const asPlayer = (m: Member): Player => ({ kind: 'member', userId: m.userId, name: m.name })
 
@@ -76,8 +74,7 @@ export function MemberPicker({ clubId, meId, slots, online, onToggle, onAddPlaye
   const { t } = useTranslation(['lobby', 'common'])
   const { members, isPending, error, refetch } = useClubMembers(clubId)
   const [query, setQuery] = useState('')
-  const q = query.trim().toLocaleLowerCase()
-  const visible = sortByPresence(members, online, meId).filter((m) => q === '' || m.name.toLocaleLowerCase().includes(q))
+  const visible = sortByPresence(members, online, meId).filter((m) => matchesName(m.name, query))
 
   let list
   if (isPending) list = <ActivityIndicator color={color.inkMuted} style={styles.pad} />
@@ -132,14 +129,17 @@ export function MemberPicker({ clubId, meId, slots, online, onToggle, onAddPlaye
         }>
         {t('new.members')}
       </SectionTitle>
-      {members.length < SEARCH_FROM ? null : (
+      {/* Shown whenever there is someone to look for: the list narrows as you type. */}
+      {members.length <= 1 ? null : (
         <Field
           label={t('new.search')}
           value={query}
           onChangeText={setQuery}
+          placeholder={t('new.searchPlaceholder')}
           autoCorrect={false}
           autoCapitalize="none"
           returnKeyType="search"
+          clearButtonMode="while-editing"
         />
       )}
       {list}

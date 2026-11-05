@@ -95,7 +95,8 @@
     "pickTitle": "Pick a player for Team {{team}}",
     "newPlayer": "New player",
     "guestLabel": "Guest",
-    "playing": "Playing now"
+    "playing": "Playing now",
+    "searchPlaceholder": "Type a name"
   },
   "invite": {
     "title": "Waiting for players",
