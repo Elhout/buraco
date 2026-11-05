@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native'
 import { Button, ErrorText, Score, Sheet, Stack, TeamBadge } from '@/components/ui'
 import { formatNumber } from '@/lib/format'
 import { space, teamColor } from '@/theme/tokens'
-import { confirmResult, continueGame } from '../actions'
+import { confirmResult, continueGame, endContinuedGame } from '../actions'
 import { isGameAdmin } from '../AdminGameControls'
 import type { GameView } from '../model'
 import { useAction, useRefreshGame } from './useAction'
@@ -12,6 +12,53 @@ import { useAction, useRefreshGame } from './useAction'
 /** Who decides when a team reaches the target: the table's scorer(s), the owner and admins. Not in tournaments. */
 export const canDecideTarget = (view: GameView, role: string): boolean =>
   view.resultProposed && view.game.tournament_match_id === null && (view.canScore || isGameAdmin(role))
+
+/** The table kept playing past the target: it may end the game at any time, score as it is. */
+export const canEndContinued = (view: GameView, role: string): boolean =>
+  view.game.status === 'live' &&
+  view.game.continued_at !== null &&
+  !view.resultProposed &&
+  view.game.tournament_match_id === null &&
+  (view.canScore || isGameAdmin(role))
+
+/** "End the game now?" with the current score; then the result is confirmed as usual. */
+export function EndNowSheet({ visible, view, onClose }: TargetReachedSheetProps) {
+  const { t } = useTranslation(['game', 'common'])
+  const refresh = useRefreshGame(view.game.id)
+  const action = useAction(view.game.id)
+  const level = view.totals.A === view.totals.B
+  const end = (): void => {
+    void action.run(async () => {
+      await endContinuedGame(view.game.id)
+      if (view.isGhost) await confirmResult(view.game.id)
+      refresh()
+      onClose()
+      router.push(`/game/${view.game.id}/result`)
+    })
+  }
+  return (
+    <Sheet
+      visible={visible}
+      onClose={onClose}
+      title={t('target.endNowTitle')}
+      subtitle={level ? t('target.level') : t('target.endNowBody')}
+      locked={action.busy}>
+      <View style={styles.score}>
+        {(['A', 'B'] as const).map((team) => (
+          <View key={team} style={styles.team}>
+            <TeamBadge team={team} />
+            <Score value={view.totals[team]} size="score" tone={teamColor(team)} />
+          </View>
+        ))}
+      </View>
+      <Stack gap={space.md}>
+        <ErrorText error={action.error} />
+        <Button label={t('target.end')} size="lg" block loading={action.busy} disabled={level} onPress={end} />
+        <Button label={t('common:actions.cancel')} variant="quiet" block disabled={action.busy} onPress={onClose} />
+      </Stack>
+    </Sheet>
+  )
+}
 
 interface TargetReachedSheetProps {
   readonly visible: boolean

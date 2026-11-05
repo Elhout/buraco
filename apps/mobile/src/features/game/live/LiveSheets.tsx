@@ -7,7 +7,7 @@ import { EnterRoundSheet } from './EnterRoundSheet'
 import { GameMenuSheet } from './GameMenuSheet'
 import { ReassignSheet } from './ReassignSheet'
 import { ReplaceGuestSheet } from './ReplaceGuestSheet'
-import { TargetReachedSheet, canDecideTarget } from './TargetReachedSheet'
+import { EndNowSheet, TargetReachedSheet, canDecideTarget, canEndContinued } from './TargetReachedSheet'
 import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { UndoApproveSheet, UndoRequestSheet } from './UndoSheets'
 import { WatchersSheet } from './WatchersSheet'
@@ -45,6 +45,7 @@ export function LiveSheets({ view, sheets, watchers, entryFocus }: LiveSheetsPro
       <WatchersSheet visible={sheet === 'watchers'} watchers={watchers} onClose={close} />
       <ReplaceGuestSheet visible={sheet === 'replaceGuest'} view={view} onClose={close} />
       {canDecideTarget(view, role) ? <TargetReachedSheet visible={sheet === 'target'} view={view} onClose={close} /> : null}
+      {canEndContinued(view, role) ? <EndNowSheet visible={sheet === 'endNow'} view={view} onClose={close} /> : null}
     </>
   )
 }

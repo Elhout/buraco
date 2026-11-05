@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { GameView } from '../model'
 import type { MenuTarget } from './GameMenuSheet'
 
-export type SheetKind = 'enter' | 'cut' | 'menu' | 'confirm' | 'target' | MenuTarget
+export type SheetKind = 'enter' | 'cut' | 'menu' | 'confirm' | 'target' | 'endNow' | MenuTarget
 
 /** iOS can't present a Modal while another is still sliding out, so swaps wait this long. */
 const SWAP_MS = 380

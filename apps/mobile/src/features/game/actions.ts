@@ -57,6 +57,9 @@ export const confirmResult = (gameId: string, pin?: string): Promise<PinResult> 
 /** Past the target: keep playing with extra rounds instead of ending the game. */
 export const continueGame = (gameId: string): Promise<unknown> => rpc('continue_game', { p_game_id: gameId })
 
+/** After keep playing: end the game now with the score as it is (then confirm as usual). */
+export const endContinuedGame = (gameId: string): Promise<unknown> => rpc('end_continued_game', { p_game_id: gameId })
+
 export const requestUndo = (gameId: string): Promise<unknown> => rpc('request_undo', { p_game_id: gameId })
 
 export const approveUndo = (gameId: string, pin: string): Promise<PinResult> =>

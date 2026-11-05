@@ -18,6 +18,7 @@ export const gameRow = (over: Partial<GameRow> = {}): GameRow => ({
   started_at: ts,
   finished_at: null,
   tournament_match_id: null,
+  continued_at: null,
   created_at: ts,
   invite_expires_at: null,
   invite_warned_at: null,

@@ -1,5 +1,5 @@
 import { useCurrentClub } from '@/features/clubs/ClubProvider'
-import { canDecideTarget } from './TargetReachedSheet'
+import { canDecideTarget, canEndContinued } from './TargetReachedSheet'
 import { router } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
@@ -62,6 +62,12 @@ function ActionBanners({ view, onOpen }: { view: GameView; onOpen: (kind: SheetK
       {t('live.resultReady')}
     </Banner>
   ) : null
+  // After "Keep playing": end the game whenever the table wants, score as it is.
+  const endNow = canEndContinued(view, role) ? (
+    <Banner action={<BannerAction label={t('target.end')} onPress={() => onOpen('endNow')} tone={color.ink} />}>
+      {t('target.pastTarget')}
+    </Banner>
+  ) : null
   const confirm = view.awaitingMyConfirmation ? (
     <Banner tone="warning" action={<BannerAction label={t('live.confirmOpen')} onPress={() => onOpen('confirm')} tone={color.warning} />}>
       {t('live.confirmWaiting', { n: formatNumber(view.awaitingMyConfirmation.displayNo) })}
@@ -81,6 +87,7 @@ function ActionBanners({ view, onOpen }: { view: GameView; onOpen: (kind: SheetK
   return (
     <>
       {result}
+      {endNow}
       {confirm}
       {undo}
     </>

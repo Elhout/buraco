@@ -225,6 +225,10 @@
     "titleClock": "Time is up",
     "body": "End the game now, or keep playing with extra rounds?",
     "end": "End game",
-    "keepPlaying": "Keep playing"
+    "keepPlaying": "Keep playing",
+    "pastTarget": "Playing past the target. End the game whenever you like.",
+    "endNowTitle": "End the game now?",
+    "endNowBody": "The score stays as it is and the higher total wins.",
+    "level": "The teams are level: play another round to decide."
   }
 }
