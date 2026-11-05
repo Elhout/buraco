@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 import { Card, Row, Score, TeamBadge, Text } from '@/components/ui'
 import { type GameView, teamNames } from '@/features/game/model'
-import { formatDate, formatNumber } from '@/lib/format'
+import { formatNumber } from '@/lib/format'
+import { gameSpan } from '@/lib/gameWhen'
 import { color, radius, space, teamColor, teamSoft } from '@/theme/tokens'
 
 function TeamColumn({ view, team }: { view: GameView; team: Team }) {
@@ -33,12 +34,12 @@ function TeamColumn({ view, team }: { view: GameView; team: Team }) {
 export function ScoreHeader({ view }: { view: GameView }) {
   const { t, i18n } = useTranslation(['history', 'common'])
   const winner = view.game.winner_team
-  const when = view.game.finished_at ?? view.game.started_at ?? view.game.created_at
+  const when = gameSpan(view.game.started_at ?? view.game.created_at, view.game.finished_at, i18n.language)
   return (
     <Card accent={view.isGhost && !view.game.verified ? color.ghost : winner ? teamColor(winner) : undefined}>
       <Row gap={space.sm}>
         <Text variant="caption" tone={color.inkMuted} style={styles.flex}>
-          {t('detail.playedOn', { date: formatDate(when, i18n.language) })}
+          {t('detail.playedOn', { date: when })}
         </Text>
         <Text variant="caption" tone={color.inkMuted}>
           {t(`common:status.${view.game.status}`)}

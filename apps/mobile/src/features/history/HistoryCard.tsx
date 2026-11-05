@@ -3,7 +3,8 @@ import type { Team } from '@buraco/shared'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, View } from 'react-native'
 import { Card, Chevron, Row, Score, TeamBadge, Text } from '@/components/ui'
-import { formatDate, formatNumber } from '@/lib/format'
+import { formatNumber } from '@/lib/format'
+import { gameDateTime } from '@/lib/gameWhen'
 import { color, space, teamColor } from '@/theme/tokens'
 import type { HistoryBadge, HistoryItem } from './items'
 import { teamLabel } from './items'
@@ -46,7 +47,7 @@ export function HistoryCard({ item, onPress }: { item: HistoryItem; onPress: () 
   const { t, i18n } = useTranslation(['history', 'common'])
   const guest = t('common:guest')
   const names = { A: teamLabel(item.seats, 'A', guest), B: teamLabel(item.seats, 'B', guest) }
-  const date = item.finishedAt ? formatDate(item.finishedAt, i18n.language) : ''
+  const date = item.finishedAt ? gameDateTime(item.finishedAt, i18n.language) : ''
   const badge = t(`badge.${item.badge}`)
   const result = item.winner ? t('card.won', { team: t(`common:team.${item.winner}`) }) : t('card.noWinner')
   const label = t('card.a11y', {
