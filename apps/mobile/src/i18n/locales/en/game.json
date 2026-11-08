@@ -230,5 +230,8 @@
     "endNowTitle": "End the game now?",
     "endNowBody": "The score stays as it is and the higher total wins.",
     "level": "The teams are level: play another round to decide."
+  },
+  "playAgain": {
+    "button": "Play again · same teams"
   }
 }

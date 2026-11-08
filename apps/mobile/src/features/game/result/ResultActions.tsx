@@ -7,6 +7,7 @@ import { useUserId } from '@/features/auth/SessionProvider'
 import { formatNumber } from '@/lib/format'
 import { color, space } from '@/theme/tokens'
 import { confirmResult } from '../actions'
+import { PlayAgainButton } from '../PlayAgainButton'
 import { type GameView, teamNames } from '../model'
 import { UndoApproveSheet, UndoRequestSheet } from '../live/UndoSheets'
 import { opponentOf } from '../live/actionState'
@@ -99,7 +100,7 @@ export function PendingActions({ view, summary }: ActionsProps) {
   )
 }
 
-/** After the result is final: share it, open the history detail, or go back to the lobby. */
+/** After the result is final: play again with the same teams, share it, open the history detail, or go back. */
 export function FinalActions({ view, summary }: ActionsProps) {
   const { t } = useTranslation(['game', 'common'])
   const [shareError, setShareError] = useState<unknown>(null)
@@ -117,7 +118,8 @@ export function FinalActions({ view, summary }: ActionsProps) {
   return (
     <View style={styles.stack}>
       {view.needsVerification ? <Banner tone="ghost">{t('result.ghostNote')}</Banner> : null}
-      {params ? <Button label={t('result.share')} size="lg" block onPress={() => void share()} /> : null}
+      <PlayAgainButton view={view} />
+      {params ? <Button label={t('result.share')} variant="secondary" size="lg" block onPress={() => void share()} /> : null}
       <ErrorText error={shareError} />
       <Button label={t('result.history')} variant="secondary" block onPress={() => router.push(`/history/${view.game.id}`)} />
       <Button label={t('result.lobby')} variant="quiet" block onPress={() => router.replace('/club')} />
