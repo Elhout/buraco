@@ -4,6 +4,7 @@ import { qk } from '@/lib/queryKeys'
 import { useRealtimeInvalidate } from '@/lib/realtime'
 import { rpc } from '@/lib/rpc'
 import { supabase } from '@/lib/supabase'
+import type { Reaction, ReactionRow } from './reactions'
 
 export type CommentRow = Tables<'game_comments'>
 
@@ -21,6 +22,32 @@ export function useGameComments(gameId: string) {
   })
   useRealtimeInvalidate(`comments:${gameId}`, [{ table: 'game_comments', filter: `game_id=eq.${gameId}` }], [commentsKey(gameId)])
   return query
+}
+
+const reactionsKey = (gameId: string) => [...qk.game(gameId), 'reactions'] as const
+
+/** Every reaction on this game's comments; live while the screen is open. */
+export function useGameReactions(gameId: string) {
+  const query = useQuery({
+    queryKey: reactionsKey(gameId),
+    queryFn: async (): Promise<ReactionRow[]> => {
+      const { data, error } = await supabase.from('comment_reactions').select('comment_id, user_id, emoji').eq('game_id', gameId)
+      if (error) throw error
+      return data
+    },
+  })
+  useRealtimeInvalidate(`reactions:${gameId}`, [{ table: 'comment_reactions', filter: `game_id=eq.${gameId}` }], [reactionsKey(gameId)])
+  return query
+}
+
+/** Adds the reaction, or takes it back when it was already mine. */
+export function useToggleReaction(gameId: string) {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: ({ commentId, emoji }: { commentId: string; emoji: Reaction }) =>
+      rpc('toggle_comment_reaction', { p_comment_id: commentId, p_emoji: emoji }),
+    onSuccess: () => client.invalidateQueries({ queryKey: reactionsKey(gameId) }),
+  })
 }
 
 export function useAddComment(gameId: string) {

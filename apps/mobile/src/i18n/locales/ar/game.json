@@ -262,6 +262,9 @@
     "send": "إرسال",
     "you": "أنت",
     "mentionHint": "أشخاص يمكنك الإشارة إليهم",
-    "placeholderMention": "أضف تعليقًا · @ للإشارة"
+    "placeholderMention": "أضف تعليقًا · @ للإشارة",
+    "like": "إعجاب",
+    "react": "أضف تفاعلًا",
+    "reactionA11y": "{{emoji}} {{count}}"
   }
 }

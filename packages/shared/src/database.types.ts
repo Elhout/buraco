@@ -155,6 +155,52 @@ export type Database = {
           },
         ]
       }
+      comment_reactions: {
+        Row: {
+          comment_id: string
+          game_id: string
+          user_id: string
+          emoji: string
+          created_at: string
+        }
+        Insert: {
+          comment_id: string
+          game_id: string
+          user_id: string
+          emoji: string
+          created_at?: string
+        }
+        Update: {
+          comment_id?: string
+          game_id?: string
+          user_id?: string
+          emoji?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_reactions_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "game_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comment_reactions_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comment_reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       devices: {
         Row: {
           id: string
@@ -1156,6 +1202,7 @@ export type Database = {
       substitute_entry: { Args: { p_entry_id: string; p_user_id: string }; Returns: undefined }
       swap_seat: { Args: { p_game_id: string; p_seat: number; p_user_id: string }; Returns: undefined }
       switch_to_ghost: { Args: { p_game_id: string }; Returns: undefined }
+      toggle_comment_reaction: { Args: { p_comment_id: string; p_emoji: string }; Returns: boolean }
       transfer_ownership: { Args: { p_club_id: string; p_user_id: string }; Returns: undefined }
       unregister_device: { Args: { p_token: string }; Returns: undefined }
       verify_ghost_seat: { Args: { p_game_id: string; p_pin: string }; Returns: Json }

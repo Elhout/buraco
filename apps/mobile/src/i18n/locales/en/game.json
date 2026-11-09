@@ -242,6 +242,9 @@
     "send": "Send",
     "you": "You",
     "mentionHint": "People you can mention",
-    "placeholderMention": "Add a comment · @ to mention"
+    "placeholderMention": "Add a comment · @ to mention",
+    "like": "Like",
+    "react": "Add a reaction",
+    "reactionA11y": "{{emoji}} {{count}}"
   }
 }
