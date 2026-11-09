@@ -65,7 +65,7 @@ export function GameComments({ gameId }: { gameId: string }) {
               <Text variant="body" selectable>
                 {splitMentions(
                   c.body,
-                  c.mentions.map((id) => byId.get(id)?.name ?? ''),
+                  (c.mentions ?? []).map((id) => byId.get(id)?.name ?? ''),
                 ).map((seg, i) =>
                   seg.mention ? (
                     <Text key={i} variant="bodyStrong" tone={color.accent}>
