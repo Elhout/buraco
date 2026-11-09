@@ -18,7 +18,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   // Must match the Expo project (EAS). Not shown to players; the app name is "Buraco".
   slug: 'elhout',
   owner: 'elhouts-team',
-  version: '1.0.0',
+  // 1.1.0: expo-audio (voice notes) is native code, so older APKs must not receive these updates
+  // (runtimeVersion follows this). Players install the new APK once.
+  version: '1.1.0',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'buraco',
@@ -55,6 +57,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ['@sentry/react-native/expo', { organization: env.SENTRY_ORG, project: env.SENTRY_PROJECT, url: 'https://sentry.io/' }],
     'expo-font',
     'expo-updates',
+    ['expo-audio', { microphonePermission: 'Buraco uses the microphone to record voice notes on games.' }],
   ],
   updates: { url: `https://u.expo.dev/${EAS_PROJECT_ID}` },
   runtimeVersion: { policy: 'appVersion' },

@@ -246,5 +246,16 @@
     "like": "Like",
     "react": "Add a reaction",
     "reactionA11y": "{{emoji}} {{count}}"
+  },
+  "voice": {
+    "record": "Record a voice note",
+    "recording": "Recording… {{time}}",
+    "sending": "Sending…",
+    "cancel": "Cancel",
+    "send": "Send",
+    "play": "Play voice note",
+    "pause": "Pause",
+    "unavailable": "This voice note is not available.",
+    "noMic": "Allow the microphone to record a voice note."
   }
 }

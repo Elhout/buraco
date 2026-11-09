@@ -121,6 +121,15 @@ describe('game_comment', () => {
   })
 })
 
+describe('voice-note comments', () => {
+  it('say it is a voice note when there is no text', () => {
+    expect(formatPush('game_comment', { sender: 'Sara', voice: true }, 'en')).toEqual({ title: 'Sara commented', body: '🎤 Voice note' })
+    expect(formatPush('game_comment', { sender: 'سارة', voice: true }, 'ar').body).toBe('🎤 رسالة صوتية')
+    expect(formatPush('comment_mention', { sender: 'Sara', voice: true }, 'en').body).toBe('🎤 Voice note')
+    expect(formatPush('game_comment', { sender: 'Sara', text: 'listen', voice: true }, 'en').body).toBe('listen')
+  })
+})
+
 describe('comment_mention', () => {
   it('says who mentioned you, with the comment', () => {
     expect(formatPush('comment_mention', { sender: 'Sara', text: '@AK come watch' }, 'en')).toEqual({

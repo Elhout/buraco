@@ -134,3 +134,50 @@ describe('@mentions', () => {
     })
   })
 })
+
+describe('voice notes', () => {
+  it('a comment can be a voice note, with or without text', async () => {
+    await inTx(db, async (tx) => {
+      const id = await startGame(tx)
+      await rpc(tx, 'public.add_game_comment($1, $2, $3::uuid[], $4, $5)', [id, '', [], `${id}/abc-123.m4a`, 12])
+      await rpc(tx, 'public.add_game_comment($1, $2, $3::uuid[], $4, $5)', [id, 'listen!', [], `${id}/def.webm`, 3])
+      const { rows } = await tx.query<{ body: string; audio_path: string; audio_seconds: number }>(
+        `select body, audio_path, audio_seconds from public.game_comments where game_id = $1 order by audio_seconds desc`,
+        [id],
+      )
+      expect(rows).toEqual([
+        { body: '', audio_path: `${id}/abc-123.m4a`, audio_seconds: 12 },
+        { body: 'listen!', audio_path: `${id}/def.webm`, audio_seconds: 3 },
+      ])
+      await tx.exec('reset role')
+      const push = await tx.query<{ payload: { voice: boolean } }>(
+        `select payload from public.notification_queue where event = 'game_comment' and game_id = $1 limit 1`,
+        [id],
+      )
+      expect(push.rows[0]?.payload.voice).toBe(true)
+    })
+  })
+
+  it("only accepts a file in this game's folder, up to 5 minutes", async () => {
+    await inTx(db, async (tx) => {
+      const id = await startGame(tx)
+      const other = '00000000-0000-0000-0000-000000000000'
+      await rejects(
+        tx,
+        () => rpc(tx, 'public.add_game_comment($1, $2, $3::uuid[], $4, $5)', [id, '', [], `${other}/x.m4a`, 5]),
+        /voice note/,
+      )
+      await rejects(
+        tx,
+        () => rpc(tx, 'public.add_game_comment($1, $2, $3::uuid[], $4, $5)', [id, '', [], `${id}/../x.m4a`, 5]),
+        /voice note/,
+      )
+      await rejects(
+        tx,
+        () => rpc(tx, 'public.add_game_comment($1, $2, $3::uuid[], $4, $5)', [id, '', [], `${id}/x.m4a`, 301]),
+        /voice note/,
+      )
+      await rejects(tx, () => rpc(tx, 'public.add_game_comment($1, $2)', [id, '']), /comment is empty/)
+    })
+  })
+})

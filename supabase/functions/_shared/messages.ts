@@ -154,11 +154,17 @@ const resultToConfirm: LangFormatters = {
 const gameComment: LangFormatters = {
   en: (p) => {
     const who = str(p, 'sender')
-    return { title: who ? `${who} commented` : 'New comment', body: str(p, 'text') ?? 'Someone commented on your game' }
+    return {
+      title: who ? `${who} commented` : 'New comment',
+      body: str(p, 'text') ?? (p.voice === true ? '🎤 Voice note' : 'Someone commented on your game'),
+    }
   },
   ar: (p) => {
     const who = str(p, 'sender')
-    return { title: who ? `تعليق من ${who}` : 'تعليق جديد', body: str(p, 'text') ?? 'علّق أحدهم على مباراتك' }
+    return {
+      title: who ? `تعليق من ${who}` : 'تعليق جديد',
+      body: str(p, 'text') ?? (p.voice === true ? '🎤 رسالة صوتية' : 'علّق أحدهم على مباراتك'),
+    }
   },
 }
 
@@ -166,11 +172,17 @@ const gameComment: LangFormatters = {
 const commentMention: LangFormatters = {
   en: (p) => {
     const who = str(p, 'sender')
-    return { title: who ? `${who} mentioned you` : 'You were mentioned', body: str(p, 'text') ?? 'Someone mentioned you in a comment' }
+    return {
+      title: who ? `${who} mentioned you` : 'You were mentioned',
+      body: str(p, 'text') ?? (p.voice === true ? '🎤 Voice note' : 'Someone mentioned you in a comment'),
+    }
   },
   ar: (p) => {
     const who = str(p, 'sender')
-    return { title: who ? `ذكرك ${who}` : 'تمت الإشارة إليك', body: str(p, 'text') ?? 'أشار إليك أحدهم في تعليق' }
+    return {
+      title: who ? `ذكرك ${who}` : 'تمت الإشارة إليك',
+      body: str(p, 'text') ?? (p.voice === true ? '🎤 رسالة صوتية' : 'أشار إليك أحدهم في تعليق'),
+    }
   },
 }
 

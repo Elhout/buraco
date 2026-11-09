@@ -266,6 +266,8 @@ export type Database = {
           body: string
           created_at: string
           mentions: string[]
+          audio_path: string | null
+          audio_seconds: number | null
         }
         Insert: {
           id?: string
@@ -274,6 +276,8 @@ export type Database = {
           body: string
           created_at?: string
           mentions?: string[]
+          audio_path?: string | null
+          audio_seconds?: number | null
         }
         Update: {
           id?: string
@@ -282,6 +286,8 @@ export type Database = {
           body?: string
           created_at?: string
           mentions?: string[]
+          audio_path?: string | null
+          audio_seconds?: number | null
         }
         Relationships: [
           {
@@ -1149,7 +1155,7 @@ export type Database = {
     Functions: {
       abandon_game: { Args: { p_game_id: string; p_pin?: string }; Returns: Json }
       add_cut: { Args: { p_game_id: string; p_seat: number }; Returns: string }
-      add_game_comment: { Args: { p_game_id: string; p_body: string; p_mentions?: string[] }; Returns: string }
+      add_game_comment: { Args: { p_game_id: string; p_body: string; p_mentions?: string[]; p_audio_path?: string; p_audio_seconds?: number }; Returns: string }
       can_read_game: { Args: { p_game_id: string }; Returns: boolean }
       can_read_tournament: { Args: { p_tournament_id: string }; Returns: boolean }
       cancel_game: { Args: { p_game_id: string }; Returns: undefined }
@@ -1206,6 +1212,7 @@ export type Database = {
       transfer_ownership: { Args: { p_club_id: string; p_user_id: string }; Returns: undefined }
       unregister_device: { Args: { p_token: string }; Returns: undefined }
       verify_ghost_seat: { Args: { p_game_id: string; p_pin: string }; Returns: Json }
+      voice_note_readable: { Args: { p_name: string }; Returns: boolean }
     }
     Enums: {
       club_role: 'owner' | 'admin' | 'member'

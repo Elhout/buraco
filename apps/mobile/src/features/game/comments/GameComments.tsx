@@ -10,6 +10,7 @@ import { gameDateTime } from '@/lib/gameWhen'
 import { HIT, color, font, radius, space } from '@/theme/tokens'
 import { useAddComment, useGameComments, useGameReactions, useToggleReaction } from './api'
 import { LIKE, REACTIONS, type Reaction, countReactions } from './reactions'
+import { VoicePlayer, VoiceRecorder } from './VoiceNote'
 import { type Picked, insertMention, mentionQuery, mentionedIds, splitMentions } from './mentions'
 import { matchesName } from '@/features/players/roster'
 
@@ -66,20 +67,23 @@ export function GameComments({ gameId }: { gameId: string }) {
               <Text variant="caption" tone={color.inkMuted}>
                 {`${c.user_id === me ? t('comments.you') : (who?.name ?? '—')} · ${gameDateTime(c.created_at, i18n.language)}`}
               </Text>
-              <Text variant="body" selectable>
-                {splitMentions(
-                  c.body,
-                  (c.mentions ?? []).map((id) => byId.get(id)?.name ?? ''),
-                ).map((seg, i) =>
-                  seg.mention ? (
-                    <Text key={i} variant="bodyStrong" tone={color.accent}>
-                      {seg.text}
-                    </Text>
-                  ) : (
-                    seg.text
-                  ),
-                )}
-              </Text>
+              {c.audio_path ? <VoicePlayer path={c.audio_path} seconds={c.audio_seconds} /> : null}
+              {c.body ? (
+                <Text variant="body" selectable>
+                  {splitMentions(
+                    c.body,
+                    (c.mentions ?? []).map((id) => byId.get(id)?.name ?? ''),
+                  ).map((seg, i) =>
+                    seg.mention ? (
+                      <Text key={i} variant="bodyStrong" tone={color.accent}>
+                        {seg.text}
+                      </Text>
+                    ) : (
+                      seg.text
+                    ),
+                  )}
+                </Text>
+              ) : null}
               <ReactionBar
                 counts={countReactions(reactions.data ?? [], c.id, me)}
                 picking={picking === c.id}
@@ -124,6 +128,9 @@ export function GameComments({ gameId }: { gameId: string }) {
           style={styles.input}
           accessibilityLabel={t('comments.placeholder')}
         />
+        {body ? null : (
+          <VoiceRecorder gameId={gameId} disabled={add.isPending} onSend={(audio) => add.mutateAsync({ body: '', mentions: [], audio })} />
+        )}
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={t('comments.send')}

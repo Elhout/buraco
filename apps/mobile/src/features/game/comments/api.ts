@@ -53,8 +53,13 @@ export function useToggleReaction(gameId: string) {
 export function useAddComment(gameId: string) {
   const client = useQueryClient()
   return useMutation({
-    mutationFn: ({ body, mentions }: { body: string; mentions: readonly string[] }) =>
-      rpc('add_game_comment', { p_game_id: gameId, p_body: body, p_mentions: [...mentions] }),
+    mutationFn: ({ body, mentions, audio }: { body: string; mentions: readonly string[]; audio?: { path: string; seconds: number } }) =>
+      rpc('add_game_comment', {
+        p_game_id: gameId,
+        p_body: body,
+        p_mentions: [...mentions],
+        ...(audio ? { p_audio_path: audio.path, p_audio_seconds: audio.seconds } : {}),
+      }),
     onSuccess: () => client.invalidateQueries({ queryKey: commentsKey(gameId) }),
   })
 }
