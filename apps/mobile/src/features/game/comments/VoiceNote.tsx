@@ -12,7 +12,7 @@ import {
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native'
-import { Button, ErrorText, Text } from '@/components/ui'
+import { ErrorText, Text } from '@/components/ui'
 import { HIT, color, radius, space } from '@/theme/tokens'
 import { uploadVoiceNote, voiceNoteUrl } from './voice'
 import { MAX_VOICE_SECONDS, formatClock, voiceSeconds } from './voiceFormat'
@@ -22,10 +22,13 @@ export function VoiceRecorder({
   gameId,
   onSend,
   disabled,
+  onRecordingChange,
 }: {
   gameId: string
   onSend: (note: { path: string; seconds: number }) => Promise<unknown>
   disabled?: boolean
+  /** True from the start of a recording until it is sent or cancelled: the box hides its text field. */
+  onRecordingChange?: (recording: boolean) => void
 }) {
   const { t } = useTranslation('game')
   const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY)
@@ -57,6 +60,7 @@ export function VoiceRecorder({
       setError(e)
     } finally {
       setBusy(false)
+      onRecordingChange?.(false)
     }
   }
 
@@ -68,6 +72,7 @@ export function VoiceRecorder({
       await setAudioModeAsync({ allowsRecording: true, playsInSilentMode: true })
       await recorder.prepareToRecordAsync()
       recorder.record()
+      onRecordingChange?.(true)
       // Stop and send at the limit the server accepts.
       limit.current = setTimeout(() => void finish(true), MAX_VOICE_SECONDS * 1000)
     } catch (e) {
@@ -79,11 +84,27 @@ export function VoiceRecorder({
     return (
       <View style={styles.recording}>
         <View style={styles.dot} />
-        <Text variant="label" style={styles.flex}>
+        <Text variant="label" numberOfLines={1} style={styles.flex}>
           {busy ? t('voice.sending') : t('voice.recording', { time: formatClock(state.durationMillis / 1000) })}
         </Text>
-        <Button label={t('voice.cancel')} variant="quiet" disabled={busy} onPress={() => void finish(false)} />
-        <Button label={t('voice.send')} loading={busy} onPress={() => void finish(true)} />
+        <Pressable
+          accessibilityRole="button"
+          disabled={busy}
+          onPress={() => void finish(false)}
+          hitSlop={8}
+          style={({ pressed }) => [styles.small, pressed && styles.pressed]}>
+          <Text variant="label" tone={color.inkMuted}>
+            {t('voice.cancel')}
+          </Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('voice.send')}
+          disabled={busy}
+          onPress={() => void finish(true)}
+          style={({ pressed }) => [styles.sendVoice, pressed && styles.pressed]}>
+          {busy ? <ActivityIndicator color={color.onPrimary} /> : <Ionicons name="send" size={18} color={color.onPrimary} />}
+        </Pressable>
       </View>
     )
   }
@@ -157,7 +178,26 @@ const styles = StyleSheet.create({
   },
   off: { opacity: 0.35 },
   pressed: { opacity: 0.7 },
-  recording: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space.sm, minHeight: HIT },
+  recording: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.sm,
+    minHeight: HIT,
+    paddingStart: space.md,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: color.lineStrong,
+  },
+  small: { paddingHorizontal: space.sm, minHeight: HIT, justifyContent: 'center' },
+  sendVoice: {
+    width: HIT,
+    height: HIT,
+    borderRadius: HIT / 2,
+    backgroundColor: color.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: color.danger },
   errorRow: { position: 'absolute', bottom: -space.lg, start: 0, end: 0 },
   loading: { alignSelf: 'flex-start' },

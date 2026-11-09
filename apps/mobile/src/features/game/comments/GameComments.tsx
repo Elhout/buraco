@@ -24,6 +24,7 @@ export function GameComments({ gameId }: { gameId: string }) {
   const reactions = useGameReactions(gameId)
   const toggle = useToggleReaction(gameId)
   const [picking, setPicking] = useState<string | null>(null)
+  const [recording, setRecording] = useState(false)
   const add = useAddComment(gameId)
   const [draft, setDraft] = useState('')
   const [picked, setPicked] = useState<readonly Picked[]>([])
@@ -117,32 +118,41 @@ export function GameComments({ gameId }: { gameId: string }) {
         </View>
       ) : null}
       <View style={styles.composer}>
-        <TextInput
-          value={draft}
-          onChangeText={setDraft}
-          placeholder={t('comments.placeholderMention')}
-          placeholderTextColor={color.inkFaint}
-          selectionColor={color.accent}
-          multiline
-          maxLength={500}
-          style={styles.input}
-          accessibilityLabel={t('comments.placeholder')}
-        />
-        {body ? null : (
-          <VoiceRecorder gameId={gameId} disabled={add.isPending} onSend={(audio) => add.mutateAsync({ body: '', mentions: [], audio })} />
+        {recording ? null : (
+          <TextInput
+            value={draft}
+            onChangeText={setDraft}
+            placeholder={t('comments.placeholderMention')}
+            placeholderTextColor={color.inkFaint}
+            selectionColor={color.accent}
+            multiline
+            maxLength={500}
+            style={styles.input}
+            accessibilityLabel={t('comments.placeholder')}
+          />
         )}
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={t('comments.send')}
-          disabled={!body || add.isPending}
-          onPress={send}
-          style={({ pressed }) => [styles.send, (!body || add.isPending) && styles.sendOff, pressed && styles.pressed]}>
-          {add.isPending ? (
-            <ActivityIndicator color={color.onPrimary} />
-          ) : (
-            <Ionicons name={I18nManager.isRTL ? 'arrow-back' : 'arrow-forward'} size={20} color={color.onPrimary} />
-          )}
-        </Pressable>
+        {body && !recording ? null : (
+          <VoiceRecorder
+            gameId={gameId}
+            disabled={add.isPending}
+            onRecordingChange={setRecording}
+            onSend={(audio) => add.mutateAsync({ body: '', mentions: [], audio })}
+          />
+        )}
+        {recording || !body ? null : (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('comments.send')}
+            disabled={!body || add.isPending}
+            onPress={send}
+            style={({ pressed }) => [styles.send, (!body || add.isPending) && styles.sendOff, pressed && styles.pressed]}>
+            {add.isPending ? (
+              <ActivityIndicator color={color.onPrimary} />
+            ) : (
+              <Ionicons name={I18nManager.isRTL ? 'arrow-back' : 'arrow-forward'} size={20} color={color.onPrimary} />
+            )}
+          </Pressable>
+        )}
       </View>
       <ErrorText error={add.error} />
     </Card>
