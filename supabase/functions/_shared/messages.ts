@@ -162,6 +162,18 @@ const gameComment: LangFormatters = {
   },
 }
 
+/** An @mention in a game comment: who mentioned you as the title, the comment as the body. */
+const commentMention: LangFormatters = {
+  en: (p) => {
+    const who = str(p, 'sender')
+    return { title: who ? `${who} mentioned you` : 'You were mentioned', body: str(p, 'text') ?? 'Someone mentioned you in a comment' }
+  },
+  ar: (p) => {
+    const who = str(p, 'sender')
+    return { title: who ? `ذكرك ${who}` : 'تمت الإشارة إليك', body: str(p, 'text') ?? 'أشار إليك أحدهم في تعليق' }
+  },
+}
+
 /** Club chat: the sender as the title, the message (first 140 characters) as the body. */
 const chatMessage: LangFormatters = {
   en: (p) => ({ title: str(p, 'sender') ?? 'Club chat', body: str(p, 'text') ?? 'New message' }),
@@ -262,6 +274,7 @@ const FORMATTERS: Readonly<Record<string, LangFormatters>> = {
   live_score: liveScore,
   chat_message: chatMessage,
   game_comment: gameComment,
+  comment_mention: commentMention,
   result_to_confirm: resultToConfirm,
   ghost_verify: ghostVerify,
   undo_requested: undoRequested,

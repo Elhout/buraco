@@ -219,6 +219,7 @@ export type Database = {
           user_id: string
           body: string
           created_at: string
+          mentions: string[]
         }
         Insert: {
           id?: string
@@ -226,6 +227,7 @@ export type Database = {
           user_id: string
           body: string
           created_at?: string
+          mentions?: string[]
         }
         Update: {
           id?: string
@@ -233,6 +235,7 @@ export type Database = {
           user_id?: string
           body?: string
           created_at?: string
+          mentions?: string[]
         }
         Relationships: [
           {
@@ -1100,7 +1103,7 @@ export type Database = {
     Functions: {
       abandon_game: { Args: { p_game_id: string; p_pin?: string }; Returns: Json }
       add_cut: { Args: { p_game_id: string; p_seat: number }; Returns: string }
-      add_game_comment: { Args: { p_game_id: string; p_body: string }; Returns: string }
+      add_game_comment: { Args: { p_game_id: string; p_body: string; p_mentions?: string[] }; Returns: string }
       can_read_game: { Args: { p_game_id: string }; Returns: boolean }
       can_read_tournament: { Args: { p_tournament_id: string }; Returns: boolean }
       cancel_game: { Args: { p_game_id: string }; Returns: undefined }

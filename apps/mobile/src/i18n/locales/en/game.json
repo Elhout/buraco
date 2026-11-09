@@ -240,6 +240,8 @@
     "empty": "No comments yet. Say something about this game.",
     "placeholder": "Add a comment",
     "send": "Send",
-    "you": "You"
+    "you": "You",
+    "mentionHint": "People you can mention",
+    "placeholderMention": "Add a comment · @ to mention"
   }
 }

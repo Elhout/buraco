@@ -86,3 +86,51 @@ describe('game comments', () => {
     })
   })
 })
+
+describe('@mentions', () => {
+  it('notifies the mentioned member (even off the table) with their own message, once', async () => {
+    await inTx(db, async (tx) => {
+      const id = await startGame(tx)
+      await actAs(tx, club.players[1])
+      await rpc(tx, 'public.add_game_comment($1, $2, $3::uuid[])', [id, '@Extra0 come watch', [watcher()]])
+      await tx.exec('reset role')
+      const { rows } = await tx.query<{ user_id: string; event: string; payload: { sender: string } }>(
+        `select user_id, event, payload from public.notification_queue where event in ('game_comment', 'comment_mention') and game_id = $1`,
+        [id],
+      )
+      const forWatcher = rows.filter((r) => r.user_id === watcher())
+      expect(forWatcher).toEqual([
+        { user_id: watcher(), event: 'comment_mention', payload: expect.objectContaining({ sender: 'Talk-Sara' }) },
+      ])
+      // The other players still get the usual comment push.
+      expect(
+        rows
+          .filter((r) => r.event === 'game_comment')
+          .map((r) => r.user_id)
+          .sort(),
+      ).toEqual([club.players[0], club.players[2], club.players[3]].sort())
+      const stored = await tx.query<{ mentions: string[] }>(`select mentions from public.game_comments where game_id = $1`, [id])
+      expect(stored.rows[0]?.mentions).toEqual([watcher()])
+    })
+  })
+
+  it('ignores mentions of outsiders and of yourself', async () => {
+    await inTx(db, async (tx) => {
+      const id = await startGame(tx)
+      await rpc(tx, 'public.add_game_comment($1, $2, $3::uuid[])', [id, 'hi', [outsider, club.players[0]]])
+      await tx.exec('reset role')
+      const stored = await tx.query<{ mentions: string[] }>(`select mentions from public.game_comments where game_id = $1`, [id])
+      expect(stored.rows[0]?.mentions).toEqual([])
+      const { rows } = await tx.query(`select 1 from public.notification_queue where event = 'comment_mention' and game_id = $1`, [id])
+      expect(rows).toHaveLength(0)
+    })
+  })
+
+  it('still accepts a comment without mentions (older apps)', async () => {
+    await inTx(db, async (tx) => {
+      const id = await startGame(tx)
+      await rpc(tx, 'public.add_game_comment($1, $2)', [id, 'plain'])
+      expect(await comments(tx, id)).toEqual([{ user_id: club.players[0], body: 'plain' }])
+    })
+  })
+})

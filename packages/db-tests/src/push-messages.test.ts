@@ -121,6 +121,17 @@ describe('game_comment', () => {
   })
 })
 
+describe('comment_mention', () => {
+  it('says who mentioned you, with the comment', () => {
+    expect(formatPush('comment_mention', { sender: 'Sara', text: '@AK come watch' }, 'en')).toEqual({
+      title: 'Sara mentioned you',
+      body: '@AK come watch',
+    })
+    expect(formatPush('comment_mention', { sender: 'سارة', text: '@AK تعال' }, 'ar')).toEqual({ title: 'ذكرك سارة', body: '@AK تعال' })
+    expect(formatPush('comment_mention', {}, 'en')).toEqual({ title: 'You were mentioned', body: 'Someone mentioned you in a comment' })
+  })
+})
+
 describe('chat_message', () => {
   it('shows who wrote and what, like a messaging app', () => {
     expect(formatPush('chat_message', { sender: 'Sara', text: 'Who is in tonight?' }, 'en')).toEqual({

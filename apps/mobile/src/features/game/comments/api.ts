@@ -26,7 +26,8 @@ export function useGameComments(gameId: string) {
 export function useAddComment(gameId: string) {
   const client = useQueryClient()
   return useMutation({
-    mutationFn: (body: string) => rpc('add_game_comment', { p_game_id: gameId, p_body: body }),
+    mutationFn: ({ body, mentions }: { body: string; mentions: readonly string[] }) =>
+      rpc('add_game_comment', { p_game_id: gameId, p_body: body, p_mentions: [...mentions] }),
     onSuccess: () => client.invalidateQueries({ queryKey: commentsKey(gameId) }),
   })
 }
