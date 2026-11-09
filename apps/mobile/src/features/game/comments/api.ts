@@ -10,10 +10,16 @@ export type CommentRow = Tables<'game_comments'>
 
 const commentsKey = (gameId: string) => [...qk.game(gameId), 'comments'] as const
 
+/** Comments are conversation: no 30 s grace period, refetch on open, and a 15 s safety poll. */
+const FRESH = { staleTime: 0, refetchOnMount: 'always', refetchInterval: 15_000 } as const
+
 /** A game's comments, oldest first; live while the screen is open. */
 export function useGameComments(gameId: string) {
   const query = useQuery({
     queryKey: commentsKey(gameId),
+    // Opening the game (often from a comment push) must show that comment at once: always refetch
+    // instead of trusting the cache, and poll gently in case the live connection is down.
+    ...FRESH,
     queryFn: async (): Promise<CommentRow[]> => {
       const { data, error } = await supabase.from('game_comments').select('*').eq('game_id', gameId).order('created_at')
       if (error) throw error
@@ -30,6 +36,7 @@ const reactionsKey = (gameId: string) => [...qk.game(gameId), 'reactions'] as co
 export function useGameReactions(gameId: string) {
   const query = useQuery({
     queryKey: reactionsKey(gameId),
+    ...FRESH,
     queryFn: async (): Promise<ReactionRow[]> => {
       const { data, error } = await supabase.from('comment_reactions').select('comment_id, user_id, emoji').eq('game_id', gameId)
       if (error) throw error
