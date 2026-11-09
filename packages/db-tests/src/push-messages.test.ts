@@ -106,6 +106,21 @@ describe('round_to_confirm', () => {
   })
 })
 
+describe('game_comment', () => {
+  it('who commented, and the comment', () => {
+    expect(formatPush('game_comment', { sender: 'Sara', text: 'Great cut!' }, 'en')).toEqual({
+      title: 'Sara commented',
+      body: 'Great cut!',
+    })
+    expect(formatPush('game_comment', { sender: 'سارة', text: 'قطع رائع!' }, 'ar')).toEqual({ title: 'تعليق من سارة', body: 'قطع رائع!' })
+  })
+
+  it('falls back when the sender or text is missing', () => {
+    expect(formatPush('game_comment', {}, 'en')).toEqual({ title: 'New comment', body: 'Someone commented on your game' })
+    expect(formatPush('game_comment', {}, 'ar')).toEqual({ title: 'تعليق جديد', body: 'علّق أحدهم على مباراتك' })
+  })
+})
+
 describe('chat_message', () => {
   it('shows who wrote and what, like a messaging app', () => {
     expect(formatPush('chat_message', { sender: 'Sara', text: 'Who is in tonight?' }, 'en')).toEqual({

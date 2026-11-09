@@ -150,6 +150,18 @@ const resultToConfirm: LangFormatters = {
   },
 }
 
+/** A comment on a game: who commented as the title, the comment (first 140 characters) as the body. */
+const gameComment: LangFormatters = {
+  en: (p) => {
+    const who = str(p, 'sender')
+    return { title: who ? `${who} commented` : 'New comment', body: str(p, 'text') ?? 'Someone commented on your game' }
+  },
+  ar: (p) => {
+    const who = str(p, 'sender')
+    return { title: who ? `تعليق من ${who}` : 'تعليق جديد', body: str(p, 'text') ?? 'علّق أحدهم على مباراتك' }
+  },
+}
+
 /** Club chat: the sender as the title, the message (first 140 characters) as the body. */
 const chatMessage: LangFormatters = {
   en: (p) => ({ title: str(p, 'sender') ?? 'Club chat', body: str(p, 'text') ?? 'New message' }),
@@ -249,6 +261,7 @@ const FORMATTERS: Readonly<Record<string, LangFormatters>> = {
   round_to_confirm: roundToConfirm,
   live_score: liveScore,
   chat_message: chatMessage,
+  game_comment: gameComment,
   result_to_confirm: resultToConfirm,
   ghost_verify: ghostVerify,
   undo_requested: undoRequested,

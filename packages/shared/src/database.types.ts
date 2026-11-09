@@ -212,6 +212,45 @@ export type Database = {
           },
         ]
       }
+      game_comments: {
+        Row: {
+          id: string
+          game_id: string
+          user_id: string
+          body: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          game_id: string
+          user_id: string
+          body: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          game_id?: string
+          user_id?: string
+          body?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_comments_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       game_events: {
         Row: {
           id: string
@@ -1061,6 +1100,7 @@ export type Database = {
     Functions: {
       abandon_game: { Args: { p_game_id: string; p_pin?: string }; Returns: Json }
       add_cut: { Args: { p_game_id: string; p_seat: number }; Returns: string }
+      add_game_comment: { Args: { p_game_id: string; p_body: string }; Returns: string }
       can_read_game: { Args: { p_game_id: string }; Returns: boolean }
       can_read_tournament: { Args: { p_tournament_id: string }; Returns: boolean }
       cancel_game: { Args: { p_game_id: string }; Returns: undefined }

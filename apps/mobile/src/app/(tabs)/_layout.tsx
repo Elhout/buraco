@@ -19,7 +19,7 @@ export default function TabsLayout() {
   const { club } = useCurrentClub()
   const me = useUserId()
   const { profile } = useSession()
-  // While the app is open, I show as online to the club (Chat and Players tabs).
+  // While the app is open, I show as online to the club (Players tab, game pickers).
   useClubPresence(club.id, me, profile?.display_name ?? '')
   return (
     <Tabs
@@ -33,7 +33,6 @@ export default function TabsLayout() {
       }}>
       {/* The Play home keeps the /club address so existing links and pushes still land. */}
       <Tabs.Screen name="club" options={{ title: t('tabs.play'), tabBarIcon: icon('play-circle-outline', 'play-circle') }} />
-      <Tabs.Screen name="chat" options={{ title: t('tabs.chat'), tabBarIcon: icon('chatbubbles-outline', 'chatbubbles') }} />
       <Tabs.Screen name="history" options={{ title: t('tabs.history'), tabBarIcon: icon('time-outline', 'time') }} />
       <Tabs.Screen name="players" options={{ title: t('tabs.players'), tabBarIcon: icon('people-outline', 'people') }} />
       <Tabs.Screen name="tournaments" options={{ title: t('tabs.tournaments'), tabBarIcon: icon('trophy-outline', 'trophy') }} />

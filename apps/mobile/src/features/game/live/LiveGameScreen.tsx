@@ -23,6 +23,7 @@ import { addCut, removeCut } from '../actions'
 import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { EditRoundSheet } from '@/features/history/detail/OwnerSheets'
 import { AdminGameButton, isGameAdmin } from '../AdminGameControls'
+import { GameComments } from '../comments/GameComments'
 import { canReplaceGuest } from './ReplaceGuestSheet'
 import { canDecideTarget } from './TargetReachedSheet'
 import { ShareGameIcon } from '../share/ShareGameButton'
@@ -173,6 +174,7 @@ export function LiveGameScreen({ gameId }: { gameId: string }) {
       <GameStateCard view={view} />
       <RoundList rows={rows} isGhost={view.isGhost} updatedAt={dataUpdatedAt} onEditRound={canEditRounds ? setEditing : undefined} />
       {editing ? <EditRoundSheet gameId={view.game.id} clubId={club.id} round={editing} onClose={() => setEditing(null)} /> : null}
+      <GameComments gameId={view.game.id} />
       <LiveSheets view={view} sheets={sheets} watchers={watchers} entryFocus={entryFocus} />
     </Screen>
   )

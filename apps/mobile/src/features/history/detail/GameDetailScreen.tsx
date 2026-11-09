@@ -10,6 +10,7 @@ import { useCurrentClub } from '@/features/clubs/ClubProvider'
 import { useClubMembers } from '@/features/clubs/members'
 import { useGame } from '@/features/game/api'
 import type { GameView, RoundView } from '@/features/game/model'
+import { GameComments } from '@/features/game/comments/GameComments'
 import { PlayAgainButton } from '@/features/game/PlayAgainButton'
 import { ShareGameButton } from '@/features/game/share/ShareGameButton'
 import { qk } from '@/lib/queryKeys'
@@ -101,6 +102,7 @@ export function GameDetailScreen({ gameId }: { gameId: string }) {
       {note ? <Banner tone={note.tone}>{t(`detail.notes.${note.key}`)}</Banner> : null}
       <SeatsPanel view={view} userId={userId} onVerified={refresh} />
       <RoundsList rounds={view.rounds} onEdit={editable ? setEditing : undefined} />
+      <GameComments gameId={view.game.id} />
       <AuditLog view={view} nameOf={nameOf} />
       {ownerTools ? <Button label={t('detail.delete')} variant="danger" block onPress={() => setDeleting(true)} /> : null}
       {editing ? (

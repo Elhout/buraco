@@ -233,5 +233,13 @@
   },
   "playAgain": {
     "button": "Play again · same teams"
+  },
+  "comments": {
+    "title": "Comments",
+    "titleCount": "Comments ({{n}})",
+    "empty": "No comments yet. Say something about this game.",
+    "placeholder": "Add a comment",
+    "send": "Send",
+    "you": "You"
   }
 }
