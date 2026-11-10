@@ -15,7 +15,16 @@ import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native'
 import { Text } from '@/components/ui'
 import { HIT, color, radius, space } from '@/theme/tokens'
 import { uploadVoiceNote, voiceNoteUrl } from './voice'
-import { MAX_VOICE_SECONDS, formatClock, voiceSeconds } from './voiceFormat'
+import { MAX_VOICE_SECONDS, formatClock, pickWebMime, voiceSeconds } from './voiceFormat'
+
+/** AAC everywhere: phones use the preset; the web asks for MP4 so iPhone Safari can play it back. */
+const RECORDING_OPTIONS = {
+  ...RecordingPresets.HIGH_QUALITY,
+  web: {
+    mimeType: typeof MediaRecorder === 'undefined' ? undefined : pickWebMime((m) => MediaRecorder.isTypeSupported(m)),
+    bitsPerSecond: 128000,
+  },
+}
 
 /** Mic button; while recording, a timer with Cancel and Send. Sends the uploaded note to `onSend`. */
 export function VoiceRecorder({
@@ -31,7 +40,7 @@ export function VoiceRecorder({
   onRecordingChange?: (recording: boolean) => void
 }) {
   const { t } = useTranslation('game')
-  const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY)
+  const recorder = useAudioRecorder(RECORDING_OPTIONS)
   const state = useAudioRecorderState(recorder, 250)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<unknown>(null)

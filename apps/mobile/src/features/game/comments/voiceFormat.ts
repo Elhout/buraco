@@ -26,3 +26,13 @@ export function formatClock(seconds: number): string {
 /** The server accepts 1 to 300 seconds. */
 export const MAX_VOICE_SECONDS = 300
 export const voiceSeconds = (millis: number): number => Math.min(MAX_VOICE_SECONDS, Math.max(1, Math.round(millis / 1000)))
+
+/**
+ * The web recorder's format: MP4/AAC first, because it plays everywhere (iPhone Safari plays a
+ * WebM recording silently); WebM only when the browser cannot record MP4.
+ */
+export const WEB_MIME_PREFERENCE = ['audio/mp4;codecs=mp4a.40.2', 'audio/mp4', 'audio/webm;codecs=opus', 'audio/webm'] as const
+
+export function pickWebMime(isSupported: (mime: string) => boolean): string | undefined {
+  return WEB_MIME_PREFERENCE.find((m) => isSupported(m))
+}

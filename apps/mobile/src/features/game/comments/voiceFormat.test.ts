@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatClock, voiceFileFor, voiceSeconds } from './voiceFormat'
+import { formatClock, pickWebMime, voiceFileFor, voiceSeconds } from './voiceFormat'
 
 describe('voiceFileFor', () => {
   it('maps what was recorded to a file type the server accepts', () => {
@@ -17,5 +17,17 @@ describe('formatClock / voiceSeconds', () => {
     expect(voiceSeconds(400)).toBe(1)
     expect(voiceSeconds(12_600)).toBe(13)
     expect(voiceSeconds(999_000)).toBe(300)
+  })
+})
+
+describe('pickWebMime', () => {
+  it('prefers MP4/AAC, which iPhone Safari can play back', () => {
+    const safari = (m: string) => m.startsWith('audio/mp4') || m.startsWith('audio/webm')
+    expect(pickWebMime(safari)).toBe('audio/mp4;codecs=mp4a.40.2')
+  })
+
+  it('falls back to WebM, then to the browser default', () => {
+    expect(pickWebMime((m) => m.startsWith('audio/webm'))).toBe('audio/webm;codecs=opus')
+    expect(pickWebMime(() => false)).toBeUndefined()
   })
 })
