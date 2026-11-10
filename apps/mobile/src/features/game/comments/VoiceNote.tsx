@@ -157,7 +157,15 @@ function Player({ url, seconds }: { url: string; seconds: number | null }) {
   const { t } = useTranslation('game')
   const player = useAudioPlayer(url)
   const status = useAudioPlayerStatus(player)
-  const total = status.duration > 0 ? status.duration : (seconds ?? 0)
+  // The saved length is the truth: browser recordings (WebM) often carry no duration, and some
+  // players then keep counting past the end. Stop there.
+  const total = seconds ?? (Number.isFinite(status.duration) && status.duration > 0 ? status.duration : 0)
+  const pastEnd = status.playing && total > 0 && status.currentTime >= total + 0.3
+  useEffect(() => {
+    if (!pastEnd) return
+    player.pause()
+    void player.seekTo(0)
+  }, [pastEnd, player])
   const toggle = (): void => {
     if (status.playing) {
       player.pause()
@@ -176,7 +184,9 @@ function Player({ url, seconds }: { url: string; seconds: number | null }) {
       <Ionicons name={status.playing ? 'pause' : 'play'} size={18} color={color.onPrimary} style={styles.playIcon} />
       <Ionicons name="mic-outline" size={16} color={color.inkMuted} />
       <Text variant="label" tone={color.inkMuted}>
-        {status.playing || status.currentTime > 0 ? `${formatClock(status.currentTime)} / ${formatClock(total)}` : formatClock(total)}
+        {status.playing || status.currentTime > 0
+          ? `${formatClock(Math.min(status.currentTime, total || status.currentTime))} / ${formatClock(total)}`
+          : formatClock(total)}
       </Text>
     </Pressable>
   )
