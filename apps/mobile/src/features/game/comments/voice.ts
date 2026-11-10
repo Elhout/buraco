@@ -17,13 +17,27 @@ export async function uploadVoiceNote(gameId: string, uri: string): Promise<stri
     mime = blob.type
   } else {
     // Phones record AAC (.m4a) to a local file.
-    body = await new File(uri).arrayBuffer()
+    body = await readRecording(uri)
   }
   const file = voiceFileFor(mime)
   const path = `${gameId}/${randomUUID()}.${file.ext}`
   const { error } = await supabase.storage.from(VOICE_BUCKET).upload(path, body, { contentType: file.contentType, upsert: false })
   if (error) throw error
   return path
+}
+
+/** The recorded file's bytes: the file-system API first, fetch as a fallback; never an empty upload. */
+async function readRecording(uri: string): Promise<ArrayBuffer> {
+  const fileUri = uri.includes('://') ? uri : `file://${uri}`
+  try {
+    const bytes = await new File(fileUri).arrayBuffer()
+    if (bytes.byteLength > 0) return bytes
+  } catch {
+    // Fall through to fetch.
+  }
+  const bytes = await (await fetch(fileUri)).arrayBuffer()
+  if (bytes.byteLength === 0) throw new Error('The recording is empty. Try again and speak for a second or two.')
+  return bytes
 }
 
 /** A short-lived link to play a voice note (the bucket is private). */

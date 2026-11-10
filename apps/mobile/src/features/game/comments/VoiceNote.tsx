@@ -12,7 +12,7 @@ import {
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native'
-import { ErrorText, Text } from '@/components/ui'
+import { Text } from '@/components/ui'
 import { HIT, color, radius, space } from '@/theme/tokens'
 import { uploadVoiceNote, voiceNoteUrl } from './voice'
 import { MAX_VOICE_SECONDS, formatClock, voiceSeconds } from './voiceFormat'
@@ -118,12 +118,20 @@ export function VoiceRecorder({
         style={({ pressed }) => [styles.mic, disabled && styles.off, pressed && styles.pressed]}>
         <Ionicons name="mic" size={20} color={color.ink} />
       </Pressable>
-      {error ? (
-        <View style={styles.errorRow}>
-          <ErrorText error={error} />
-        </View>
-      ) : null}
+      {error ? <VoiceError error={error} /> : null}
     </>
+  )
+}
+
+/** Voice-note failures say what went wrong (device, permission, upload), not a generic line. */
+function VoiceError({ error }: { error: unknown }) {
+  const { t } = useTranslation('game')
+  const message =
+    error instanceof Error ? error.message : typeof error === 'object' && error && 'message' in error ? String(error.message) : ''
+  return (
+    <Text variant="caption" tone={color.danger} accessibilityRole="alert" style={styles.errorText}>
+      {message ? t('voice.failed', { reason: message }) : t('voice.failedGeneric')}
+    </Text>
   )
 }
 
@@ -132,7 +140,7 @@ export function VoicePlayer({ path, seconds }: { path: string; seconds: number |
   const { t } = useTranslation('game')
   const url = useQuery({ queryKey: ['voice-note', path], queryFn: () => voiceNoteUrl(path), staleTime: 50 * 60_000 })
   if (url.isPending) return <ActivityIndicator color={color.inkMuted} style={styles.loading} />
-  if (url.error || !url.data) return <ErrorText error={url.error ?? new Error(t('voice.unavailable'))} />
+  if (url.error || !url.data) return <VoiceError error={url.error ?? new Error(t('voice.unavailable'))} />
   return <Player url={url.data} seconds={seconds} />
 }
 
@@ -199,7 +207,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: color.danger },
-  errorRow: { position: 'absolute', bottom: -space.lg, start: 0, end: 0 },
+  errorText: { flexShrink: 1 },
   loading: { alignSelf: 'flex-start' },
   player: {
     flexDirection: 'row',

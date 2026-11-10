@@ -256,6 +256,8 @@
     "play": "Play voice note",
     "pause": "Pause",
     "unavailable": "This voice note is not available.",
-    "noMic": "Allow the microphone to record a voice note."
+    "noMic": "Allow the microphone to record a voice note.",
+    "failed": "Voice note failed: {{reason}}",
+    "failedGeneric": "Voice note failed. Try again."
   }
 }
