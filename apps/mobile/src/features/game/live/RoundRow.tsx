@@ -5,7 +5,7 @@ import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native'
 import { Score, Text } from '@/components/ui'
 import { formatNumber, formatSigned } from '@/lib/format'
 import { color, radius, space, teamColor, teamSoft } from '@/theme/tokens'
-import type { BonusChip, RoundRowModel } from './roundRows'
+import { type BonusChip, type RoundRowModel, leadOf } from './roundRows'
 
 function useStatusText(row: RoundRowModel, isGhost: boolean): string {
   const { t } = useTranslation(['game', 'common'])
@@ -112,6 +112,7 @@ export function RoundRow({ row, isGhost, onEdit }: { row: RoundRowModel; isGhost
           <Cell team="A" value={row.a} chips={row.bonuses.filter((c) => c.team === 'A')} struck={struck} />
           <Cell team="B" value={row.b} chips={row.bonuses.filter((c) => c.team === 'B')} struck={struck} />
         </View>
+        {row.after ? <AfterLine after={row.after} /> : null}
         {status ? (
           <View style={styles.statusLine}>
             {row.status === 'sending' ? <ActivityIndicator size="small" color={color.inkMuted} /> : null}
@@ -131,6 +132,22 @@ export function RoundRow({ row, isGhost, onEdit }: { row: RoundRowModel; isGhost
         ) : null}
       </View>
     </Pressable>
+  )
+}
+
+/** "Total 800 – 880 · B +80": the score after this round and the gap at that point. */
+function AfterLine({ after }: { after: Readonly<Record<Team, number>> }) {
+  const { t } = useTranslation(['game', 'common'])
+  const lead = leadOf(after)
+  return (
+    <View style={styles.statusLine}>
+      <Text variant="caption" tone={color.inkMuted}>
+        {t('rounds.total', { a: formatNumber(after.A), b: formatNumber(after.B) })}
+      </Text>
+      <Text variant="caption" tone={lead ? teamColor(lead.team) : color.inkMuted}>
+        {lead ? `· ${t('rounds.lead', { team: lead.team, by: formatNumber(lead.by) })}` : `· ${t('rounds.level')}`}
+      </Text>
+    </View>
   )
 }
 

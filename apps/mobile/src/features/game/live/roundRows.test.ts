@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { actionBlock, opponentOf } from './actionState'
-import { bonusByTeam, buildRoundRows } from './roundRows'
+import { bonusByTeam, buildRoundRows, leadOf } from './roundRows'
 import { outboxItem, roundRow, view } from './testFixtures'
 
 const rowsOf = (v: ReturnType<typeof view>, outbox: Parameters<typeof buildRoundRows>[0]['outbox'] = []) =>
@@ -24,6 +24,17 @@ describe('buildRoundRows', () => {
       [1, true, 'U3', 'r1'],
     ])
     expect(rowsOf(v, [outboxItem('o3', 1, 2, 1)])[0]).toMatchObject({ edited: false, round: null })
+  })
+
+  it('carries the score after each counted round, cuts included', () => {
+    const rows = rowsOf(
+      view([roundRow(1, 'confirmed', 400, 500, 1), roundRow(2, 'confirmed', 300, 380, 1, [[1, 100]]), roundRow(3, 'pending', 9, 9, 1)]),
+    )
+    expect(rows.map((r) => [r.no, r.after])).toEqual([
+      [3, null],
+      [2, { A: 800, B: 880 }],
+      [1, { A: 400, B: 500 }],
+    ])
   })
 
   it('says which team a pending round waits for', () => {
@@ -85,5 +96,13 @@ describe('actionBlock', () => {
   it('names the opponent', () => {
     expect(opponentOf('A')).toBe('B')
     expect(opponentOf('B')).toBe('A')
+  })
+})
+
+describe('leadOf', () => {
+  it('who leads and by how much, null when level', () => {
+    expect(leadOf({ A: 840, B: 1990 })).toEqual({ team: 'B', by: 1150 })
+    expect(leadOf({ A: 2340, B: 2090 })).toEqual({ team: 'A', by: 250 })
+    expect(leadOf({ A: 500, B: 500 })).toBeNull()
   })
 })

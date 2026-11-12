@@ -1,5 +1,6 @@
 import type { Team } from '@buraco/shared'
 import type { OutboxItem } from '../../../lib/outbox/core'
+import { runningTotals } from '../../history/detail/runningTotals'
 import type { LineView, RoundView, SeatView } from '../model'
 
 /**
@@ -35,6 +36,14 @@ export interface RoundRowModel {
   readonly editedBy: string | null
   /** The saved round behind this row; null for rounds still in the outbox. */
   readonly round: RoundView | null
+  /** The game score after this round (cuts included); null for rounds that don't count (yet). */
+  readonly after: Readonly<Record<Team, number>> | null
+}
+
+/** Who is ahead and by how much; null when level. */
+export function leadOf(totals: Readonly<Record<Team, number>>): { readonly team: Team; readonly by: number } | null {
+  if (totals.A === totals.B) return null
+  return totals.A > totals.B ? { team: 'A', by: totals.A - totals.B } : { team: 'B', by: totals.B - totals.A }
 }
 
 const otherTeam = (team: Team): Team => (team === 'A' ? 'B' : 'A')
@@ -61,6 +70,7 @@ function rowFromRound(round: RoundView): RoundRowModel {
     edited: round.editedAt !== null,
     editedBy: round.editedAt !== null ? round.editedByName : null,
     round,
+    after: null,
   }
 }
 
@@ -82,6 +92,7 @@ function rowFromOutbox(item: OutboxItem, no: number, seats: readonly SeatView[],
     edited: false,
     editedBy: null,
     round: null,
+    after: null,
   }
 }
 
@@ -101,7 +112,8 @@ export function buildRoundRows({ rounds, seats, outbox, cutBonus }: RoundRowsInp
   const open = rounds.find((r) => r.status === 'open') ?? null
   const fold = open !== null && sending.length > 0
   const confirmed = rounds.filter((r) => r.status === 'confirmed').length
-  const serverRows = rounds.filter((r) => !(fold && r.id === open.id)).map(rowFromRound)
+  const totals = runningTotals(rounds)
+  const serverRows = rounds.filter((r) => !(fold && r.id === open.id)).map((r) => ({ ...rowFromRound(r), after: totals.get(r.id) ?? null }))
   const sendingRows = sending.map((item, i) => {
     const row = rowFromOutbox(item, confirmed + 1 + i, seats, cutBonus)
     return i === 0 && fold ? { ...row, bonuses: [...open.lines.map(chipFromLine), ...row.bonuses] } : row

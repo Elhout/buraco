@@ -36,7 +36,9 @@
     "tapToEnter": "Tap to enter a round",
     "cutOff": "{{points}} exact cut",
     "cutOn": "{{points}} ✓ this deal",
-    "cutA11y": "Team {{team}} made the exact cut ({{points}})"
+    "cutA11y": "Team {{team}} made the exact cut ({{points}})",
+    "leads": "Team {{team}} leads by {{by}}",
+    "level": "Level"
   },
   "rounds": {
     "title": "Rounds",
@@ -55,7 +57,10 @@
     "edited": "Edited",
     "edit": "Edit round",
     "editHint": "Double-tap to edit this round",
-    "editedBy": "Edited by {{name}}"
+    "editedBy": "Edited by {{name}}",
+    "total": "Total {{a}} – {{b}}",
+    "lead": "{{team}} +{{by}}",
+    "level": "Level"
   },
   "bar": {
     "enter": "Enter round",

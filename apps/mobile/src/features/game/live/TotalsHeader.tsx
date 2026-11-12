@@ -5,7 +5,7 @@ import { Score, TargetBar, TeamBadge, Text } from '@/components/ui'
 import { formatNumber, formatSigned } from '@/lib/format'
 import { color, radius, space, teamColor, teamSoft } from '@/theme/tokens'
 import { type GameView, teamNames } from '../model'
-import { bonusByTeam } from './roundRows'
+import { bonusByTeam, leadOf } from './roundRows'
 
 /** Saved rounds plus the exact cuts already tapped in the current deal. */
 const shownTotals = (view: GameView): Readonly<Record<Team, number>> => {
@@ -89,6 +89,17 @@ function CutButton({ team, cut }: { team: Team; cut: CutControl }) {
 }
 
 /** Team A (start side) vs Team B (end side): the totals everyone at the table glances at. */
+/** "B leads by 1,150" (or "Level") under the two totals, current deal's cuts included. */
+function LeadLine({ view }: { view: GameView }) {
+  const { t } = useTranslation(['game', 'common'])
+  const lead = leadOf(shownTotals(view))
+  return (
+    <Text variant="label" tone={lead ? teamColor(lead.team) : color.inkMuted} center>
+      {lead ? t('live.leads', { team: lead.team, by: formatNumber(lead.by) }) : t('live.level')}
+    </Text>
+  )
+}
+
 export function TotalsHeader({ view, onTeamPress, cut }: { view: GameView; onTeamPress?: (team: Team) => void; cut?: CutControl }) {
   const { t } = useTranslation(['game', 'common'])
   return (
@@ -98,6 +109,7 @@ export function TotalsHeader({ view, onTeamPress, cut }: { view: GameView; onTea
         <View style={styles.rule} />
         <TeamTotal view={view} team="B" onPress={onTeamPress} cut={cut} />
       </View>
+      <LeadLine view={view} />
       <Text variant="caption" tone={color.inkFaint} center>
         {t('live.target', { points: formatNumber(view.config.targetScore) })}
       </Text>
