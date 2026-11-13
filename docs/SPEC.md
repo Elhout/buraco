@@ -272,7 +272,7 @@ Every push comes from a database change: a trigger writes to `notification_queue
 | Game invite | 3 invited players | Omar invited you: you and Sara vs Ahmed and Nour. Confirm with PIN | /game/\[id\]/invite |
 | Invite expiring | Players not yet confirmed, at 2 minutes left | Your seat expires in 2 minutes | /game/\[id\]/invite |
 | Game started | Club members who opted in | Omar and Sara vs Ahmed and Nour just started | /game/\[id\] |
-| Live score | The game's players, after every counted round (not on a phone with the game open) | A 1240 – 980 B. Round 5: Omar and Sara vs Ahmed and Nour. Replaces the previous score | /game/\[id\] |
+| Live score | Every club member, after every counted round (not on a phone with the game open) | A 1240 – 980 B. Round 5: Omar and Sara vs Ahmed and Nour. Replaces the previous score | /game/\[id\] |
 | Comment mention | A member @mentioned in a game comment (any member, at the table or not) | Sara mentioned you: @AK come watch | /game/\[id\] |
 | Game comment | The game's players and earlier commenters, not the author (not on a phone with that game open) | Sara commented: Great cut! | /game/\[id\] |
 | Round awaiting your confirmation | Opposing scorekeeper, only if app is backgrounded | Round 4: 350 vs 220. Confirm? | /game/\[id\] |
