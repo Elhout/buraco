@@ -159,6 +159,30 @@ describe('chat_message', () => {
   })
 })
 
+describe('game_finished', () => {
+  const payload = { winner: 'A', a: 2100, b: 300, team_a: ['Omar', 'Sara'], team_b: ['Ahmed', 'Nour'] }
+
+  it('names the winners and the final score', () => {
+    expect(formatPush('game_finished', payload, 'en')).toEqual({
+      title: 'Game over: A 2100 – 300 B',
+      body: 'Omar and Sara beat Ahmed and Nour',
+    })
+    expect(formatPush('game_finished', { ...payload, winner: 'B', a: 900, b: 2050 }, 'en').body).toBe('Ahmed and Nour beat Omar and Sara')
+  })
+
+  it('is written in Arabic, team labels stay Latin', () => {
+    expect(formatPush('game_finished', payload, 'ar')).toEqual({
+      title: 'انتهت المباراة: A 2100 – 300 B',
+      body: 'فاز Omar وSara على Ahmed وNour',
+    })
+  })
+
+  it('falls back without a winner or names', () => {
+    expect(formatPush('game_finished', {}, 'en')).toEqual({ title: 'Game over', body: 'A game just ended' })
+    expect(formatPush('game_finished', {}, 'ar')).toEqual({ title: 'انتهت المباراة', body: 'انتهت مباراة للتو' })
+  })
+})
+
 describe('live_score', () => {
   const payload = { round_no: 3, a: 1240, b: 980, team_a: ['Omar', 'Sara'], team_b: ['Ahmed', 'Nour'] }
 

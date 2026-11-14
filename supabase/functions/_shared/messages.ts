@@ -218,6 +218,29 @@ const liveScore: LangFormatters = {
   },
 }
 
+const gameFinished: LangFormatters = {
+  en: (p) => {
+    const a = num(p, 'a')
+    const b = num(p, 'b')
+    const title = a === null || b === null ? 'Game over' : `Game over: A ${a} – ${b} B`
+    const winner = str(p, 'winner')
+    const won = names(p, winner === 'B' ? 'team_b' : 'team_a')
+    const lost = names(p, winner === 'B' ? 'team_a' : 'team_b')
+    if ((winner !== 'A' && winner !== 'B') || won.length === 0 || lost.length === 0) return { title, body: 'A game just ended' }
+    return { title, body: `${joinNames(won, 'en')} beat ${joinNames(lost, 'en')}` }
+  },
+  ar: (p) => {
+    const a = num(p, 'a')
+    const b = num(p, 'b')
+    const title = a === null || b === null ? 'انتهت المباراة' : `انتهت المباراة: A ${a} – ${b} B`
+    const winner = str(p, 'winner')
+    const won = names(p, winner === 'B' ? 'team_b' : 'team_a')
+    const lost = names(p, winner === 'B' ? 'team_a' : 'team_b')
+    if ((winner !== 'A' && winner !== 'B') || won.length === 0 || lost.length === 0) return { title, body: 'انتهت مباراة للتو' }
+    return { title, body: `فاز ${joinNames(won, 'ar')} على ${joinNames(lost, 'ar')}` }
+  },
+}
+
 const ghostVerify: LangFormatters = {
   en: () => ({ title: 'Verify result', body: "Confirm last night's result?" }),
   ar: () => ({ title: 'تأكيد النتيجة', body: 'هل تؤكد نتيجة مباراة الليلة الماضية؟' }),
@@ -284,6 +307,7 @@ const FORMATTERS: Readonly<Record<string, LangFormatters>> = {
   game_started: gameStarted,
   round_to_confirm: roundToConfirm,
   live_score: liveScore,
+  game_finished: gameFinished,
   chat_message: chatMessage,
   game_comment: gameComment,
   comment_mention: commentMention,

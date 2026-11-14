@@ -34,8 +34,8 @@
   },
   "notifications": {
     "section": "Notifications",
-    "notify_game_started": "Games starting",
-    "notify_game_started_hint": "When someone starts a game",
+    "notify_game_started": "Club games",
+    "notify_game_started_hint": "When a game starts and when it ends",
     "notify_tournament": "Tournaments",
     "notify_tournament_hint": "Table assignments and round clocks"
   },

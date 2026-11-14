@@ -8,7 +8,7 @@ let club: Club
 
 beforeAll(async () => {
   db = await createDb()
-  club = await seedClub(db, 'Live')
+  club = await seedClub(db, 'Live', 1)
 }, 120_000)
 
 type Tx = Parameters<Parameters<typeof inTx>[1]>[0]
@@ -23,7 +23,7 @@ const liveScores = async (tx: Tx, gameId: string) => {
 }
 
 describe('live score push (lock-screen score after every counted round)', () => {
-  it('queues the running score for every club member when a round counts', async () => {
+  it('queues the running score for the players at the table only when a round counts', async () => {
     await inTx(db, async (tx) => {
       await actAs(tx, club.players[0])
       const seats = normalSeats(club).map((s) => (s.seat === 4 ? { seat: 4, team: 'B' as const, guest_name: 'Guest' } : s))
@@ -33,9 +33,9 @@ describe('live score push (lock-screen score after every counted round)', () => 
       await tx.exec('reset role')
 
       const rows = await liveScores(tx, id)
-      // Every club member, also those not at this table (the guest has no account), two rounds.
-      expect(rows).toHaveLength(8)
-      expect(new Set(rows.map((r) => r.user_id))).toEqual(new Set(club.players))
+      // The three seated accounts (the guest has none), two rounds; members off the table get nothing.
+      expect(rows).toHaveLength(6)
+      expect(new Set(rows.map((r) => r.user_id))).toEqual(new Set(club.players.slice(0, 3)))
       expect(rows.every((r) => r.deep_link === `/game/${id}`)).toBe(true)
       const last = rows[rows.length - 1]!.payload
       expect(last).toMatchObject({ round_no: 2, a: 320, b: 20 })

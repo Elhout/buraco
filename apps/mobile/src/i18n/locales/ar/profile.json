@@ -34,8 +34,8 @@
   },
   "notifications": {
     "section": "الإشعارات",
-    "notify_game_started": "بدء المباريات",
-    "notify_game_started_hint": "عندما يبدأ أحدهم مباراة",
+    "notify_game_started": "مباريات النادي",
+    "notify_game_started_hint": "عند بدء المباراة وعند انتهائها",
     "notify_tournament": "البطولات",
     "notify_tournament_hint": "توزيع الطاولات ومؤقت الجولات"
   },
