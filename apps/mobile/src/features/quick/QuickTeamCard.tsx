@@ -44,14 +44,7 @@ export function QuickTeamCard({ team, name, total, target, leading, onRename, on
         accessibilityRole="button"
         accessibilityLabel={t('addRoundFor', { team })}
         style={({ pressed }) => [styles.scoreTap, pressed && styles.pressed]}>
-        <Score
-          value={total}
-          size="scoreXl"
-          tone={teamColor(team)}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          style={[styles.score, scoreFit(formatNumber(total))]}
-        />
+        <Score value={total} size="scoreXl" tone={teamColor(team)} numberOfLines={1} adjustsFontSizeToFit style={styles.score} />
         <TargetBar team={team} value={total} target={target} />
       </Pressable>
       <Text variant="caption" tone={toGo === 0 ? teamColor(team) : color.inkMuted}>
@@ -73,15 +66,6 @@ export function QuickTeamCard({ team, name, total, target, leading, onRename, on
       ) : null}
     </View>
   )
-}
-
-/**
- * Half a phone width holds about four big digits; longer totals ("1,800", "-1,250") shrink so
- * they never get cut off. adjustsFontSizeToFit does this on phones but not in the web build.
- */
-const scoreFit = (text: string): { fontSize: number; lineHeight: number } | null => {
-  const scale = Math.min(1, 4 / Math.max(text.length, 1))
-  return scale < 1 ? { fontSize: Math.round(72 * scale), lineHeight: Math.round(76 * scale) } : null
 }
 
 const styles = StyleSheet.create({
