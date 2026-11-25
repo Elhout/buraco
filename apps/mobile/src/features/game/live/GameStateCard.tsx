@@ -2,6 +2,7 @@ import { router } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { Button, Card, Text } from '@/components/ui'
 import { color } from '@/theme/tokens'
+import { RestoreGameButton } from '../AdminGameControls'
 import type { GameView } from '../model'
 
 /**
@@ -40,6 +41,7 @@ export function GameStateCard({ view }: { view: GameView }) {
       return (
         <Card accent={color.danger}>
           <Text variant="bodyStrong">{t('live.abandoned')}</Text>
+          <RestoreGameButton gameId={id} tournament={game.tournament_match_id != null} />
           <Button label={t('live.openHistory')} variant="secondary" block onPress={() => router.push(`/history/${id}`)} />
           <Button label={t('live.backToLobby')} variant="quiet" block onPress={() => router.replace('/club')} />
         </Card>

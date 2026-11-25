@@ -1156,6 +1156,7 @@ export type Database = {
       abandon_game: { Args: { p_game_id: string; p_pin?: string }; Returns: Json }
       add_cut: { Args: { p_game_id: string; p_seat: number }; Returns: string }
       add_game_comment: { Args: { p_game_id: string; p_body: string; p_mentions?: string[]; p_audio_path?: string; p_audio_seconds?: number }; Returns: string }
+      admin_finish_game: { Args: { p_game_id: string }; Returns: Json }
       can_read_game: { Args: { p_game_id: string }; Returns: boolean }
       can_read_tournament: { Args: { p_tournament_id: string }; Returns: boolean }
       cancel_game: { Args: { p_game_id: string }; Returns: undefined }
@@ -1194,6 +1195,7 @@ export type Database = {
       reset_pin: { Args: { p_pin: string }; Returns: undefined }
       respond_invite: { Args: { p_game_id: string; p_accept: boolean; p_pin?: string }; Returns: Json }
       respond_undo: { Args: { p_game_id: string; p_approve: boolean; p_pin?: string }; Returns: Json }
+      restore_game: { Args: { p_game_id: string }; Returns: Json }
       rotate_invite_code: { Args: { p_club_id: string }; Returns: string }
       send_chat_message: { Args: { p_club_id: string; p_body: string }; Returns: string }
       set_device_state: { Args: { p_token: string; p_app_state: string; p_active_game_id?: string; p_chat_open?: boolean }; Returns: undefined }

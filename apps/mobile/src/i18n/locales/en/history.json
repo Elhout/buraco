@@ -120,6 +120,7 @@
     "scorekeeperReassigned": "{{name}} now keeps score",
     "abandonApproved": "{{actor}} agreed to abandon the game",
     "abandoned": "The game was abandoned",
+    "restored": "The game was restored",
     "seatVerified": "{{actor}} confirmed the result",
     "unknown": "{{type}}",
     "roundEdited": "{{actor}} corrected round {{round}} to {{a}} – {{b}}",

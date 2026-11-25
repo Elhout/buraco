@@ -202,7 +202,14 @@
     "deleteTitle": "Delete this game?",
     "deleteBody": "It disappears for everyone, with all its rounds. This can’t be undone.",
     "deleteConfirm": "Delete game",
-    "chip": "Admin"
+    "chip": "Admin",
+    "finish": "End now: leader wins",
+    "finishHint": "Ends it now with the team ahead as the winner. It counts in the stats.",
+    "finishTitle": "End with the leader winning?",
+    "finishBody": "The team with more points wins with the score as it is now, and the game counts in the stats.",
+    "finishConfirm": "End and record the win",
+    "restore": "Restore game",
+    "restoreHint": "Ended by mistake? Restoring brings it back live with all its rounds. Then add a round, or use Admin › End now to record the winner."
   },
   "replaceGuest": {
     "title": "Swap a guest",

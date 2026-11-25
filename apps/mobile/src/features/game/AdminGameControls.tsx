@@ -14,7 +14,7 @@ import { HIT, color, radius, space } from '@/theme/tokens'
 /** Games an admin can still stop: being set up, collecting invites, or being played. */
 const CURRENT = new Set(['draft', 'inviting', 'live'])
 
-export type AdminGameAction = 'end' | 'delete'
+export type AdminGameAction = 'end' | 'finish' | 'delete'
 type Action = AdminGameAction
 
 /** The owner and admins may end or delete current games. */
@@ -43,6 +43,7 @@ export function AdminGameButton({ gameId, status, onReplaceGuest }: { gameId: st
       {open ? (
         <AdminGameSheet
           gameId={gameId}
+          canFinish={status === 'live'}
           onClose={() => setOpen(false)}
           onReplaceGuest={
             onReplaceGuest
@@ -64,8 +65,11 @@ export function AdminGameSheet({
   onClose,
   initialAction,
   onReplaceGuest,
+  canFinish,
 }: {
   gameId: string
+  /** Live games only: end now with the leading team as the winner. */
+  canFinish?: boolean
   onClose: () => void
   initialAction?: Action
   /** Offered when the game has a guest seat to hand to a member. */
@@ -78,18 +82,20 @@ export function AdminGameSheet({
   const run = useMutation({
     mutationFn: async (a: Action) => {
       if (a === 'end') await rpc('end_game', { p_game_id: gameId })
+      else if (a === 'finish') await rpc('admin_finish_game', { p_game_id: gameId })
       else await rpc('delete_game', { p_game_id: gameId })
       await Promise.all([
+        client.invalidateQueries({ queryKey: qk.game(gameId) }),
         client.invalidateQueries({ queryKey: qk.lobby(club.id) }),
         client.invalidateQueries({ queryKey: qk.historyAll(club.id) }),
         client.invalidateQueries({ queryKey: qk.stats(club.id) }),
       ])
       if (a === 'delete') client.removeQueries({ queryKey: qk.game(gameId) })
     },
-    onSuccess: () => {
+    onSuccess: (_, a) => {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
       onClose()
-      router.replace('/club')
+      router.replace(a === 'finish' ? `/game/${gameId}/result` : '/club')
     },
   })
 
@@ -100,7 +106,7 @@ export function AdminGameSheet({
           <ErrorText error={run.error} />
           <Button
             label={t(`admin.${action}Confirm`)}
-            variant="danger"
+            variant={action === 'finish' ? 'primary' : 'danger'}
             size="lg"
             block
             loading={run.isPending}
@@ -128,6 +134,14 @@ export function AdminGameSheet({
             onPress={onReplaceGuest}
           />
         ) : null}
+        {canFinish ? (
+          <ListRow
+            title={t('admin.finish')}
+            subtitle={t('admin.finishHint')}
+            leading={<Ionicons name="trophy-outline" size={22} color={color.ink} />}
+            onPress={() => setAction('finish')}
+          />
+        ) : null}
         <ListRow
           title={t('admin.end')}
           subtitle={t('admin.endHint')}
@@ -144,6 +158,37 @@ export function AdminGameSheet({
         />
       </View>
     </Sheet>
+  )
+}
+
+/**
+ * On an abandoned game, for the owner and admins: brings it back to live with all its rounds
+ * (an "end game" by mistake). Renders nothing for everyone else and for tournament games.
+ */
+export function RestoreGameButton({ gameId, tournament }: { gameId: string; tournament: boolean }) {
+  const { t } = useTranslation(['game', 'common'])
+  const { role, club } = useCurrentClub()
+  const client = useQueryClient()
+  const restore = useMutation({
+    mutationFn: async () => {
+      await rpc('restore_game', { p_game_id: gameId })
+      await Promise.all([
+        client.invalidateQueries({ queryKey: qk.game(gameId) }),
+        client.invalidateQueries({ queryKey: qk.lobby(club.id) }),
+        client.invalidateQueries({ queryKey: qk.historyAll(club.id) }),
+      ])
+    },
+    onSuccess: () => void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success),
+  })
+  if (!isGameAdmin(role) || tournament) return null
+  return (
+    <Stack gap={space.sm}>
+      <ErrorText error={restore.error} />
+      <Button label={t('admin.restore')} size="lg" block loading={restore.isPending} onPress={() => restore.mutate()} />
+      <Text variant="caption" tone={color.inkMuted}>
+        {t('admin.restoreHint')}
+      </Text>
+    </Stack>
   )
 }
 

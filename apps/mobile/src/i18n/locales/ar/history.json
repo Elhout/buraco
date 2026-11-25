@@ -124,6 +124,7 @@
     "scorekeeperReassigned": "أصبح {{name}} يسجّل النتائج",
     "abandonApproved": "وافق {{actor}} على ترك المباراة",
     "abandoned": "تُركت المباراة",
+    "restored": "استُعيدت المباراة",
     "seatVerified": "أكّد {{actor}} النتيجة",
     "unknown": "{{type}}",
     "roundEdited": "صحّح {{actor}} الجولة {{round}} إلى {{a}} – {{b}}",
