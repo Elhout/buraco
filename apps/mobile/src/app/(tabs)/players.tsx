@@ -10,6 +10,8 @@ import { type Member, useClubMembers } from '@/features/clubs/members'
 import { AddPlayerSheet } from '@/features/clubs/screens/AddPlayerSheet'
 import { RoleChip } from '@/features/clubs/screens/RoleChip'
 import { useOnlineMembers } from '@/features/lobby/presence'
+import { KpiCards } from '@/features/players/KpiCards'
+import { clubKpis } from '@/features/players/kpis'
 import { type RosterRow, buildRoster, matchesName } from '@/features/players/roster'
 import { useClubH2H, useClubPlayerStats, useClubRatings, useStatsLive } from '@/features/stats/api'
 import { DailyBoards } from '@/features/stats/DailyBoards'
@@ -63,6 +65,7 @@ export default function PlayersScreen() {
         ]}
       />
       {view === 'daily' ? <DailyBoards clubId={current.club.id} members={members.members} me={me} /> : null}
+      {view === 'board' ? <KpiCards kpis={clubKpis(stats.data ?? [], ratings.data ?? new Map())} nameOf={members.nameOf} /> : null}
       {view === 'board' && roster.length > 0 ? <SearchBox value={query} onChange={setQuery} /> : null}
       {view === 'board' && roster.length > 0 && shown.length === 0 ? (
         <EmptyState icon="search-outline" title={t('noMatch', { query: query.trim() })} />
