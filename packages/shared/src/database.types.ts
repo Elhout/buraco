@@ -1163,6 +1163,7 @@ export type Database = {
       change_pin: { Args: { p_old_pin: string; p_new_pin: string }; Returns: Json }
       check_my_pin: { Args: { p_pin: string }; Returns: Json }
       club_accounts: { Args: { p_club_id: string }; Returns: { user_id: string; display_name: string; role: Database['public']['Enums']['club_role']; username: string; can_manage: boolean }[] }
+      club_ratings: { Args: { p_club_id: string }; Returns: { user_id: string; rating: number; games: number }[] }
       confirm_result: { Args: { p_game_id: string; p_pin?: string }; Returns: Json }
       confirm_round: { Args: { p_round_id: string; p_pin?: string }; Returns: Json }
       continue_game: { Args: { p_game_id: string }; Returns: Json }

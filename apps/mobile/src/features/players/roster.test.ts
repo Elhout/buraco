@@ -62,6 +62,38 @@ describe('buildRoster', () => {
   })
 })
 
+describe('buildRoster with Elo ratings', () => {
+  const members = [
+    { userId: 'a', name: 'Samy' },
+    { userId: 'b', name: 'AK' },
+    { userId: 'c', name: 'Noby' },
+    { userId: 'd', name: 'Hadida' },
+  ]
+  const stats = [
+    { user_id: 'a', games: 60, wins: 40 },
+    { user_id: 'b', games: 3, wins: 2 },
+    { user_id: 'c', games: 12, wins: 4 },
+  ]
+
+  it('ranks by rating (rounded), flags fewer than 5 games as provisional, no games last', () => {
+    const ratings = new Map([
+      ['a', 1561.4],
+      ['b', 1588.6],
+      ['c', 1470.2],
+    ])
+    expect(buildRoster(members, stats, 'en', ratings).map((r) => [r.name, r.rating, r.provisional])).toEqual([
+      ['AK', 1589, true],
+      ['Samy', 1561, false],
+      ['Noby', 1470, false],
+      ['Hadida', null, true],
+    ])
+  })
+
+  it('falls back to the adjusted win rate while ratings load', () => {
+    expect(buildRoster(members, stats, 'en').map((r) => r.name)).toEqual(['Samy', 'AK', 'Noby', 'Hadida'])
+  })
+})
+
 describe('matchesName', () => {
   it('finds by any part of the name, ignoring case and accents', () => {
     expect(matchesName('Samy', 'sam')).toBe(true)

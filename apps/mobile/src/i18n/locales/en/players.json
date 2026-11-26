@@ -26,7 +26,7 @@
     "champion": "Champion of the day: {{names}}",
     "champions": "Champions of the day: {{names}}"
   },
-  "scoreLabel": "score",
-  "scoreA11y": "Ranking score {{score}}",
-  "rankingHow": "Ranked by win rate, counting everyone as if they also had 5 wins and 5 losses, so a few lucky games can’t top the board and every player is ranked from their first game."
+  "rankingHow": "Ranked by rating: everyone starts at 1,500. Beating a stronger pair earns more points than beating a weaker one, so you climb by who you beat, not by how much you play. “New” means fewer than 5 games. The % is the win rate counting 5 extra wins and 5 extra losses.",
+  "provisional": "New",
+  "ratingA11y": "Rating {{rating}}, adjusted win rate {{score}}"
 }

@@ -11,7 +11,7 @@ import { AddPlayerSheet } from '@/features/clubs/screens/AddPlayerSheet'
 import { RoleChip } from '@/features/clubs/screens/RoleChip'
 import { useOnlineMembers } from '@/features/lobby/presence'
 import { type RosterRow, buildRoster, matchesName } from '@/features/players/roster'
-import { useClubH2H, useClubPlayerStats, useStatsLive } from '@/features/stats/api'
+import { useClubH2H, useClubPlayerStats, useClubRatings, useStatsLive } from '@/features/stats/api'
 import { DailyBoards } from '@/features/stats/DailyBoards'
 import { type H2HRow, mostBeaten } from '@/features/stats/select'
 import i18n from '@/i18n'
@@ -25,6 +25,7 @@ export default function PlayersScreen() {
   const members = useClubMembers(current.club.id)
   const stats = useClubPlayerStats(current.club.id)
   const h2h = useClubH2H(current.club.id)
+  const ratings = useClubRatings(current.club.id)
   const online = useOnlineMembers(current.club.id)
   const [adding, setAdding] = useState(false)
   const [query, setQuery] = useState('')
@@ -32,7 +33,7 @@ export default function PlayersScreen() {
   const me = useUserId()
   useStatsLive(current.club.id)
   const isAdmin = current.role === 'owner' || current.role === 'admin'
-  const roster = buildRoster(members.members, stats.data ?? [], i18n.language)
+  const roster = buildRoster(members.members, stats.data ?? [], i18n.language, ratings.data)
   // Places come from the full board, so a search keeps everyone's real rank.
   const ranked = roster.map((p, i) => ({ p, rank: p.games > 0 ? i + 1 : null }))
   const shown = ranked.filter(({ p }) => matchesName(p.name, query))
@@ -41,6 +42,7 @@ export default function PlayersScreen() {
     void members.refetch()
     void stats.refetch()
     void h2h.refetch()
+    void ratings.refetch()
   }
 
   return (
@@ -164,12 +166,14 @@ function LeaderRow({ player: p, rank, h2h, nameOf, online }: LeaderRowProps) {
       </View>
       {p.role === 'admin' ? <RoleChip role="admin" /> : null}
       {p.games > 0 ? (
-        <View style={styles.score} accessibilityLabel={t('scoreA11y', { score: formatPercent(p.score) })}>
+        <View
+          style={styles.score}
+          accessibilityLabel={t('ratingA11y', { rating: formatNumber(p.rating ?? 0), score: formatPercent(p.score) })}>
           <Text variant="bodyStrong" tone={rank === 1 ? color.accent : color.ink}>
-            {formatPercent(p.score)}
+            {formatNumber(p.rating ?? 0)}
           </Text>
-          <Text variant="caption" tone={color.inkFaint}>
-            {t('scoreLabel')}
+          <Text variant="caption" tone={p.provisional ? color.warning : color.inkFaint}>
+            {p.provisional ? t('provisional') : formatPercent(p.score)}
           </Text>
         </View>
       ) : null}

@@ -133,3 +133,15 @@ export function useClubPlayerStats(clubId: string) {
     },
   })
 }
+
+/** Elo rating per player (all time), from public.club_ratings. */
+export function useClubRatings(clubId: string) {
+  return useQuery({
+    queryKey: key(clubId, 'ratings'),
+    queryFn: async (): Promise<ReadonlyMap<string, number>> => {
+      const { data, error } = await supabase.rpc('club_ratings', { p_club_id: clubId })
+      if (error) throw error
+      return new Map((data ?? []).map((r) => [r.user_id, Number(r.rating)]))
+    },
+  })
+}

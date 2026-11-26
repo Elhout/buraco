@@ -169,7 +169,9 @@ History is the list of games; stats are views computed from verified games only,
 
 **Head-to-head** between two players or two fixed pairs.
 
-**Club leaderboard**: ranked by win rate with a minimum of 10 games, with games played and points differential as columns; season reset optional (organizer sets a season start date).
+**Club board (Players tab)**: every member with a counted game is ranked by **Elo rating** (`public.club_ratings`, mirrored by `rateGames` in `@buraco/shared`). Everyone starts at 1500; a team's strength is the average of its two players (a guest counts as 1500 and is never rated); after each counted game, oldest first, each player moves by 32 × (result − expected), with expected = 1 / (1 + 10^((theirs − mine) / 400)). Fewer than 5 games shows as "New". Ties go to the adjusted win rate, (wins + 5) / (games + 10), shown beside the rating, then games played. Players with no games are listed last.
+
+**Season leaderboard view** (`v_leaderboard`): win rate with a minimum of 10 games, games played and points differential; season reset optional (organizer sets a season start date).
 
 Stats live in Postgres views (`v_player_stats`, `v_pair_stats`, `v_h2h`) refreshed on read; at this volume no materialization is needed.
 
