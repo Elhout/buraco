@@ -9,18 +9,42 @@ describe('buildRoster', () => {
     { userId: 'd', name: 'Hadida' },
   ]
 
-  it('lists every member, most wins first, then the better rate, then by name', () => {
+  it('ranks by adjusted win rate, not by how many games were won', () => {
     const stats = [
-      { user_id: 'a', games: 10, wins: 6 },
-      { user_id: 'b', games: 8, wins: 6 },
-      { user_id: 'c', games: 3, wins: 1 },
+      { user_id: 'a', games: 40, wins: 22 }, // 55%: most wins, (27/50) 54%
+      { user_id: 'b', games: 4, wins: 4 }, // 100% over few games: (9/14) 64%
+      { user_id: 'c', games: 3, wins: 1 }, // (6/13) 46%
     ]
     expect(buildRoster(members, stats, 'en').map((r) => [r.name, r.games, r.wins])).toEqual([
-      ['AK', 8, 6],
-      ['Samy', 10, 6],
+      ['AK', 4, 4],
+      ['Samy', 40, 22],
       ['Noby', 3, 1],
       ['Hadida', 0, 0],
     ])
+  })
+
+  it('a long strong record still beats a short perfect one', () => {
+    const stats = [
+      { user_id: 'a', games: 100, wins: 70 }, // 75/110 = 68%
+      { user_id: 'b', games: 3, wins: 3 }, // 8/13 = 62%
+    ]
+    expect(
+      buildRoster(members, stats, 'en')
+        .map((r) => r.name)
+        .slice(0, 2),
+    ).toEqual(['Samy', 'AK'])
+  })
+
+  it('breaks an equal score by more games played', () => {
+    const stats = [
+      { user_id: 'a', games: 10, wins: 5 },
+      { user_id: 'b', games: 20, wins: 10 },
+    ]
+    expect(
+      buildRoster(members, stats, 'en')
+        .map((r) => r.name)
+        .slice(0, 2),
+    ).toEqual(['AK', 'Samy'])
   })
 
   it('carries losses, 0 when unknown', () => {

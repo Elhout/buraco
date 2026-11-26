@@ -25,5 +25,8 @@
     "games_other": "{{n}} games",
     "champion": "Champion of the day: {{names}}",
     "champions": "Champions of the day: {{names}}"
-  }
+  },
+  "scoreLabel": "score",
+  "scoreA11y": "Ranking score {{score}}",
+  "rankingHow": "Ranked by win rate, counting everyone as if they also had 5 wins and 5 losses, so a few lucky games can’t top the board and every player is ranked from their first game."
 }

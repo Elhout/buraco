@@ -15,7 +15,7 @@ import { useClubH2H, useClubPlayerStats, useStatsLive } from '@/features/stats/a
 import { DailyBoards } from '@/features/stats/DailyBoards'
 import { type H2HRow, mostBeaten } from '@/features/stats/select'
 import i18n from '@/i18n'
-import { formatNumber } from '@/lib/format'
+import { formatNumber, formatPercent } from '@/lib/format'
 import { HIT, color, font, radius, space } from '@/theme/tokens'
 
 /** Players tab: the club leaderboard. Wins and losses per player and the opponent each beats most. */
@@ -64,6 +64,11 @@ export default function PlayersScreen() {
       {view === 'board' && roster.length > 0 ? <SearchBox value={query} onChange={setQuery} /> : null}
       {view === 'board' && roster.length > 0 && shown.length === 0 ? (
         <EmptyState icon="search-outline" title={t('noMatch', { query: query.trim() })} />
+      ) : null}
+      {view === 'board' && shown.length > 0 ? (
+        <Text variant="caption" tone={color.inkMuted}>
+          {t('rankingHow')}
+        </Text>
       ) : null}
       {view === 'board' && shown.length > 0 ? (
         <Card style={styles.card}>
@@ -158,6 +163,16 @@ function LeaderRow({ player: p, rank, h2h, nameOf, online }: LeaderRowProps) {
         ) : null}
       </View>
       {p.role === 'admin' ? <RoleChip role="admin" /> : null}
+      {p.games > 0 ? (
+        <View style={styles.score} accessibilityLabel={t('scoreA11y', { score: formatPercent(p.score) })}>
+          <Text variant="bodyStrong" tone={rank === 1 ? color.accent : color.ink}>
+            {formatPercent(p.score)}
+          </Text>
+          <Text variant="caption" tone={color.inkFaint}>
+            {t('scoreLabel')}
+          </Text>
+        </View>
+      ) : null}
       <Chevron />
     </Pressable>
   )
@@ -188,6 +203,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: space.md, paddingVertical: space.md, minHeight: 64 },
   pressed: { opacity: 0.6 },
   rank: { width: 28, textAlign: 'center' },
+  score: { alignItems: 'flex-end' },
   body: { flex: 1, gap: space.xxs },
   record: { flexDirection: 'row', gap: space.xs, alignItems: 'center' },
 })

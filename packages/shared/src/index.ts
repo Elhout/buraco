@@ -1,4 +1,5 @@
 export * from './accounts'
+export * from './rating'
 export * from './scoring'
 export * from './config'
 export * from './tournament'
