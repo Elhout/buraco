@@ -5,20 +5,23 @@ import { useTranslation } from 'react-i18next'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { Text } from '@/components/ui'
 import { BigNumber } from '@/features/stats/viz'
-import { formatNumber } from '@/lib/format'
+import { formatNumber, formatPercent } from '@/lib/format'
 import { color, radius, space } from '@/theme/tokens'
 import type { ClubKpis, Kpi } from './kpis'
 
 type IconName = ComponentProps<typeof Ionicons>['name']
 
 const CARDS: readonly { key: keyof ClubKpis; icon: IconName; tone: string }[] = [
-  { key: 'topRated', icon: 'trophy', tone: color.accent },
+  { key: 'bestWinRate', icon: 'trophy', tone: color.accent },
   { key: 'hotStreak', icon: 'flame', tone: color.danger },
   { key: 'bestStreak', icon: 'trending-up', tone: color.success },
   { key: 'biggestWin', icon: 'flash', tone: color.accent },
   { key: 'mostCuts', icon: 'cut', tone: color.ink },
   { key: 'mostGames', icon: 'albums', tone: color.ink },
 ]
+
+const kpiText = (key: keyof ClubKpis, value: number): string =>
+  key === 'bestWinRate' ? formatPercent(value) : key === 'biggestWin' ? `+${formatNumber(value)}` : formatNumber(value)
 
 /** Two-column highlight cards above the Players board; tap one to open that player. */
 export function KpiCards({ kpis, nameOf }: { kpis: ClubKpis; nameOf: (userId: string) => string }) {
@@ -34,7 +37,7 @@ export function KpiCards({ kpis, nameOf }: { kpis: ClubKpis; nameOf: (userId: st
         <Pressable
           key={key}
           accessibilityRole="button"
-          accessibilityLabel={t(`kpi.${key}A11y`, { name: nameOf(kpi.userId), n: formatNumber(kpi.value) })}
+          accessibilityLabel={t(`kpi.${key}A11y`, { name: nameOf(kpi.userId), n: kpiText(key, kpi.value) })}
           onPress={() => router.push({ pathname: '/player/[id]', params: { id: kpi.userId } })}
           style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
           <View style={styles.head}>
@@ -43,7 +46,7 @@ export function KpiCards({ kpis, nameOf }: { kpis: ClubKpis; nameOf: (userId: st
               {t(`kpi.${key}`)}
             </Text>
           </View>
-          <BigNumber text={key === 'biggestWin' ? `+${formatNumber(kpi.value)}` : formatNumber(kpi.value)} size="score" tone={tone} />
+          <BigNumber text={kpiText(key, kpi.value)} size="score" tone={tone} />
           <Text variant="bodyStrong" numberOfLines={1}>
             {nameOf(kpi.userId)}
           </Text>

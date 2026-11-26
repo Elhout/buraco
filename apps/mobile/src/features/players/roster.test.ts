@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildRoster, matchesName } from './roster'
+import { RANKED_MIN_GAMES, buildRoster, matchesName } from './roster'
 
 describe('buildRoster', () => {
   const members = [
@@ -7,90 +7,59 @@ describe('buildRoster', () => {
     { userId: 'b', name: 'AK' },
     { userId: 'c', name: 'Noby' },
     { userId: 'd', name: 'Hadida' },
+    { userId: 'e', name: 'Ali' },
   ]
 
-  it('ranks by adjusted win rate, not by how many games were won', () => {
+  it('ranks by win %, not by how many games were won', () => {
     const stats = [
-      { user_id: 'a', games: 40, wins: 22 }, // 55%: most wins, (27/50) 54%
-      { user_id: 'b', games: 4, wins: 4 }, // 100% over few games: (9/14) 64%
-      { user_id: 'c', games: 3, wins: 1 }, // (6/13) 46%
+      { user_id: 'a', games: 40, wins: 22, losses: 18 }, // 55%, most wins
+      { user_id: 'b', games: 10, wins: 7, losses: 3 }, // 70%
+      { user_id: 'c', games: 6, wins: 2, losses: 4 }, // 33%
     ]
-    expect(buildRoster(members, stats, 'en').map((r) => [r.name, r.games, r.wins])).toEqual([
-      ['AK', 4, 4],
-      ['Samy', 40, 22],
-      ['Noby', 3, 1],
-      ['Hadida', 0, 0],
+    expect(buildRoster(members, stats, 'en').map((r) => [r.name, Math.round(r.winRate * 100), r.isNew])).toEqual([
+      ['AK', 70, false],
+      ['Samy', 55, false],
+      ['Noby', 33, false],
+      ['Ali', 0, false],
+      ['Hadida', 0, false],
     ])
   })
 
-  it('a long strong record still beats a short perfect one', () => {
+  it('lists players under 5 games as new, after the ranked ones, most games first', () => {
+    expect(RANKED_MIN_GAMES).toBe(5)
     const stats = [
-      { user_id: 'a', games: 100, wins: 70 }, // 75/110 = 68%
-      { user_id: 'b', games: 3, wins: 3 }, // 8/13 = 62%
+      { user_id: 'a', games: 3, wins: 3 }, // 100% but only 3 games
+      { user_id: 'b', games: 5, wins: 1 }, // 20%, ranked
+      { user_id: 'c', games: 4, wins: 1 },
     ]
-    expect(
-      buildRoster(members, stats, 'en')
-        .map((r) => r.name)
-        .slice(0, 2),
-    ).toEqual(['Samy', 'AK'])
+    expect(buildRoster(members, stats, 'en').map((r) => [r.name, r.isNew])).toEqual([
+      ['AK', false],
+      ['Noby', true],
+      ['Samy', true],
+      ['Ali', false],
+      ['Hadida', false],
+    ])
   })
 
-  it('breaks an equal score by more games played', () => {
+  it('breaks an equal win % by more games, then by name', () => {
     const stats = [
       { user_id: 'a', games: 10, wins: 5 },
       { user_id: 'b', games: 20, wins: 10 },
+      { user_id: 'c', games: 10, wins: 5 },
     ]
     expect(
       buildRoster(members, stats, 'en')
         .map((r) => r.name)
-        .slice(0, 2),
-    ).toEqual(['AK', 'Samy'])
+        .slice(0, 3),
+    ).toEqual(['AK', 'Noby', 'Samy'])
   })
 
   it('carries losses, 0 when unknown', () => {
-    const rows = buildRoster(members, [{ user_id: 'a', games: 10, wins: 6, losses: 4 }], 'en')
+    const rows = buildRoster(members.slice(0, 2), [{ user_id: 'a', games: 10, wins: 6, losses: 4 }], 'en')
     expect(rows.map((r) => [r.name, r.losses])).toEqual([
       ['Samy', 4],
       ['AK', 0],
-      ['Hadida', 0],
-      ['Noby', 0],
     ])
-  })
-
-  it('keeps members without any games, sorted by name', () => {
-    expect(buildRoster(members, [], 'en').map((r) => r.name)).toEqual(['AK', 'Hadida', 'Noby', 'Samy'])
-  })
-})
-
-describe('buildRoster with Elo ratings', () => {
-  const members = [
-    { userId: 'a', name: 'Samy' },
-    { userId: 'b', name: 'AK' },
-    { userId: 'c', name: 'Noby' },
-    { userId: 'd', name: 'Hadida' },
-  ]
-  const stats = [
-    { user_id: 'a', games: 60, wins: 40 },
-    { user_id: 'b', games: 3, wins: 2 },
-    { user_id: 'c', games: 12, wins: 4 },
-  ]
-
-  it('ranks by rating (rounded), flags fewer than 5 games as provisional, no games last', () => {
-    const ratings = new Map([
-      ['a', 1561.4],
-      ['b', 1588.6],
-      ['c', 1470.2],
-    ])
-    expect(buildRoster(members, stats, 'en', ratings).map((r) => [r.name, r.rating, r.provisional])).toEqual([
-      ['AK', 1589, true],
-      ['Samy', 1561, false],
-      ['Noby', 1470, false],
-      ['Hadida', null, true],
-    ])
-  })
-
-  it('falls back to the adjusted win rate while ratings load', () => {
-    expect(buildRoster(members, stats, 'en').map((r) => r.name)).toEqual(['Samy', 'AK', 'Noby', 'Hadida'])
   })
 })
 

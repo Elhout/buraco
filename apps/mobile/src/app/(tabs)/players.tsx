@@ -12,8 +12,8 @@ import { RoleChip } from '@/features/clubs/screens/RoleChip'
 import { useOnlineMembers } from '@/features/lobby/presence'
 import { KpiCards } from '@/features/players/KpiCards'
 import { clubKpis } from '@/features/players/kpis'
-import { type RosterRow, buildRoster, matchesName } from '@/features/players/roster'
-import { useClubH2H, useClubPlayerStats, useClubRatings, useStatsLive } from '@/features/stats/api'
+import { RANKED_MIN_GAMES, type RosterRow, buildRoster, matchesName } from '@/features/players/roster'
+import { useClubH2H, useClubPlayerStats, useStatsLive } from '@/features/stats/api'
 import { DailyBoards } from '@/features/stats/DailyBoards'
 import { type H2HRow, mostBeaten } from '@/features/stats/select'
 import i18n from '@/i18n'
@@ -27,7 +27,6 @@ export default function PlayersScreen() {
   const members = useClubMembers(current.club.id)
   const stats = useClubPlayerStats(current.club.id)
   const h2h = useClubH2H(current.club.id)
-  const ratings = useClubRatings(current.club.id)
   const online = useOnlineMembers(current.club.id)
   const [adding, setAdding] = useState(false)
   const [query, setQuery] = useState('')
@@ -35,16 +34,15 @@ export default function PlayersScreen() {
   const me = useUserId()
   useStatsLive(current.club.id)
   const isAdmin = current.role === 'owner' || current.role === 'admin'
-  const roster = buildRoster(members.members, stats.data ?? [], i18n.language, ratings.data)
+  const roster = buildRoster(members.members, stats.data ?? [], i18n.language)
   // Places come from the full board, so a search keeps everyone's real rank.
-  const ranked = roster.map((p, i) => ({ p, rank: p.games > 0 ? i + 1 : null }))
+  const ranked = roster.map((p, i) => ({ p, rank: p.games > 0 && !p.isNew ? i + 1 : null }))
   const shown = ranked.filter(({ p }) => matchesName(p.name, query))
 
   const refresh = (): void => {
     void members.refetch()
     void stats.refetch()
     void h2h.refetch()
-    void ratings.refetch()
   }
 
   return (
@@ -65,7 +63,7 @@ export default function PlayersScreen() {
         ]}
       />
       {view === 'daily' ? <DailyBoards clubId={current.club.id} members={members.members} me={me} /> : null}
-      {view === 'board' ? <KpiCards kpis={clubKpis(stats.data ?? [], ratings.data ?? new Map())} nameOf={members.nameOf} /> : null}
+      {view === 'board' ? <KpiCards kpis={clubKpis(stats.data ?? [])} nameOf={members.nameOf} /> : null}
       {view === 'board' && roster.length > 0 ? <SearchBox value={query} onChange={setQuery} /> : null}
       {view === 'board' && roster.length > 0 && shown.length === 0 ? (
         <EmptyState icon="search-outline" title={t('noMatch', { query: query.trim() })} />
@@ -79,7 +77,13 @@ export default function PlayersScreen() {
         <Card style={styles.card}>
           {shown.map(({ p, rank }, i) => (
             <View key={p.userId}>
-              {i > 0 ? <View style={styles.rule} /> : null}
+              {p.isNew && !shown[i - 1]?.p.isNew ? (
+                <Text variant="label" tone={color.inkMuted} style={styles.section}>
+                  {t('newSection', { n: formatNumber(RANKED_MIN_GAMES) })}
+                </Text>
+              ) : i > 0 ? (
+                <View style={styles.rule} />
+              ) : null}
               <LeaderRow player={p} rank={rank} h2h={h2h.data ?? []} nameOf={members.nameOf} online={online.has(p.userId)} />
             </View>
           ))}
@@ -169,15 +173,15 @@ function LeaderRow({ player: p, rank, h2h, nameOf, online }: LeaderRowProps) {
       </View>
       {p.role === 'admin' ? <RoleChip role="admin" /> : null}
       {p.games > 0 ? (
-        <View
-          style={styles.score}
-          accessibilityLabel={t('ratingA11y', { rating: formatNumber(p.rating ?? 0), score: formatPercent(p.score) })}>
-          <Text variant="bodyStrong" tone={rank === 1 ? color.accent : color.ink}>
-            {formatNumber(p.rating ?? 0)}
+        <View style={styles.score} accessibilityLabel={t('winRateA11y', { rate: formatPercent(p.winRate) })}>
+          <Text variant="bodyStrong" tone={rank === 1 ? color.accent : p.isNew ? color.inkMuted : color.ink}>
+            {formatPercent(p.winRate)}
           </Text>
-          <Text variant="caption" tone={p.provisional ? color.warning : color.inkFaint}>
-            {p.provisional ? t('provisional') : formatPercent(p.score)}
-          </Text>
+          {p.isNew ? (
+            <Text variant="caption" tone={color.warning}>
+              {t('provisional')}
+            </Text>
+          ) : null}
         </View>
       ) : null}
       <Chevron />
@@ -211,6 +215,7 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.6 },
   rank: { width: 28, textAlign: 'center' },
   score: { alignItems: 'flex-end' },
+  section: { paddingTop: space.md, paddingBottom: space.xs },
   body: { flex: 1, gap: space.xxs },
   record: { flexDirection: 'row', gap: space.xs, alignItems: 'center' },
 })

@@ -1,3 +1,5 @@
+import { RANKED_MIN_GAMES } from './roster'
+
 /**
  * Club highlights above the Players board: who leads each stat. Pure; tested in kpis.test.ts.
  * A tie goes to the player with fewer games (they got there quicker), then the lower id.
@@ -18,8 +20,8 @@ export interface Kpi {
 }
 
 export interface ClubKpis {
-  /** Highest Elo rating. */
-  readonly topRated: Kpi | null
+  /** Best win % (0..1) among players with at least RANKED_MIN_GAMES games. */
+  readonly bestWinRate: Kpi | null
   /** Most wins in a row right now. */
   readonly hotStreak: Kpi | null
   /** Most wins in a row ever. */
@@ -31,7 +33,7 @@ export interface ClubKpis {
   readonly biggestWin: Kpi | null
 }
 
-export function clubKpis(stats: readonly KpiStats[], ratings: ReadonlyMap<string, number>): ClubKpis {
+export function clubKpis(stats: readonly KpiStats[]): ClubKpis {
   const rows = stats.flatMap((s) => (s.user_id && Number(s.games ?? 0) > 0 ? [{ ...s, id: s.user_id, games: Number(s.games) }] : []))
   const lead = (value: (r: (typeof rows)[number]) => number | null): Kpi | null => {
     let best: { id: string; value: number; games: number } | null = null
@@ -46,7 +48,7 @@ export function clubKpis(stats: readonly KpiStats[], ratings: ReadonlyMap<string
   }
   const num = (v: number | null | undefined): number | null => (v === null || v === undefined ? null : Number(v))
   return {
-    topRated: lead((r) => (ratings.has(r.id) ? Math.round(ratings.get(r.id)!) : null)),
+    bestWinRate: lead((r) => (r.games >= RANKED_MIN_GAMES ? Number(r.wins ?? 0) / r.games : null)),
     hotStreak: lead((r) => num(r.current_streak)),
     bestStreak: lead((r) => num(r.best_streak)),
     mostGames: lead((r) => r.games),

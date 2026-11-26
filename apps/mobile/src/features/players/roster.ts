@@ -1,9 +1,13 @@
-import { ELO_PROVISIONAL_GAMES, ELO_START, adjustedWinRate } from '@buraco/shared'
-
 /**
- * The Players tab list: every club member with games, wins and losses, best first. Pure; tested in
+ * The Players tab list: every club member with games, wins and losses. Pure; tested in
  * roster.test.ts.
+ *
+ * Ranked by win % among players with at least RANKED_MIN_GAMES games (ties: more games, then
+ * name). Players with fewer games are "new": listed after the ranked ones, most games first.
+ * Members without a game come last.
  */
+export const RANKED_MIN_GAMES = 5
+
 export interface RosterMember {
   readonly userId: string
   readonly name: string
@@ -21,12 +25,10 @@ export type RosterRow<M extends RosterMember = RosterMember> = M & {
   readonly games: number
   readonly wins: number
   readonly losses: number
-  /** Adjusted win rate (0..1), 50% before the first game. */
-  readonly score: number
-  /** Elo rating (rounded); null before the first game. */
-  readonly rating: number | null
-  /** Too few games for the rating to be settled yet. */
-  readonly provisional: boolean
+  /** wins / games (0..1); 0 before the first game. */
+  readonly winRate: number
+  /** Has played, but fewer than RANKED_MIN_GAMES games: not ranked yet. */
+  readonly isNew: boolean
 }
 
 /** Case- and accent-insensitive: "sam" finds "Samy", "zoe" finds "Zoë"; an empty query matches all. */
@@ -41,32 +43,22 @@ export function matchesName(name: string, query: string): boolean {
   return q === '' || fold(name).includes(q)
 }
 
-/**
- * Highest Elo rating first (see rateGames); while ratings are loading, best adjusted win rate.
- * Ties go to more games (the surer record), then name; players with no games last.
- */
-export function buildRoster<M extends RosterMember>(
-  members: readonly M[],
-  stats: readonly RosterStats[],
-  locale: string,
-  ratings?: ReadonlyMap<string, number>,
-): RosterRow<M>[] {
+const tier = (r: { games: number; isNew: boolean }): number => (r.games === 0 ? 2 : r.isNew ? 1 : 0)
+
+export function buildRoster<M extends RosterMember>(members: readonly M[], stats: readonly RosterStats[], locale: string): RosterRow<M>[] {
   const byId = new Map(stats.flatMap((s) => (s.user_id ? [[s.user_id, s] as const] : [])))
   return members
     .map((m) => {
       const s = byId.get(m.userId)
       const games = Number(s?.games ?? 0)
       const wins = Number(s?.wins ?? 0)
-      const score = adjustedWinRate(wins, games, Number(s?.draws ?? 0))
-      const rating = games === 0 ? null : Math.round(ratings?.get(m.userId) ?? ELO_START)
-      return { ...m, games, wins, losses: Number(s?.losses ?? 0), score, rating, provisional: games < ELO_PROVISIONAL_GAMES }
+      const winRate = games === 0 ? 0 : wins / games
+      return { ...m, games, wins, losses: Number(s?.losses ?? 0), winRate, isNew: games > 0 && games < RANKED_MIN_GAMES }
     })
-    .sort(
-      (a, b) =>
-        Number(a.games === 0) - Number(b.games === 0) ||
-        (ratings ? (b.rating ?? 0) - (a.rating ?? 0) : 0) ||
-        b.score - a.score ||
-        b.games - a.games ||
-        a.name.localeCompare(b.name, locale),
-    )
+    .sort((a, b) => {
+      const byTier = tier(a) - tier(b)
+      if (byTier !== 0) return byTier
+      const primary = tier(a) === 1 ? b.games - a.games || b.winRate - a.winRate : b.winRate - a.winRate || b.games - a.games
+      return primary || a.name.localeCompare(b.name, locale)
+    })
 }

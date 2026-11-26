@@ -169,7 +169,7 @@ History is the list of games; stats are views computed from verified games only,
 
 **Head-to-head** between two players or two fixed pairs.
 
-**Club board (Players tab)**: every member with a counted game is ranked by **Elo rating** (`public.club_ratings`, mirrored by `rateGames` in `@buraco/shared`). Everyone starts at 1500; a team's strength is the average of its two players (a guest counts as 1500 and is never rated); after each counted game, oldest first, each player moves by 32 × (result − expected), with expected = 1 / (1 + 10^((theirs − mine) / 400)). Fewer than 5 games shows as "New". Ties go to the adjusted win rate, (wins + 5) / (games + 10), shown beside the rating, then games played. Players with no games are listed last.
+**Club board (Players tab)**: ranked by **win %** (wins ÷ games) among members with at least 5 counted games; ties go to more games, then name. Members with 1–4 games are listed after them as "New" (most games first), members without a game last. Highlight cards above the board: best win % (5+ games), current win streak, best win streak, biggest win margin, most exact cuts, most games; a tie goes to fewer games. (`public.club_ratings`, an Elo rating, exists in the database but is not shown.)
 
 **Season leaderboard view** (`v_leaderboard`): win rate with a minimum of 10 games, games played and points differential; season reset optional (organizer sets a season start date).
 
